@@ -1,0 +1,27 @@
+{
+	"files": [],
+	"references": [
+		{ "path": "./tsconfig.app.jsonc" },
+		{ "path": "./tsconfig.node.jsonc" },
+	],
+	"compilerOptions": {
+		"target": "ES2023",
+		"lib": ["DOM", "DOM.Iterable", "ES2023"],
+		"module": "ESNext",
+		"skipLibCheck": true,
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"jsx": "react-jsx",
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitReturns": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./src/*"],
+		},
+	},
+	"include": ["src"],
+}
