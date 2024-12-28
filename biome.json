@@ -26,10 +26,10 @@
 	"json": {
 		"parser": {
 			"allowComments": true,
-			"allowTrailingCommas": true
+			"allowTrailingCommas": false
 		},
 		"formatter": {
-			"trailingCommas": "all"
+			"trailingCommas": "none"
 		}
 	},
 	"javascript": {
@@ -38,7 +38,9 @@
 			"indentWidth": 4,
 			"jsxQuoteStyle": "double",
 			"trailingCommas": "all",
-			"arrowParentheses": "asNeeded"
+			"arrowParentheses": "asNeeded",
+			"semicolons":"always",
+			"quoteProperties":"asNeeded"
 		}
 	}
 }

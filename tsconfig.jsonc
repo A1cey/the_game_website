@@ -2,7 +2,7 @@
 	"files": [],
 	"references": [
 		{ "path": "./tsconfig.app.jsonc" },
-		{ "path": "./tsconfig.node.jsonc" },
+		{ "path": "./tsconfig.node.jsonc" }
 	],
 	"compilerOptions": {
 		"target": "ES2023",
@@ -20,8 +20,8 @@
 		"noImplicitReturns": true,
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./src/*"],
-		},
+			"@/*": ["./src/*"]
+		}
 	},
-	"include": ["src"],
+	"include": ["src"]
 }
