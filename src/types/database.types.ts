@@ -55,21 +55,21 @@ export type Database = {
       players: {
         Row: {
           id: string
-          session_id: string
+          session_id: string | null
         }
         Insert: {
           id?: string
-          session_id?: string
+          session_id?: string | null
         }
         Update: {
           id?: string
-          session_id?: string
+          session_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "players_session_id_fkey"
             columns: ["session_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "sessions"
             referencedColumns: ["id"]
           },
