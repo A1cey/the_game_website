@@ -6,8 +6,9 @@
 		"useIgnoreFile": false
 	},
 	"files": {
+		"include": ["src/*"],
 		"ignoreUnknown": false,
-		"ignore": []
+		"ignore": ["src/components/ui/*"]
 	},
 	"formatter": {
 		"enabled": true,
@@ -39,8 +40,8 @@
 			"jsxQuoteStyle": "double",
 			"trailingCommas": "all",
 			"arrowParentheses": "asNeeded",
-			"semicolons":"always",
-			"quoteProperties":"asNeeded"
+			"semicolons": "always",
+			"quoteProperties": "asNeeded"
 		}
 	}
 }

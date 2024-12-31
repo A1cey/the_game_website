@@ -137,6 +137,12 @@ export type Database = {
         }
         Returns: undefined
       }
+      start_game: {
+        Args: {
+          session_name: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       log_event:
