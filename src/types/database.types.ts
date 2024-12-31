@@ -7,89 +7,106 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string
-          query?: string
-          variables?: Json
-          extensions?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       games: {
         Row: {
+          game_state: Json | null
           id: string
-          options: Json
-          type: string
         }
         Insert: {
+          game_state?: Json | null
           id?: string
-          options?: Json
-          type?: string
         }
         Update: {
+          game_state?: Json | null
           id?: string
-          options?: Json
-          type?: string
+        }
+        Relationships: []
+      }
+      logs: {
+        Row: {
+          created_at: string
+          data: Json | null
+          description: Database["public"]["Enums"]["log_event"]
+          id: string | null
+          index: number
+        }
+        Insert: {
+          created_at?: string
+          data?: Json | null
+          description: Database["public"]["Enums"]["log_event"]
+          id?: string | null
+          index?: number
+        }
+        Update: {
+          created_at?: string
+          data?: Json | null
+          description?: Database["public"]["Enums"]["log_event"]
+          id?: string | null
+          index?: number
         }
         Relationships: []
       }
       players: {
         Row: {
           id: string
-          session_id: string | null
+          joined_at: string
+          name: string | null
+          player_game_state: Json | null
+          session_name: string
         }
         Insert: {
           id?: string
-          session_id?: string | null
+          joined_at?: string
+          name?: string | null
+          player_game_state?: Json | null
+          session_name: string
         }
         Update: {
           id?: string
-          session_id?: string | null
+          joined_at?: string
+          name?: string | null
+          player_game_state?: Json | null
+          session_name?: string
         }
         Relationships: [
           {
-            foreignKeyName: "players_session_id_fkey"
-            columns: ["session_id"]
+            foreignKeyName: "players_session_name_fkey"
+            columns: ["session_name"]
             isOneToOne: false
             referencedRelation: "sessions"
-            referencedColumns: ["id"]
+            referencedColumns: ["name"]
           },
         ]
       }
       sessions: {
         Row: {
-          game_id: string | null
-          id: string
+          created_at: string
+          game_id: string
+          game_started_at: string | null
+          last_update_at: string
+          max_num_of_players: number
           name: string
+          num_of_players: number
         }
         Insert: {
-          game_id?: string | null
-          id?: string
-          name?: string
+          created_at?: string
+          game_id?: string
+          game_started_at?: string | null
+          last_update_at?: string
+          max_num_of_players?: number
+          name: string
+          num_of_players?: number
         }
         Update: {
-          game_id?: string | null
-          id?: string
+          created_at?: string
+          game_id?: string
+          game_started_at?: string | null
+          last_update_at?: string
+          max_num_of_players?: number
           name?: string
+          num_of_players?: number
         }
         Relationships: [
           {
@@ -106,10 +123,33 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_default_name_for_player: {
+        Args: {
+          session_name_input: string
+        }
+        Returns: string
+      }
+      insert_log: {
+        Args: {
+          session_name_input: string
+          description_input: Database["public"]["Enums"]["log_event"]
+          data_input?: Json
+        }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      log_event:
+        | "new_session_created"
+        | "session_deleted"
+        | "new_game_created"
+        | "game_started"
+        | "game_updated"
+        | "game_ended"
+        | "game_deleted"
+        | "new_player_joined_the_session"
+        | "player_updated"
+        | "player_left_the_session"
     }
     CompositeTypes: {
       [_ in never]: never
