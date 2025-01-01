@@ -41,19 +41,18 @@ const GameCarousel = ({ gameImgs, setCurrentGame }: CarouselProps) => {
         align: "center",
         loop: true,
       }}
-      className="w-full max-w-sm"
+      className="w-full max-w-5xl"
     >
       <CarouselContent className="-ml-1 md:-ml-4">
-        {gameImgs.map((img, idx) => (
-          <CarouselItem
-            key={idx}
-            className="pl-1 lg:basis-1/3 md:pl-4 md:basis-1/2"
-          >
-            <div className="p-1">
-              <img src={img} alt={getAltNameForGame(gameImgs[idx])} />
-            </div>
-          </CarouselItem>
-        ))}
+        {
+          gameImgs.map((img, idx) => (
+            <CarouselItem key={idx} className="pl-1 lg:basis-1/3 md:pl-4 md:basis-1/2">
+              <div className="p-1">
+                <img src={img} alt={getAltNameForGame(gameImgs[idx])} />
+              </div>
+            </CarouselItem>
+          ))
+        }
       </CarouselContent>
       <CarouselPrevious />
       <CarouselNext />

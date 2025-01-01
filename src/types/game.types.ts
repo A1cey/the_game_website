@@ -1,4 +1,5 @@
 export enum Games {
+  Arschloch,
   Durak,
   Poker,
   Schwimmen,
