@@ -62,6 +62,7 @@ const Home = () => {
 
 	const joinSession = async () => {
 		console.log("Joining");
+
 		if (sessionName === "") {
 			console.error(" Please provide a session name.");
 			return;

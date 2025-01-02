@@ -1,10 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "@/pages/Home";
 import { createContext, useCallback, useEffect, useState } from "react";
-import type { Session_t, Game_t, Player_t } from "@/types/database_extended.types";
+import type {
+	Session_t,
+	Game_t,
+	Player_t,
+} from "@/types/database_extended.types";
 import Game from "@/pages/Game";
 import Session from "@/pages/Session";
 import supabase from "@/utils/supabase";
+import { useNavigate } from "react-router-dom";
 
 export const SessionCtx = createContext<{
 	session: Session_t;
@@ -48,6 +53,8 @@ export const PlayerCtx = createContext<{
 });
 
 const App = () => {
+	const navigate = useNavigate();
+
 	const [session, setSession] = useState<Session_t>({
 		created_at: "",
 		game_id: "",
@@ -71,9 +78,24 @@ const App = () => {
 		session_name: "",
 	});
 
-	const updateSession = useCallback((data: Session_t) => {
-		setSession(data);
-	}, []);
+	const updateSession = useCallback(
+		(data: Session_t) => {
+			// ingame check
+			// game started
+			if (!session.game_started_at && data.game_started_at) {
+				navigate("game");
+			}
+
+			// game ended
+			if (session.game_started_at && !data.game_started_at) {
+				// TODO: end game logic
+				navigate("session");
+			}
+
+			setSession(data);
+		},
+		[navigate],
+	);
 
 	const updateGame = useCallback((data: Game_t) => {
 		setGame(data);
@@ -120,55 +142,38 @@ const App = () => {
 		}
 
 		// Subscription
-		const sessionChannel = supabase
-			.channel("session-updates")
-			.on(
-				"postgres_changes",
-				{
-					schema: "public",
-					table: "sessions",
-					event: "UPDATE",
-					filter: `name=eq.${session.name}`,
-				},
-				payload => {
-					console.log("session changes");
-					updateSession(payload.new as Session_t);
-				},
-			);
+		const sessionChannel = supabase.channel("session-updates").on(
+			"postgres_changes",
+			{
+				schema: "public",
+				table: "sessions",
+				event: "UPDATE",
+				filter: `name=eq.${session.name}`,
+			},
+			payload => updateSession(payload.new as Session_t),
+		);
 
-		const gameChannel = supabase
-			.channel("game-updates")
-			.on(
-				"postgres_changes",
-				{
-					schema: "public",
-					table: "games",
-					event: "UPDATE",
-					filter: `id=eq.${session.game_id}`,
-				},
-				payload => {
-					console.log("game changes");
-					updateGame(payload.new as Game_t);
-				},
-			);
+		const gameChannel = supabase.channel("game-updates").on(
+			"postgres_changes",
+			{
+				schema: "public",
+				table: "games",
+				event: "UPDATE",
+				filter: `id=eq.${session.game_id}`,
+			},
+			payload => updateGame(payload.new as Game_t),
+		);
 
-		const playerChannel = supabase
-			.channel("player-updates")
-			.on(
-				"postgres_changes",
-				{
-					schema: "public",
-					table: "players",
-					event: "UPDATE",
-					filter: `id=eq.${player.id}`,
-				},
-				payload => {
-					console.log("player changes");
-					console.log(payload);
-					console.log(payload.new);
-					updatePlayer(payload.new as Player_t);
-				},
-			);
+		const playerChannel = supabase.channel("player-updates").on(
+			"postgres_changes",
+			{
+				schema: "public",
+				table: "players",
+				event: "UPDATE",
+				filter: `id=eq.${player.id}`,
+			},
+			payload => updatePlayer(payload.new as Player_t),
+		);
 
 		sessionChannel.subscribe();
 		gameChannel.subscribe();
@@ -193,7 +198,7 @@ const App = () => {
 			<GameCtx.Provider value={{ game, updateGame }}>
 				<PlayerCtx.Provider value={{ player, updatePlayer }}>
 					<Routes>
-					  <Route path="/" element={<Home />} />
+						<Route path="/" element={<Home />} />
 						<Route path="/session" element={<Session />} />
 						<Route path="/game" element={<Game />} />
 						<Route path="*" element={<Home />} />
