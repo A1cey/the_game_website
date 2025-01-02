@@ -10,6 +10,8 @@ import Game from "@/pages/Game";
 import Session from "@/pages/Session";
 import supabase from "@/utils/supabase";
 import { useNavigate } from "react-router-dom";
+import type { Json } from "./types/database.types";
+import { convertGamesJSONToGameT } from "./utils/game";
 
 export const SessionCtx = createContext<{
 	session: Session_t;
@@ -32,6 +34,7 @@ export const GameCtx = createContext<{
 	updateGame: (data: Game_t) => void;
 }>({
 	game: {
+		current_player: 1,
 		game_state: null,
 		id: "",
 	},
@@ -47,6 +50,7 @@ export const PlayerCtx = createContext<{
 		joined_at: "",
 		name: null,
 		player_game_state: null,
+		position_in_session: 0,
 		session_name: "",
 	},
 	updatePlayer: () => {},
@@ -66,6 +70,7 @@ const App = () => {
 	});
 
 	const [game, setGame] = useState<Game_t>({
+		current_player: 1,
 		game_state: null,
 		id: "",
 	});
@@ -75,6 +80,7 @@ const App = () => {
 		joined_at: "",
 		name: null,
 		player_game_state: null,
+		position_in_session: 0,
 		session_name: "",
 	});
 
@@ -94,11 +100,18 @@ const App = () => {
 
 			setSession(data);
 		},
-		[navigate],
+		[navigate, session.game_started_at],
 	);
 
-	const updateGame = useCallback((data: Game_t) => {
-		setGame(data);
+	const updateGame = useCallback((data: Json) => {
+		const newData = convertGamesJSONToGameT(data);
+
+		if (!newData) {
+			console.error("Bad response for game update.");
+			return;
+		}
+
+		setGame(newData);
 	}, []);
 
 	const updatePlayer = useCallback((data: Player_t) => {
@@ -115,18 +128,21 @@ const App = () => {
 				.single()
 				.then(({ data, error }) => {
 					if (data) updateSession(data as Session_t);
-					if (error) console.error("Error fetching session:", error);
+					if (error) console.error("Error fetching session: ", error);
 				});
 
-			supabase
-				.from("games")
-				.select()
-				.eq("id", session.game_id)
-				.single()
-				.then(({ data, error }) => {
-					if (data) updateGame(data as Game_t);
-					if (error) console.error("Error fetching game:", error);
-				});
+			if (session.game_id) {
+				supabase
+					.from("games")
+					.select()
+					.eq("id", session.game_id)
+					.single()
+					.then(({ data, error }) => {
+						if (data) updateGame(data as Json);
+						if (error)
+							console.error("Error fetching game: ", error);
+					});
+			}
 		}
 
 		if (player.id) {
@@ -137,52 +153,90 @@ const App = () => {
 				.single()
 				.then(({ data, error }) => {
 					if (data) updatePlayer(data as Player_t);
-					if (error) console.error("Error fetching player:", error);
+					if (error) console.error("Error fetching player: ", error);
 				});
 		}
 
 		// Subscription
-		const sessionChannel = supabase.channel("session-updates").on(
-			"postgres_changes",
-			{
-				schema: "public",
-				table: "sessions",
-				event: "UPDATE",
-				filter: `name=eq.${session.name}`,
-			},
-			payload => updateSession(payload.new as Session_t),
-		);
+		let sessionChannel = undefined;
+		let gameChannel = undefined;
+		let playerChannel = undefined;
 
-		const gameChannel = supabase.channel("game-updates").on(
-			"postgres_changes",
-			{
-				schema: "public",
-				table: "games",
-				event: "UPDATE",
-				filter: `id=eq.${session.game_id}`,
-			},
-			payload => updateGame(payload.new as Game_t),
-		);
+		if (session.name) {
+			console.log("Subscribing to session: ", session.name);
+			sessionChannel = supabase.channel("session-updates").on(
+				"postgres_changes",
+				{
+					schema: "public",
+					table: "sessions",
+					event: "UPDATE",
+					filter: `name=eq.${session.name}`,
+				},
+				payload => updateSession(payload.new as Session_t),
+			);
 
-		const playerChannel = supabase.channel("player-updates").on(
-			"postgres_changes",
-			{
-				schema: "public",
-				table: "players",
-				event: "UPDATE",
-				filter: `id=eq.${player.id}`,
-			},
-			payload => updatePlayer(payload.new as Player_t),
-		);
+			sessionChannel.subscribe((subState, err) => {
+				if (subState)
+					console.log("Subscription state sessions: ", subState);
+				if (err)
+					console.error(
+						`Error subscribing to session with name ${session.name}: `,
+						err,
+					);
+			});
+		}
 
-		sessionChannel.subscribe();
-		gameChannel.subscribe();
-		playerChannel.subscribe();
+		if (session.game_id) {
+			console.log("Subscribing to games: ", session.game_id);
+			gameChannel = supabase.channel("game-updates").on(
+				"postgres_changes",
+				{
+					schema: "public",
+					table: "games",
+					event: "UPDATE",
+					filter: `id=eq.${session.game_id}`,
+				},
+				payload => updateGame(payload.new as Game_t),
+			);
+
+			gameChannel.subscribe((subState, err) => {
+				if (subState)
+					console.log("Subscription state games: ", subState);
+				if (err)
+					console.error(
+						`Error subscribing to game with id ${session.game_id}: ${err}`,
+					);
+			});
+		}
+
+		if (player.id) {
+			console.log("Subscribing to players: ", player.id);
+			playerChannel = supabase.channel("player-updates").on(
+				"postgres_changes",
+				{
+					schema: "public",
+					table: "players",
+					event: "UPDATE",
+					filter: `id=eq.${player.id}`,
+				},
+				payload => updatePlayer(payload.new as Player_t),
+			);
+
+			playerChannel.subscribe((subState, err) => {
+				if (subState)
+					console.log("Subscription state players: ", subState);
+				if (err)
+					console.error(
+						`Error subscribing to player with id ${player.id}: `,
+						err,
+					);
+			});
+		}
 
 		return () => {
-			sessionChannel.unsubscribe();
-			gameChannel.unsubscribe();
-			playerChannel.unsubscribe();
+			sessionChannel?.unsubscribe();
+			gameChannel?.unsubscribe();
+			playerChannel?.unsubscribe();
 		};
 	}, [
 		session.name,

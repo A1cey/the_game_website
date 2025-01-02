@@ -1,5 +1,13 @@
-import { type Card, CardType, CardValue, Games } from "@/types/game.types";
+import {
+	type Card,
+	CardType,
+	CardValue,
+	Games,
+	type GameState,
+} from "@/types/game.types";
 import { getEnumValues } from "./other";
+import { Json } from "@/types/database.types";
+import { Game_t } from "@/types/database_extended.types";
 
 export const getGameImgs = (): string[] => {
 	return getEnumValues(Games).map(key =>
@@ -22,8 +30,8 @@ export const getCards = (): Card[] => {
 
 export const validPlayerCount = (
 	playerCount: number,
-	minPlayersAllowed: number = 1,
-	maxPlayersAllowed: number = 20,
+	minPlayersAllowed = 1,
+	maxPlayersAllowed = 20,
 ): boolean => {
 	if (minPlayersAllowed < 1) {
 		console.error(
@@ -49,3 +57,161 @@ export const validPlayerCount = (
 	return true;
 };
 
+export const convertGamesStateJSONToGameStateType = (
+	json: Json | null,
+): GameState<Games> | null => {
+	if (json == null) {
+		console.error("JSON game state is null or undefined.");
+		return null;
+	}
+
+	if (
+		typeof json === "boolean" ||
+		typeof json === "number" ||
+		typeof json === "string" ||
+		Array.isArray(json)
+	) {
+		console.error(
+			`JSON game state is not an object but has the type "${typeof json}". It needs to be an object to be converted into a game state.`,
+		);
+		return null;
+	}
+
+	const game = json["game"];
+
+	if (!game) {
+		console.error("Game type is undefined");
+		return null;
+	}
+
+	const gameName =
+		getEnumValues(Games).find(val => Games[val] === game) || null;
+
+	if (!gameName) {
+		console.error("Game name is null");
+		return null;
+	}
+
+	return json as GameState<typeof gameName>;
+};
+
+export const convertGamesJSONToGameT = (json: Json | null): Game_t | null => {
+	if (json == null) {
+		console.error("JSON game data is null or undefined.");
+		return null;
+	}
+
+	if (
+		typeof json === "boolean" ||
+		typeof json === "number" ||
+		typeof json === "string" ||
+		Array.isArray(json)
+	) {
+		console.error(
+			`JSON game data is not an object but has the type ${typeof json}. It needs to be an object to be converted into a game state.`,
+		);
+		return null;
+	}
+
+	const id = json["id"];
+
+	if (!id) {
+		console.error("Game id is undefined.");
+		return null;
+	}
+
+	if (typeof id !== "string") {
+		console.error("JSON game id is not a string.");
+		return null;
+	}
+
+	const currentPlayer = json["current_player"];
+
+	if (!currentPlayer) {
+		console.error("Current player is undefined.");
+		return null;
+	}
+
+	if (typeof currentPlayer !== "number") {
+		console.error("Current player JSON is not a number.");
+		return null;
+	}
+
+	return {
+		current_player: currentPlayer,
+		id: id,
+		game_state: json["game_state"]
+			? convertGamesStateJSONToGameStateType(json["game_state"] as Json)
+			: null,
+	};
+};
+
+export const defaultGameState = (game: Games): GameState<Games> => {
+	const defaultArschlochGameState: GameState<Games.ARSCHLOCH> = {
+		game: Games.ARSCHLOCH,
+		maxPlayers: 8,
+		minPlayers: 2,
+		options: {},
+	};
+
+	const defaultDurakGameState: GameState<Games.DURAK> = {
+		game: Games.DURAK,
+		maxPlayers: 8,
+		minPlayers: 2,
+		options: {},
+	};
+
+	const defaultMaexleGameState: GameState<Games.MAEXLE> = {
+		game: Games.MAEXLE,
+		maxPlayers: 8,
+		minPlayers: 2,
+		options: {
+			lives: 5,
+			passOn21: true,
+		},
+		diceValue: 31,
+		namedValue: 31,
+	};
+
+	const defaultPokerGameState: GameState<Games.POKER> = {
+		game: Games.POKER,
+		maxPlayers: 8,
+		minPlayers: 2,
+		options: {},
+	};
+
+	const defaultSchwimmenGameState: GameState<Games.SCHWIMMEN> = {
+		game: Games.SCHWIMMEN,
+		maxPlayers: 8,
+		minPlayers: 2,
+		options: {},
+	};
+
+	const defaultWerwolfGameState: GameState<Games.WERWOLF> = {
+		game: Games.WERWOLF,
+		maxPlayers: 8,
+		minPlayers: 2,
+		options: {},
+	};
+
+	switch (game) {
+		case Games.ARSCHLOCH:
+			return defaultArschlochGameState;
+		case Games.DURAK:
+			return defaultDurakGameState;
+		case Games.MAEXLE:
+			return defaultMaexleGameState;
+		case Games.POKER:
+			return defaultPokerGameState;
+		case Games.SCHWIMMEN:
+			return defaultSchwimmenGameState;
+		case Games.WERWOLF:
+			return defaultWerwolfGameState;
+	}
+};
+
+export const defaultDBGameState = (game: Games): Json => {
+	const defaultState = defaultGameState(game);
+	console.log(Games[game]);
+	return { ...defaultState, game: Games[game] };
+};

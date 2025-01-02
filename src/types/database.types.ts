@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
 	| string
 	| number
 	| boolean
@@ -11,14 +11,17 @@ export type Database = {
 		Tables: {
 			games: {
 				Row: {
+					current_player: number;
 					game_state: Json | null;
 					id: string;
 				};
 				Insert: {
+					current_player?: number;
 					game_state?: Json | null;
 					id?: string;
 				};
 				Update: {
+					current_player?: number;
 					game_state?: Json | null;
 					id?: string;
 				};
@@ -54,6 +57,7 @@ export type Database = {
 					joined_at: string;
 					name: string | null;
 					player_game_state: Json | null;
+					position_in_session: number | null;
 					session_name: string;
 				};
 				Insert: {
@@ -61,6 +65,7 @@ export type Database = {
 					joined_at?: string;
 					name?: string | null;
 					player_game_state?: Json | null;
+					position_in_session?: number | null;
 					session_name: string;
 				};
 				Update: {
@@ -68,6 +73,7 @@ export type Database = {
 					joined_at?: string;
 					name?: string | null;
 					player_game_state?: Json | null;
+					position_in_session?: number | null;
 					session_name?: string;
 				};
 				Relationships: [
@@ -129,11 +135,23 @@ export type Database = {
 				};
 				Returns: string;
 			};
+			get_next_player_position: {
+				Args: {
+					session_name_input: string;
+				};
+				Returns: number;
+			};
 			insert_log: {
 				Args: {
 					session_name_input: string;
 					description_input: Database["public"]["Enums"]["log_event"];
 					data_input?: Json;
+				};
+				Returns: undefined;
+			};
+			next_player: {
+				Args: {
+					session_name_input: string;
 				};
 				Returns: undefined;
 			};

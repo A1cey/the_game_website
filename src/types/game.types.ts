@@ -7,9 +7,7 @@ export enum Games {
 	WERWOLF = 5,
 }
 
-export type GameState<T extends Games> = {
-	currentPlayer: string;
-} & { game: T } & BaseInformation & {
+export type GameState<T extends Games> = { game: T } & BaseInformation & {
 		options: GameMap[T]["options"];
 	} & GameMap[T]["state"];
 
@@ -39,7 +37,7 @@ type GameMap = {
 		state: WerwolfGameState;
 	};
 };
-	
+
 export type Card = [CardType, CardValue];
 
 export enum CardValue {

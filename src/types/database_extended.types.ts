@@ -1,8 +1,10 @@
 import type { Json } from "@/types/database.types";
 import type { Database } from "@/types/database.types";
+import { Games, GameState } from "./game.types";
 
 export type Game_t = {
-	game_state: Json | null;
+	current_player: number;
+	game_state: GameState<Games> | null;
 	id: string;
 };
 
@@ -19,6 +21,7 @@ export type Player_t = {
 	joined_at: string;
 	name: string | null;
 	player_game_state: Json | null;
+	position_in_session: number | null;
 	session_name: string;
 };
 

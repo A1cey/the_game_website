@@ -1,14 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-	Carousel,
-	type CarouselApi,
-	CarouselContent,
-	CarouselItem,
-	CarouselNext,
-	CarouselPrevious,
-} from "@/components/ui/carousel";
 import { Games } from "@/types/game.types";
 import { getAltNameForGame } from "@/utils/game";
+import { getEnumValues } from "@/utils/other";
 
 type CarouselProps = {
 	gameImgs: string[];
@@ -23,22 +16,14 @@ const GameCarousel = ({ gameImgs, setCurrentGame }: CarouselProps) => {
 			return;
 		}
 
-		setCurrentGame(
-			Object.keys(Games).filter(key => isNaN(Number(key)))[
-				api.selectedScrollSnap()
-			],
-		);
+		setCurrentGame(Games[getEnumValues(Games)[api.selectedScrollSnap()]]);
 
 		api.on("select", () =>
 			setCurrentGame(
-				Object.keys(Games).filter(key => isNaN(Number(key)))[
-					api.selectedScrollSnap()
-				],
+				Games[getEnumValues(Games)[api.selectedScrollSnap()]],
 			),
 		);
 	}, [api, setCurrentGame]);
-
-	console.log(gameImgs);
 
 	return (
 		<Carousel
