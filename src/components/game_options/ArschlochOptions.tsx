@@ -1,5 +1,5 @@
 const ArschlochOptions = () => {
-	return <div>Arschloch Options</div>;
+  return <div>Arschloch Options</div>;
 };
 
 export default ArschlochOptions;

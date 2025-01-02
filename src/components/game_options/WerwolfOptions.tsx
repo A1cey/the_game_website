@@ -1,5 +1,5 @@
 const WerwolfOptions = () => {
-	return <div>Werwolf Options</div>;
+  return <div>Werwolf Options</div>;
 };
 
 export default WerwolfOptions;

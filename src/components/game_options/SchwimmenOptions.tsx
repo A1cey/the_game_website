@@ -1,5 +1,5 @@
 const SchwimmenOptions = () => {
-	return <div>Schwimmen Options</div>;
+  return <div>Schwimmen Options</div>;
 };
 
 export default SchwimmenOptions;

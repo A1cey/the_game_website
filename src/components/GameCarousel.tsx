@@ -2,57 +2,56 @@ import { useEffect, useState } from "react";
 import { Games } from "@/types/game.types";
 import { getAltNameForGame } from "@/utils/game";
 import { getEnumValues } from "@/utils/other";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Slider from "react-slick";
 
 type CarouselProps = {
-	gameImgs: string[];
-	setCurrentGame: React.Dispatch<React.SetStateAction<string>>;
+  gameImgs: string[];
+  setCurrentGame: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const GameCarousel = ({ gameImgs, setCurrentGame }: CarouselProps) => {
-	const [api, setApi] = useState<CarouselApi>();
+  const [activeSlide, setActiveSlide] = useState(0);
 
-	useEffect(() => {
-		if (!api) {
-			return;
-		}
+  useEffect(() => {
+    setCurrentGame(Games[getEnumValues(Games)[activeSlide]]);
+  }, [activeSlide, setCurrentGame]);
 
-		setCurrentGame(Games[getEnumValues(Games)[api.selectedScrollSnap()]]);
+  const settings = {
+    customPaging: (i: number) => {
+      return (
+        <a>
+          <img src={gameImgs[i]} alt={getAltNameForGame(gameImgs[i])} />
+        </a>
+      );
+    },
+    dots: true,
+    infinite: true,
+    speed: 600,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    centerMode: true,
+    className: "center",
+    centerPadding: "0px",
+    swipeToSlide: true,
+    focusOnSelect: true,
+    beforeChange: (_: number, next: number) => {
+      setActiveSlide(next);
+    },
+  };
 
-		api.on("select", () =>
-			setCurrentGame(
-				Games[getEnumValues(Games)[api.selectedScrollSnap()]],
-			),
-		);
-	}, [api, setCurrentGame]);
-
-	return (
-		<Carousel
-			setApi={setApi}
-			opts={{
-				align: "center",
-				loop: true,
-			}}
-			className="w-full max-w-5xl"
-		>
-			<CarouselContent className="-ml-1 md:-ml-4">
-				{gameImgs.map((img, idx) => (
-					<CarouselItem
-						key={idx}
-						className="pl-1 lg:basis-1/3 md:pl-4 md:basis-1/2"
-					>
-						<div className="p-1">
-							<img
-								src={img}
-								alt={getAltNameForGame(gameImgs[idx])}
-							/>
-						</div>
-					</CarouselItem>
-				))}
-			</CarouselContent>
-			<CarouselPrevious />
-			<CarouselNext />
-		</Carousel>
-	);
+  return (
+    <div className="p-10 max-w-4xl mx-auto">
+      <Slider {...settings}>
+        {gameImgs.map((img, idx) => (
+          <div key={idx} className="bg-opacity-0">
+            <img src={img} alt={getAltNameForGame(gameImgs[idx])} />
+          </div>
+        ))}
+      </Slider>
+    </div>
+  );
 };
 
 export default GameCarousel;

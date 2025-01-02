@@ -7,13 +7,13 @@ import "@/types/database.types.ts";
 const rootElement = document.getElementById("root");
 
 if (!rootElement) {
-	throw new Error("Root element not found.");
+  throw new Error("Root element not found.");
 }
 
 createRoot(rootElement).render(
-	<StrictMode>
-		<BrowserRouter>
-			<App />
-		</BrowserRouter>
-	</StrictMode>,
+  <StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>,
 );

@@ -1,137 +1,168 @@
-import { useContext, useState } from "react";
+import { useEffect, useState } from "react";
 import supabase from "@/utils/supabase";
 import { useNavigate } from "react-router-dom";
-import { PlayerCtx, SessionCtx } from "@/App";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import "@/index.css";
-import type { Player_t, Session_t } from "@/types/database_extended.types";
+import { Button } from "@nextui-org/button";
+import { Input } from "@nextui-org/input";
+import useGameStore from "@/hooks/useGameStore";
+import usePlayerStore from "@/hooks/usePlayerStore";
+import useSessionStore from "@/hooks/useSessionStore";
+import { Game_t, Session_t } from "@/types/database_extended.types";
 
 const Home = () => {
-	const [sessionName, setSessionName] = useState("");
-	const [playerName, setPlayerName] = useState("");
-	const { updatePlayer } = useContext(PlayerCtx);
-	const { updateSession } = useContext(SessionCtx);
-	const navigate = useNavigate();
+  const navigate = useNavigate();
 
-	const createPlayer = async () => {
-		const { data, error } = await supabase
-			.from("players")
-			.insert({
-				session_name: sessionName,
-				name: playerName !== "" ? playerName : null,
-			})
-			.select()
-			.single();
+  const [sessionName, setSessionName] = useState("");
+  const [playerName, setPlayerName] = useState("");
 
-		if (error) {
-			console.error("Error fetching session:", error);
-			return;
-		}
+  const updatePlayer = usePlayerStore(state => state.updatePlayer);
+  const { session, updateSession, subscriptionActive } = useSessionStore();
+  const { game, updateGame } = useGameStore();
 
-		if (data) {
-			updatePlayer(data as Player_t);
-		}
-	};
+  useEffect(() => {
+    useSessionStore.getState().unsubscribe();
+    useGameStore.getState().unsubscribe();
+    usePlayerStore.getState().unsubscribe();
+  }, [])
 
-	const createSession = async () => {
-		if (sessionName === "") {
-			console.error("Please provide Session Name");
-			return;
-		}
+  const setUp = async (data: Session_t) => {
+    updateSession(data);
 
-		const { data, error } = await supabase
-			.from("sessions")
-			.insert({ name: sessionName })
-			.select()
-			.single();
+    const old_num_of_players = session.num_of_players;
 
-		if (error) {
-			console.error("Error fetching session:", error);
-			return;
-		}
+    await createPlayer();
 
-		if (data) {
-			updateSession(data as Session_t);
+    const new_num_of_players = session.num_of_players;
 
-			await createPlayer();
+    // Adds up to the correct number of players without another fetch. The subscription check and player count should assure a solid result.
+    if (!subscriptionActive && old_num_of_players === new_num_of_players) {
+      console.log(session)
+      updateSession({ ...session, num_of_players: session.num_of_players + 1 })
+    }
 
-			navigate("session");
-		}
-	};
+    const newGame: Game_t = {
+      ...game,
+      id: data.game_id,
+    };
 
-	const joinSession = async () => {
-		console.log("Joining");
+    updateGame(newGame);
 
-		if (sessionName === "") {
-			console.error(" Please provide a session name.");
-			return;
-		}
+    navigate("session");
+  };
 
-		const { data, error } = await supabase
-			.from("sessions")
-			.select()
-			.eq("name", sessionName)
-			.single();
+  const createPlayer = async () => {
+    supabase
+      .from("players")
+      .insert({
+        session_name: sessionName,
+        name: playerName !== "" ? playerName : null,
+      })
+      .select()
+      .single()
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("Error fetching session:", error);
+          return;
+        }
+        if (data) {
+          updatePlayer(data);
+        }
+      });
+  };
 
-		if (error) {
-			console.error("Error fetching session:", error);
-			return;
-		}
+  const createSession = async () => {
+    if (sessionName === "") {
+      console.error("Please provide Session Name");
+      return;
+    }
 
-		if (data) {
-			if (data.num_of_players === data.max_num_of_players) {
-				console.warn("Session is full.");
-				return;
-			}
+    supabase
+      .from("sessions")
+      .insert({ name: sessionName })
+      .select()
+      .single()
+      .then(async ({ data, error }) => {
+        if (error) {
+          console.error("Error fetching session:", error);
+          return;
+        }
+        if (data) {
+          setUp(data);
+        }
+      });
+  };
 
-			if (data.game_started_at) {
-				console.warn("Session is currently in a game.");
-				return;
-			}
+  const joinSession = async () => {
+    console.log("Joining");
 
-			updateSession(data as Session_t);
+    if (sessionName === "") {
+      console.error(" Please provide a session name.");
+      return;
+    }
 
-			await createPlayer();
+    supabase
+      .from("sessions")
+      .select()
+      .eq("name", sessionName)
+      .single()
+      .then(async ({ data, error }) => {
+        if (error) {
+          console.error("Error fetching session:", error);
+          return;
+        }
+        if (data) {
+          if (data.num_of_players === data.max_num_of_players) {
+            console.warn("Session is full.");
+            return;
+          }
 
-			navigate("session");
-		}
-	};
+          if (data.game_started_at) {
+            console.warn("Session is currently in a game.");
+            return;
+          }
 
-	return (
-		<div className="grid gap-4 justify-center">
-			<h1 className="mt-40 text-4xl font-bold text-center">
-				The Game Website
-			</h1>
+          setUp(data);
+        }
+      });
+  };
 
-			<Input
-				className="mt-20 hover:bg-gray-200 hover:scale-[1.05] "
-				placeholder="Player Name"
-				onChange={e => setPlayerName(e.target.value)}
-			/>
-			<Input
-				className="hover:bg-gray-200 hover:scale-[1.05] "
-				placeholder="Session Name"
-				onChange={e => setSessionName(e.target.value)}
-			/>
-			<div className="flex gap-4 justify-center">
-				<Button
-					className="active:scale-[0.98] hover:scale-[1.05] font-semibold"
-					variant="outline"
-					onClick={createSession}
-				>
-					Create Session
-				</Button>
-				<Button
-					className="active:scale-[0.98] hover:scale-[1.05] font-semibold"
-					variant="outline"
-					onClick={joinSession}
-				>
-					Join Session
-				</Button>
-			</div>
-		</div>
-	);
+  return (
+    <div className="grid gap-4 justify-center">
+      <h1 className="mt-40 text-4xl font-bold text-center">The Game Website</h1>
+
+      <Input
+        variant="bordered"
+        className="mt-20 hover:scale-[1.05]  "
+        placeholder="Player Name"
+        onChange={e => setPlayerName(e.target.value)}
+      />
+      <Input
+        variant="bordered"
+        isRequired
+        className="hover:scale-[1.05]"
+        placeholder="Session Name"
+        onChange={e => setSessionName(e.target.value)}
+      />
+      <div className="flex gap-4 justify-center">
+        <Button
+          className="active:scale-[0.98] hover:scale-[1.05] font-semibold"
+          color="primary"
+          variant="bordered"
+          onPress={createSession}
+        >
+          Create Session
+        </Button>
+        <Button
+          className="active:scale-[0.98] hover:scale-[1.05] font-semibold"
+          color="primary"
+          variant="bordered"
+          onPress={joinSession}
+        >
+          Join Session
+        </Button>
+      </div>
+    </div>
+  );
 };
 
 export default Home;
