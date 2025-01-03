@@ -17,8 +17,11 @@ const Home = () => {
   const [playerName, setPlayerName] = useState("");
 
   const updatePlayer = usePlayerStore(state => state.updatePlayer);
-  const { session, updateSession, subscriptionActive } = useSessionStore();
-  const { game, updateGame } = useGameStore();
+  const numOfPlayers = useSessionStore(state => state.session.num_of_players);
+  const updateSession = useSessionStore(state => state.updateSession);
+  const isSessionSubscriptionActive =  useSessionStore(state => state.subscriptionActive);
+  const game = useGameStore(state => state.game);
+  const updateGame  = useGameStore(state => state.updateGame);
 
   useEffect(() => {
     useSessionStore.getState().unsubscribe();
@@ -29,16 +32,15 @@ const Home = () => {
   const setUp = async (data: Session_t) => {
     updateSession(data);
 
-    const old_num_of_players = session.num_of_players;
+    const old_num_of_players = numOfPlayers;
 
     await createPlayer();
 
-    const new_num_of_players = session.num_of_players;
+    const new_num_of_players = numOfPlayers;
 
     // Adds up to the correct number of players without another fetch. The subscription check and player count should assure a solid result.
-    if (!subscriptionActive && old_num_of_players === new_num_of_players) {
-      console.log(session)
-      updateSession({ ...session, num_of_players: session.num_of_players + 1 })
+    if (!isSessionSubscriptionActive && old_num_of_players === new_num_of_players) {
+      updateSession({ num_of_players: numOfPlayers + 1 })
     }
 
     const newGame: Game_t = {

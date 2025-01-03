@@ -6,7 +6,6 @@ import GameOptions from "@/components/game_options/GameOptions";
 import { Games } from "@/types/game.types";
 import { getEnumValues } from "@/utils/other";
 import type { Json } from "@/types/database.types";
-import { Button } from "@nextui-org/button";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { Link } from "@nextui-org/react";
 import useSessionStore from "@/hooks/useSessionStore";
@@ -17,11 +16,11 @@ import ButtonBordered from "@/components/ButtonBordered";
 const Session = () => {
   const [currentGame, setCurrentGame] = useState("");
   const session = useSessionStore(state => state.session);
-  const game = useGameStore(state => state.game);
-  const player = usePlayerStore(state => state.player);
+  const gameState = useGameStore(state => state.game.game_state);
+  const playerId = usePlayerStore(state => state.player.id);
 
   const removePlayerFromSession = async () => {
-    if (!player.id) {
+    if (!playerId) {
       console.error("Error removing player from session: player id not set.");
       return;
     }
@@ -29,7 +28,7 @@ const Session = () => {
     supabase
       .from("players")
       .delete()
-      .eq("id", player.id)
+      .eq("id", playerId)
       .then(({ error }) => {
         if (error) console.error("Error removing player from session: ", error);
       });
@@ -79,8 +78,8 @@ const Session = () => {
         <div className="flex gap-20 justify-center">
         <GameOptions
           currentGame={
-            game.game_state?.game
-              ? (Games[game.game_state.game as unknown as keyof typeof Games] as unknown as Games)
+            gameState?.game
+              ? (Games[gameState.game as unknown as keyof typeof Games] as unknown as Games)
               : undefined
           }
         />

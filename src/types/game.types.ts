@@ -7,9 +7,17 @@ export enum Games {
   WERWOLF = 5,
 }
 
-export type GameState<T extends Games> = { game: T } & BaseInformation & {
-    options: GameMap[T]["options"];
-  } & GameMap[T]["state"];
+export type JSONGameState<T extends Games> =
+  { game: string | T }
+  & BaseInformation
+  & { options: Record<string, string | number | boolean> | GameMap[T]["options"]; }
+  & { state: Record<string, string | number | boolean|null> | GameMap[T]["state"]  };
+
+export type GameState<T extends Games> =
+  { game: T }
+  & BaseInformation
+  & { options: GameMap[T]["options"]; }
+  & { state: GameMap[T]["state"] };
 
 type GameMap = {
   [Games.ARSCHLOCH]: {

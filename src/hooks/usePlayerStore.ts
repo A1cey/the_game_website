@@ -17,7 +17,7 @@ interface PlayerState {
   player: Player_t;
   subscriptionActive: boolean;
   subscription: RealtimeChannel | null;
-  updatePlayer: (data: Json | Player_t) => void;
+  updatePlayer: (data: Json | Partial<Player_t>) => void;
   subscribeToPlayer: (gameId: string) => void;
   unsubscribe: () => void;
 }
@@ -27,15 +27,15 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
   subscriptionActive: false,
   subscription: null as RealtimeChannel | null,
 
-  updatePlayer: (data: Json | Player_t) => {
+  updatePlayer: (data: Json | Partial<Player_t>) => {
     set(state => {
       const newPlayer = data as Player_t;
 
-      if (newPlayer.id && !state.subscriptionActive) {
+      if (newPlayer?.id && !state.subscriptionActive) {
         get().subscribeToPlayer(newPlayer.id);
       }
 
-      return { player: newPlayer };
+      return { player: {...state.player, ...newPlayer} };
     });
   },
 

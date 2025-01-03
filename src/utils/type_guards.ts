@@ -1,0 +1,194 @@
+import { Json } from "@/types/database.types";
+import { Game_t } from "@/types/database_extended.types";
+import { Games, GameState, JSONGameState, PossibleMaexleValue } from "@/types/game.types";
+
+export const isGameState = <T extends Games>(data: unknown): data is GameState<T> => {
+  if (typeof data !== "object" || data === null) return false;
+
+  const gameState = data as Partial<GameState<T>>;
+
+  if (!Object.values(Games).includes(gameState.game as Games)) {
+    return false;
+  }
+
+  const isValidBaseInformation = (gameState: Partial<GameState<T>>): boolean => {
+    return typeof gameState.minPlayers !== "number" || typeof gameState.maxPlayers !== "number";
+  }
+
+  if (!isValidBaseInformation(gameState)) {
+    return false;
+  }
+
+  switch (gameState.game) {
+    case Games.ARSCHLOCH:
+      return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
+    case Games.DURAK:
+      return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
+    case Games.MAEXLE:
+      return (
+        isValidOptions(gameState.options, { passOn21: "boolean", lives: "number" }) &&
+        isValidState(gameState.state, { diceValue: "PossibleMaexleValue", namedValue: "PossibleMaexleValue" })
+      );
+    case Games.POKER:
+      return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
+    case Games.SCHWIMMEN:
+      return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
+    case Games.WERWOLF:
+      return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
+    default:
+      return false;
+  }
+}
+
+const isValidOptions = (options: unknown, schema: Record<string, string>): boolean => {
+  if (typeof options !== "object" || options === null) return false;
+
+  for (const key in schema) {
+    const expectedType = schema[key];
+    const value = (options as Record<string, unknown>)[key];
+
+    if (expectedType === "boolean" && typeof value !== "boolean") return false;
+    if (expectedType === "number" && typeof value !== "number") return false;
+  }
+
+  return true;
+}
+
+const isValidState = (state: unknown, schema: Record<string, string>): boolean => {
+  if (typeof state !== "object" || state === null) return false;
+
+  for (const key in schema) {
+    const expectedType = schema[key];
+    const value = (state as Record<string, unknown>)[key];
+
+    if (expectedType === "PossibleMaexleValue" && !isPossibleMaexleValue(value)) {
+      return false;
+    } else if (typeof value !== expectedType) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+const isPossibleMaexleValue = (value: unknown): boolean => {
+  const validValues = [
+    null, 31, 32, 41, 42, 43, 51, 52, 53, 54, 61, 62, 63, 64, 65, 11, 22, 33, 44, 55, 66, 21,
+  ];
+  return validValues.includes(value as PossibleMaexleValue);
+}
+
+export const isPartialGameT = (input: unknown): input is Partial<Game_t> => {
+  if (input == null || typeof input !== "object") {
+    return false;
+  }
+
+  const gameTSchema: Record<string, string> = { current_player: "number", game_state: "GameState", id: "string" };
+
+  for (const key in gameTSchema) {
+    const expectedType = gameTSchema[key];
+    const value = (input as Record<string, unknown>)[key];
+
+    // skipping over undefined values
+    if (value === undefined) {
+      continue;
+    }
+
+    if (expectedType === "GameState" && !isGameState(value)) {
+      return false;
+    } else if (typeof value !== expectedType) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export const isGameT = (input: unknown): input is Game_t => {
+  if (input == null || typeof input !== "object") {
+    return false;
+  }
+
+  const gameTSchema: Record<string, string> = { current_player: "number", game_state: "GameState", id: "string" };
+
+  for (const key in gameTSchema) {
+    const expectedType = gameTSchema[key];
+    const value = (input as Record<string, unknown>)[key];
+
+    if (expectedType === "GameState" && !isGameState(value)) {
+      return false;
+    } else if (typeof value !== expectedType) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export const isJson = (value: unknown): value is Json => {
+  // Check for primitive types and null
+  if (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean" ||
+    value === null
+  ) {
+    return true;
+  }
+
+  // Check for arrays
+  if (Array.isArray(value)) {
+    return value.every(isJson); // Ensure all elements are Json
+  }
+
+  // Check for objects
+  if (typeof value === "object" && value !== null) {
+    return Object.entries(value).every(([key, val]) => {
+      // Ensure key is a string and value is Json
+      return typeof key === "string" && (val === undefined || isJson(val));
+    });
+  }
+
+  // If none of the above, it's not Json
+  return false; 0
+}
+
+export const isJsonConvertibleToGameState = <T extends Games>(json: Json): json is JSONGameState<T> => {
+  if (json == null) {
+    console.error("JSON game data is null or undefined.");
+    return false;
+  }
+
+  if (typeof json === "boolean" || typeof json === "number" || typeof json === "string" || Array.isArray(json)) {
+    console.error(
+      `JSON game data is not an object but has the type ${typeof json}. It needs to be an object to be converted into a game state.`,
+    );
+    return false;
+  }
+
+  const id = json["id"];
+
+  if (!id) {
+    console.error("Game id is undefined.");
+    return false;
+  }
+
+  if (typeof id !== "string") {
+    console.error("JSON game id is not a string.");
+    return false;
+  }
+
+  const currentPlayer = json["current_player"];
+
+  if (!currentPlayer) {
+    console.error("Current player is undefined.");
+    return false;
+  }
+
+  if (typeof currentPlayer !== "number") {
+    console.error("Current player JSON is not a number.");
+    return false;
+  }
+
+  return true;
+}

@@ -17,8 +17,8 @@ interface SessionState {
   session: Session_t;
   subscriptionActive: boolean;
   subscription: RealtimeChannel | null;
-  updateSession: (data: Session_t) => void;
-  subscribeToSession: (gameId: string) => void;
+  updateSession: (data: Partial<Session_t>) => void;
+  subscribeToSession: (sessionName: string) => void;
   unsubscribe: () => void;
 }
 
@@ -27,15 +27,15 @@ const useSessionStore = create<SessionState>()((set, get) => ({
   subscriptionActive: false,
   subscription: null as RealtimeChannel | null,
 
-  updateSession: (data: Session_t) => {
+  updateSession: (data: Partial<Session_t>) => {
     set(state => {
       console.log("trying to subscribe for session: ");
-      console.log("data.name: ", data.name, "!state.subscriptionActive", !state.subscriptionActive);
-      if (data.name && !state.subscriptionActive) {
+      console.log("data.name: ", data?.name, "!state.subscriptionActive", !state.subscriptionActive);
+      if (data?.name && !state.subscriptionActive) {
         get().subscribeToSession(data.name);
       }
 
-      return { session: data };
+      return { session: { ...state.session, ...data } };
     });
   },
 
