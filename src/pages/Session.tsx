@@ -12,6 +12,7 @@ import { Link } from "@nextui-org/react";
 import useSessionStore from "@/hooks/useSessionStore";
 import usePlayerStore from "@/hooks/usePlayerStore";
 import useGameStore from "@/hooks/useGameStore";
+import ButtonBordered from "@/components/ButtonBordered";
 
 const Session = () => {
   const [currentGame, setCurrentGame] = useState("");
@@ -64,17 +65,18 @@ const Session = () => {
   return (
     <div>
       <div className="ml-10 p-2 flex gap-20 w-full items-center">
-        <Button as={Link} color="primary" href={"/"} onPress={removePlayerFromSession}>
+        <ButtonBordered as={Link} color="primary" href={"/"} onPress={removePlayerFromSession}>
           Home
-        </Button>
+        </ButtonBordered>
         <ThemeSwitcher />
         <div>Players: {session.num_of_players}</div>
         <p>Selected Game: {currentGame}</p>
       </div>
-      <div className="grid gap-4 justify-center">
+      <div className="grid gap-20 justify-center">
         <div className="mt-40">
           <GameCarousel gameImgs={getGameImgs()} setCurrentGame={setCurrentGame} />
         </div>
+        <div className="flex gap-20 justify-center">
         <GameOptions
           currentGame={
             game.game_state?.game
@@ -82,9 +84,10 @@ const Session = () => {
               : undefined
           }
         />
-        <Button className="w-40 text-xl" onPress={startGame}>
+        <ButtonBordered onPress={startGame}>
           Start
-        </Button>
+        </ButtonBordered>
+        </div>
       </div>
     </div>
   );

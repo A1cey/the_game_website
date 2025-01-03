@@ -54,7 +54,7 @@ export const ThemeSwitcher = () => {
       <Switch
         id="theme-switch"
         defaultSelected
-        color="success"
+        color="warning"
         endContent={<MoonIcon />}
         size="lg"
         startContent={<SunIcon />}

@@ -6,6 +6,22 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 
+type ArrowProps = {
+  direction: "next" | "prev",
+  onClick: any,
+  style: any
+  className: any
+}
+
+const Arrow = ({ direction, onClick, style, className }: ArrowProps) => {
+  return ( <div
+       className={`${className} border-2px border-primary rounded-3xl`}
+       style={{ ...style }}
+       onClick={onClick}
+     />
+  );
+}
+
 type CarouselProps = {
   gameImgs: string[];
   setCurrentGame: React.Dispatch<React.SetStateAction<string>>;
@@ -19,13 +35,10 @@ const GameCarousel = ({ gameImgs, setCurrentGame }: CarouselProps) => {
   }, [activeSlide, setCurrentGame]);
 
   const settings = {
-    customPaging: (i: number) => {
-      return (
-        <a>
-          <img src={gameImgs[i]} alt={getAltNameForGame(gameImgs[i])} />
-        </a>
-      );
-    },
+    appendDots: (dots: any) => (<div> <ul className="m-0 flex gap-2 justify-center items-center"> {dots} </ul></div>),
+    customPaging: (i: number) => (<div className={`size-7 p-0 m-0 rounded-3xl border-2 ${i === activeSlide ? "border-primary-700 text-primary-700" : "border-primary hover:scale-[1.11] text-primary"}`} >{i + 1}</div>),
+    //nextArrow: <Arrow direction="next" />,
+    prevArrow: <Arrow direction="prev" />,
     dots: true,
     infinite: true,
     speed: 600,

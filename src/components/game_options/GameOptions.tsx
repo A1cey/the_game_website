@@ -7,6 +7,7 @@ import SchwimmenOptions from "./SchwimmenOptions";
 import WerwolfOptions from "./WerwolfOptions";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 import { Button } from "@nextui-org/button";
+import ButtonBordered from "../ButtonBordered";
 
 const GameOptions = ({ currentGame }: { currentGame: Games | undefined }) => {
   let currentOptions = null;
@@ -38,10 +39,10 @@ const GameOptions = ({ currentGame }: { currentGame: Games | undefined }) => {
 
   return (
     <Popover placement="bottom">
-      <PopoverTrigger className="w-40">
-        <Button color="primary" disabled={!currentOptions}>
+      <PopoverTrigger>
+        <ButtonBordered disabled={!currentOptions}>
           Game Options
-        </Button>
+        </ButtonBordered>
       </PopoverTrigger>
       <PopoverContent>{currentOptions || <p>No options available</p>}</PopoverContent>
     </Popover>

@@ -8,6 +8,7 @@ import useGameStore from "@/hooks/useGameStore";
 import usePlayerStore from "@/hooks/usePlayerStore";
 import useSessionStore from "@/hooks/useSessionStore";
 import { Game_t, Session_t } from "@/types/database_extended.types";
+import ButtonBordered from "@/components/ButtonBordered";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -144,22 +145,8 @@ const Home = () => {
         onChange={e => setSessionName(e.target.value)}
       />
       <div className="flex gap-4 justify-center">
-        <Button
-          className="active:scale-[0.98] hover:scale-[1.05] font-semibold"
-          color="primary"
-          variant="bordered"
-          onPress={createSession}
-        >
-          Create Session
-        </Button>
-        <Button
-          className="active:scale-[0.98] hover:scale-[1.05] font-semibold"
-          color="primary"
-          variant="bordered"
-          onPress={joinSession}
-        >
-          Join Session
-        </Button>
+        <ButtonBordered onPress={createSession}>Create Session</ButtonBordered>
+        <ButtonBordered onPress={joinSession}>Join Session</ButtonBordered>
       </div>
     </div>
   );

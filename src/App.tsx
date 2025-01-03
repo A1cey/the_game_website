@@ -26,7 +26,7 @@ const App = () => {
   
   return (
     <NextUIProvider navigate={navigate} useHref={useHref}>
-      <main className={`${theme} text-foreground bg-background`}>
+      <main className={`${theme} text-foreground bg-background h-screen w-screen`}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/session" element={<Session />} />
