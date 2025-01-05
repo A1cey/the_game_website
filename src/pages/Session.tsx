@@ -2,17 +2,19 @@ import supabase from "@/utils/supabase";
 import GameCarousel from "@/components/ui/GameCarousel";
 import GameOptions from "@/components/game_options/GameOptions";
 import { Games } from "@/types/game.types";
-import { Link } from "@nextui-org/react";
+import { Link, Snippet } from "@nextui-org/react";
 import useSessionStore from "@/hooks/useSessionStore";
 import usePlayerStore from "@/hooks/usePlayerStore";
 import useGameStore from "@/hooks/useGameStore";
 import ButtonBordered from "@/components/ui/ButtonBordered";
 import { getGameImgs } from "@/utils/game";
+import useThemeStore from "@/hooks/useThemeStore";
 
 const Session = () => {
   const session = useSessionStore(state => state.session);
   const gameState = useGameStore(state => state.game.game_state);
   const playerId = usePlayerStore(state => state.player.id);
+  const theme = useThemeStore(state => state.theme);
 
   const removePlayerFromSession = async () => {
     if (!playerId) {
@@ -41,7 +43,23 @@ const Session = () => {
         <ButtonBordered as={Link} color="primary" href={"/"} onPress={removePlayerFromSession}>
           Home
         </ButtonBordered>
-        <div>Players: {session.num_of_players}</div>
+        <Snippet
+          codeString={session.name}
+          hideSymbol={true} 
+          className={`
+            ${theme} text-${
+            theme === "dark" ? "white" : "black"
+          } ${theme === "dark" ? "border-1 border-default" : ""}`}
+          tooltipProps={{
+            delay: 0,
+            color: "foreground",
+            content: "Copy",
+            placement: "right",
+            closeDelay: 0,
+          }}>
+          {"Session Name: " + session.name}
+        </Snippet>
+        <p>Players: {session.num_of_players}</p>
         <p>Selected Game: {gameState?.game.toString() ?? Object.values(Games)[0].toString()}</p>
       </div>
       <div className="grid gap-20 justify-center">

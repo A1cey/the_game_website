@@ -1,6 +1,8 @@
 import type { Json } from "@/types/database.types";
 import type { Game_t } from "@/types/database_extended.types";
-import { convertGamesJSONToGameT } from "@/utils/game";
+import { Games } from "@/types/game.types";
+import { convertGamesJSONToGameT, defaultGameState } from "@/utils/game";
+import { getEnumValues } from "@/utils/other";
 import supabase from "@/utils/supabase";
 import { isPartialGameT } from "@/utils/type_guards";
 import type { RealtimeChannel } from "@supabase/supabase-js";
@@ -101,6 +103,12 @@ const getNewGame = (data: Json, old: Game_t): Game_t => {
   if (!newGame) {
     console.error("Bad response for game update.");
     return old;
+  }
+  
+  if (newGame.game_state === null) {
+    newGame.game_state = defaultGameState(
+      Games[Object.keys(Games).filter(key => Number.isNaN(Number(key)))[0] as keyof typeof Games]
+    );
   }
 
   return newGame;

@@ -46,35 +46,36 @@ const ArrowRightSVG = ({ fill = "currentColor", filled, size, height, width, ...
 }
 
 type ArrowProps = {
-  onClick?: React.MouseEventHandler<SVGSVGElement> ,
+  onClick?: any ,
   theme: string
 }
 
 
 const ArrowLeft = ({ onClick }: ArrowProps) => {
   return (
-    <Button isIconOnly aria-label="Settings" className="
+    <Button isIconOnly aria-label="Settings" onPress={()=> onClick()}
+      className="
       hover:scale-[1.05]
       -left-16 absolute top-[50%] translate-y-[-50%] size-6 rounded-full 
       flex justify-center items-center
       dark:border-2 dark:border-primary 
       bg-primary dark:bg-transparent"
       >
-      <ArrowLeftSVG filled={true} className="text-primary-foreground dark:text-primary" onClick={onClick} />
+        <ArrowLeftSVG filled={true} className="text-primary-foreground dark:text-primary" />
     </Button>
   )
 }
 
-const ArrowRight = ({ onClick }: ArrowProps) => {
+const ArrowRight = ({ onClick}: ArrowProps) => {
   return (
-    <Button isIconOnly aria-label="Settings" 
+    <Button isIconOnly aria-label="Settings" onPress={()=> onClick()}
       className="
       hover:scale-[1.05]
       -right-16 absolute top-[50%] translate-y-[-50%] size-6 rounded-full 
       flex justify-center items-center
       bg-primary dark:bg-transparent
       dark:border-2 dark:border-primary">
-      <ArrowRightSVG filled={true} className="text-primary-foreground dark:text-primary" onClick={onClick} />
+      <ArrowRightSVG filled={true} className="text-primary-foreground dark:text-primary" />
     </Button>
   )
 }
@@ -92,6 +93,7 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
   const [activeSlide, setActiveSlide] = useState(0);
   
   const sliderRef = useRef<Slider | null>(null); 
+  const isRender = useRef(true);
   
   const updateGameTypeAtDB = useCallback(() => {
     const gameName = getEnumValues(Games).find(val => Games[val] === currentGame) ?? null;
@@ -114,12 +116,22 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
       });
   }, [gameId, currentGame]);
   
-  useEffect(() => {    
+  useEffect(() => {
+    if (isRender.current) {
+      isRender.current = false;
+      return;
+    }
+    
     console.log("Setting current game: ", activeSlide, Games[getEnumValues(Games)[activeSlide]])
     setCurrentGame(Games[getEnumValues(Games)[activeSlide]]);
   }, [activeSlide, setCurrentGame]);
   
   useEffect(() => {
+    if (isRender.current) {
+      isRender.current = false;
+      return;
+    }
+    
     updateGameTypeAtDB();
   }, [currentGame]);
   

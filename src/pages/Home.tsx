@@ -6,7 +6,7 @@ import { Input } from "@nextui-org/input";
 import useGameStore from "@/hooks/useGameStore";
 import usePlayerStore from "@/hooks/usePlayerStore";
 import useSessionStore from "@/hooks/useSessionStore";
-import { Game_t, Session_t } from "@/types/database_extended.types";
+import { Session_t } from "@/types/database_extended.types";
 import ButtonBordered from "@/components/ui/ButtonBordered";
 import { PostgrestError } from "@supabase/supabase-js";
 import { Form } from "@nextui-org/form";
@@ -28,12 +28,9 @@ const Home = () => {
   const updatePlayer = usePlayerStore(state => state.updatePlayer);
   const resetPlayer = usePlayerStore(state => state.resetStore);
 
-  const numOfPlayers = useSessionStore(state => state.session.num_of_players);
   const updateSession = useSessionStore(state => state.updateSession);
-  const isSessionSubscriptionActive = useSessionStore(state => state.subscriptionActive);
   const resetSession = useSessionStore(state => state.resetStore);
 
-  const game = useGameStore(state => state.game);
   const updateGame = useGameStore(state => state.updateGame);
   const resetGame = useGameStore(state => state.resetStore);
 
@@ -55,35 +52,111 @@ const Home = () => {
     console.error(consoleError, error);
   };
 
-  const setUp = async (data: Session_t) => {
-    updateSession(data);
-
-    const old_num_of_players = numOfPlayers;
-
-    await createPlayer();
-
-    const new_num_of_players = numOfPlayers;
-
-    // Adds up to the correct number of players without another fetch. The subscription check and player count should assure a solid result.
-    if (!isSessionSubscriptionActive && old_num_of_players === new_num_of_players) {
-      updateSession({ num_of_players: numOfPlayers + 1 });
+  const setUp = async (name: string) => {
+    if (!name) {
+      console.error("No session name available.");
+      return;
     }
-
-    const newGame: Game_t = {
-      ...game,
-      id: data.game_id,
-    };
-
-    updateGame(newGame, "user");
+    
+    if (!await createPlayer(name)) {
+      resetPlayer();
+      return;
+    }
+    
+    const gameId = await fetchSessionData(name);
+    if (!gameId) {
+      console.error("No game id available.: ", gameId);
+      resetPlayer();
+      resetSession();
+      return;
+    }
+    
+    if (!await fetchGameData(gameId)) {
+      resetSession();
+      resetPlayer();
+      resetGame();
+      return
+    }
 
     navigate("session");
   };
 
-  const createPlayer = async () => {
+  const fetchSessionData = async (sessionName: string): Promise<string> => {
+    if (!sessionName) {
+      console.error("No session name available.");
+      return "";
+    }
+
+    const { data, error } = await supabase
+      .from("sessions")
+      .select()
+      .eq("name", sessionName)
+      .single();
+    
+    if (error) {
+      setSessionError({
+        consoleError: "Error fetching session: ",
+        error,
+        displayError: "Could not find session.",
+      });
+      return "";
+    }
+    
+    if (data) {
+      if (data.num_of_players === data.max_num_of_players) {
+        setSessionError({ consoleError: "Session is full." });
+        return "";
+      }
+
+      if (data.game_started_at) {
+        setSessionError({ consoleError: "Session is currently in a game." });
+        return "";
+      }
+
+      updateSession(data as Session_t);
+      
+      console.log("session data: ", data)
+      
+      return data.game_id;
+    }
+    
+
+    return "";
+  }
+
+  const fetchGameData = async (gameId: string): Promise<boolean> => {
+    if (!gameId) {
+      console.error("No game id available. ", gameId);
+      return false;
+    }
+
+    supabase.from("games").select().eq("id", gameId).single().then(({ data, error }) => {
+      if (error) {
+        setSessionError({
+          consoleError: "Error fetching game: ",
+          error,
+          displayError: "Could not find game.",
+        });
+        return false;
+      }
+      if (data) {
+        updateGame(data, "subscription");
+      }
+    });
+
+    return true;
+  }
+
+  const createPlayer = async (name: string): Promise<boolean> => {
+    if (!name) {
+      console.error("No session name available.");
+      return false;
+    }    
+
     supabase
       .from("players")
       .insert({
-        session_name: sessionName,
+        session_name: name,
         name: playerName !== "" ? playerName : null,
       })
       .select()
@@ -91,76 +164,73 @@ const Home = () => {
       .then(({ data, error }) => {
         if (error) {
           setSessionError({
-            consoleError: "Error fetching players: ",
+            consoleError: "Error creating players: ",
             error,
             displayError: "Could not create player.",
           });
-          return;
+          return false;
         }
         if (data) {
           updatePlayer(data);
         }
       });
+
+    return true;
   };
 
   const createSession = async () => {
-    if (sessionName === "") {
-      setSessionError({ consoleError: "Please provide a session name." });
-      return;
-    }
-
-    supabase
-      .from("sessions")
-      .insert({ name: sessionName })
-      .select()
-      .single()
-      .then(async ({ data, error }) => {
-        if (error) {
-          setSessionError({
-            consoleError: "Error fetching session: ",
-            error,
-            displayError: "Could not create session.",
-          });
-          return;
-        }
-        if (data) {
-          setUp(data);
-        }
-      });
+    supabase.rpc("create_session").then(({ data, error }) => {
+      if (error) {
+        setSessionError({
+          consoleError: "Error creating session: ",
+          error,
+          displayError: "Could not create session.",
+        });
+        return;
+      }
+      if (data) {
+        console.log("Created session: ", data);
+        setUp(data);
+      }
+    });
   };
 
   const joinSession = async () => {
     console.log("Joining");
 
-    if (sessionName === "") {
-      setSessionError({ consoleError: "Please provide a session name." });
+    if (sessionName.length < 6) {
+      setSessionError({ consoleError: `Session names must be exactly six characters long. Current length: ${sessionName.length}.` });
       return;
     }
 
-    supabase
-      .from("sessions")
-      .select()
-      .eq("name", sessionName)
-      .single()
-      .then(async ({ data, error }) => {
-        if (error) {
-          setSessionError({ consoleError: "Error fetching session: ", error, displayError: "Could not find session." });
-          return;
-        }
-        if (data) {
-          if (data.num_of_players === data.max_num_of_players) {
-            setSessionError({ consoleError: "Session is full." });
-            return;
-          }
+    setUp(sessionName);
+  };
 
-          if (data.game_started_at) {
-            setSessionError({ consoleError: "Session is currently in a game." });
-            return;
-          }
-
-          setUp(data);
+  const handleSessionNameChange = (input: string) => {
+    const validCharacters = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+    const invalidChars = input
+      .split("")
+      .filter((char) => !validCharacters.includes(char))
+      .reduce<string[]>((acc, val) => {
+        if (!acc.includes(val)) {
+          acc.push(val);
         }
+        return acc;
+      }, []);
+
+    if (input.length > 6) {
+      setSessionError({ consoleError: `Session names must be exactly six characters long. Current length: ${input.length}.` });
+      return;
+    }
+
+    if (invalidChars.length > 0) {
+      setSessionError({
+        consoleError: `Session name contains invalid characters: ${invalidChars.join(", ")}.`
       });
+      return;
+    }
+
+    setIsInvalidSession(false);
   };
 
   return (
@@ -183,12 +253,11 @@ const Home = () => {
           label="Session Name"
           labelPlacement="outside"
           variant="bordered"
-          isRequired
           className="hover:scale-[1.05]"
           onChange={e => setSessionName(e.target.value)}
           isInvalid={isInvalidSession}
           errorMessage={sessionNameErrorMessage}
-          onValueChange={() => setIsInvalidSession(false)}
+          onValueChange={value => handleSessionNameChange(value)}
         />
         <div className="flex mt-6 gap-4 justify-center w-full">
           <ButtonBordered onPress={createSession}>Create Session</ButtonBordered>

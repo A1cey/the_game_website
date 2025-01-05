@@ -97,9 +97,10 @@ export const convertGamesJSONToGameT = (json: Json): Game_t | null => {
   };
 };
 
+
 export const defaultGameState = (game: Games): GameState<Games> => {
-  const defaultArschlochGameState: GameState<Games.ARSCHLOCH> = {
-    game: Games.ARSCHLOCH,
+  const defaultAssholeGameState: GameState<Games.ASSHOLE> = {
+    game: Games.ASSHOLE,
     maxPlayers: 8,
     minPlayers: 2,
     options: {},
@@ -114,8 +115,8 @@ export const defaultGameState = (game: Games): GameState<Games> => {
     state: {},
   };
 
-  const defaultMaexleGameState: GameState<Games.MAEXLE> = {
-    game: Games.MAEXLE,
+  const defaultLittleMaxGameState: GameState<Games.LITTLE_MAX> = {
+    game: Games.LITTLE_MAX,
     maxPlayers: 8,
     minPlayers: 2,
     options: {
@@ -136,8 +137,8 @@ export const defaultGameState = (game: Games): GameState<Games> => {
     state: {},
   };
 
-  const defaultSchwimmenGameState: GameState<Games.SCHWIMMEN> = {
-    game: Games.SCHWIMMEN,
+  const defaultThirtyOneGameState: GameState<Games.THIRTY_ONE> = {
+    game: Games.THIRTY_ONE,
     maxPlayers: 8,
     minPlayers: 2,
     options: {},
@@ -153,16 +154,16 @@ export const defaultGameState = (game: Games): GameState<Games> => {
   };
 
   switch (game) {
-    case Games.ARSCHLOCH:
-      return defaultArschlochGameState;
+    case Games.ASSHOLE:
+      return defaultAssholeGameState;
     case Games.DURAK:
       return defaultDurakGameState;
-    case Games.MAEXLE:
-      return defaultMaexleGameState;
+    case Games.LITTLE_MAX:
+      return defaultLittleMaxGameState;
     case Games.POKER:
       return defaultPokerGameState;
-    case Games.SCHWIMMEN:
-      return defaultSchwimmenGameState;
+    case Games.THIRTY_ONE:
+      return defaultThirtyOneGameState;
     case Games.WERWOLF:
       return defaultWerwolfGameState;
   }

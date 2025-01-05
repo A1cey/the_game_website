@@ -1,9 +1,9 @@
 import { type GameMap, Games } from "@/types/game.types";
-import ArschlochOptions from "./ArschlochOptions";
+import AssholeOptions from "./AssholeOptions";
 import DurakOptions from "./DurakOptions";
-import MaexleOptions from "./MaexleOptions";
+import LittleMaxOptions from "./LittleMaxOptions";
 import PokerOptions from "./PokerOptions";
-import SchwimmenOptions from "./SchwimmenOptions";
+import ThirtyOneOptions from "./ThirtyOneOptions";
 import WerwolfOptions from "./WerwolfOptions";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 import ButtonBordered from "../ui/ButtonBordered";
@@ -13,11 +13,11 @@ import supabase from "@/utils/supabase";
 import useGameStore from "@/hooks/useGameStore";
 import useSessionStore from "@/hooks/useSessionStore";
 import {
-  isArschlochOptions,
+  isAssholeOptions,
   isDurakOptions,
-  isMaexleOptions,
+  isLittleMaxOptions,
   isPokerOptions,
-  isSchwimmenOptions,
+  isThirtyOneOptions,
   isWerwolfOptions,
 } from "@/utils/type_guards";
 
@@ -54,11 +54,11 @@ const GameOptions = ({ currentGame }: { currentGame: Games | undefined }) => {
   let currentOptions = null;
   if (gameType && currentGame !== undefined) {
     switch (Number(currentGame)) {
-      case Games.ARSCHLOCH:
-        console.log("trying setting arschloch options with state: ", gameState.options);
-        if (isArschlochOptions(gameState.options)) {
-          console.log("setting arschloch options");
-          currentOptions = <ArschlochOptions setOptions={setOptions} />;
+      case Games.ASSHOLE:
+        console.log("trying setting asshole options with state: ", gameState.options);
+        if (isAssholeOptions(gameState.options)) {
+          console.log("setting asshole options");
+          currentOptions = <AssholeOptions setOptions={setOptions} />;
         }
         break;
       case Games.DURAK:
@@ -66,10 +66,10 @@ const GameOptions = ({ currentGame }: { currentGame: Games | undefined }) => {
           currentOptions = <DurakOptions setOptions={setOptions} />;
         }
         break;
-      case Games.MAEXLE:
-        if (isMaexleOptions(gameState.options)) {
+      case Games.LITTLE_MAX:
+        if (isLittleMaxOptions(gameState.options)) {
           currentOptions = (
-            <MaexleOptions
+            <LittleMaxOptions
               setOptions={setOptions}
               lives={gameState.options.lives}
               passOn21={gameState.options.passOn21}
@@ -82,9 +82,9 @@ const GameOptions = ({ currentGame }: { currentGame: Games | undefined }) => {
           currentOptions = <PokerOptions setOptions={setOptions} />;
         }
         break;
-      case Games.SCHWIMMEN:
-        if (isSchwimmenOptions(gameState.options)) {
-          currentOptions = <SchwimmenOptions setOptions={setOptions} />;
+      case Games.THIRTY_ONE:
+        if (isThirtyOneOptions(gameState.options)) {
+          currentOptions = <ThirtyOneOptions setOptions={setOptions} />;
         }
         break;
       case Games.WERWOLF:

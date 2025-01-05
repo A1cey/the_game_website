@@ -1,9 +1,9 @@
 export enum Games {
-  ARSCHLOCH = 0,
+  ASSHOLE = 0,
   DURAK = 1,
-  MAEXLE = 2,
+  LITTLE_MAX = 2,
   POKER = 3,
-  SCHWIMMEN = 4,
+  THIRTY_ONE = 4,
   WERWOLF = 5,
 }
 
@@ -16,25 +16,25 @@ export type GameState<T extends Games> = { game: T } & BaseInformation & { optio
   };
 
 export type GameMap = {
-  [Games.ARSCHLOCH]: {
-    options: ArschlochOptionsType;
-    state: ArschlochGameState;
+  [Games.ASSHOLE]: {
+    options: AssholeOptionsType;
+    state: AssholeGameState;
   };
   [Games.DURAK]: {
     options: DurakOptionsType;
     state: DurakGameState;
   };
-  [Games.MAEXLE]: {
-    options: MaexleOptionsType;
-    state: MaexleGameState;
+  [Games.LITTLE_MAX]: {
+    options: LittleMaxOptionsType;
+    state: LittleMaxGameState;
   };
   [Games.POKER]: {
     options: PokerOptionsType;
     state: PokerGameState;
   };
-  [Games.SCHWIMMEN]: {
-    options: SchwimmenOptionsType;
-    state: SchwimmenGameState;
+  [Games.THIRTY_ONE]: {
+    options: ThirtyOneOptionsType;
+    state: ThirtyOneGameState;
   };
   [Games.WERWOLF]: {
     options: WerwolfOptionsType;
@@ -72,27 +72,27 @@ export type BaseInformation = {
   maxPlayers: number;
 };
 
-export type ArschlochOptionsType = {};
+export type AssholeOptionsType = {};
 export type DurakOptionsType = {};
-export type MaexleOptionsType = {
+export type LittleMaxOptionsType = {
   passOn21: boolean;
   lives: number;
 };
 export type PokerOptionsType = {};
-export type SchwimmenOptionsType = {};
+export type ThirtyOneOptionsType = {};
 export type WerwolfOptionsType = {};
 
-export type ArschlochGameState = {};
+export type AssholeGameState = {};
 export type DurakGameState = {};
-export type MaexleGameState = {
-  diceValue: PossibleMaexleValue;
-  namedValue: PossibleMaexleValue;
+export type LittleMaxGameState = {
+  diceValue: PossibleLittleMaxValue;
+  namedValue: PossibleLittleMaxValue;
 };
 export type PokerGameState = {};
-export type SchwimmenGameState = {};
+export type ThirtyOneGameState = {};
 export type WerwolfGameState = {};
 
-export type PossibleMaexleValue =
+export type PossibleLittleMaxValue =
   | null
   | 31
   | 32

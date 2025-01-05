@@ -1,15 +1,15 @@
 import { Json } from "@/types/database.types";
 import { Game_t } from "@/types/database_extended.types";
 import {
-  ArschlochOptionsType,
+  AssholeOptionsType,
   DurakOptionsType,
   Games,
   GameState,
   JSONGameState,
-  MaexleOptionsType,
+  LittleMaxOptionsType,
   PokerOptionsType,
-  PossibleMaexleValue,
-  SchwimmenOptionsType,
+  PossibleLittleMaxValue,
+  ThirtyOneOptionsType,
   WerwolfOptionsType,
 } from "@/types/game.types";
 
@@ -33,18 +33,18 @@ export const isGameState = <T extends Games>(data: unknown): data is GameState<T
   }
 
   switch (gameState.game) {
-    case Games.ARSCHLOCH:
+    case Games.ASSHOLE:
       return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
     case Games.DURAK:
       return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
-    case Games.MAEXLE:
+    case Games.LITTLE_MAX:
       return (
         isValidOptions(gameState.options, { passOn21: "boolean", lives: "number" }) &&
-        isValidState(gameState.state, { diceValue: "PossibleMaexleValue", namedValue: "PossibleMaexleValue" })
+        isValidState(gameState.state, { diceValue: "PossibleLittleMaxValue", namedValue: "PossibleLittleMaxValue" })
       );
     case Games.POKER:
       return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
-    case Games.SCHWIMMEN:
+    case Games.THIRTY_ONE:
       return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
     case Games.WERWOLF:
       return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
@@ -96,7 +96,7 @@ const isValidState = (state: unknown, schema: Record<string, string>): boolean =
     const expectedType = schema[key];
     const value = (state as Record<string, unknown>)[key];
 
-    if (expectedType === "PossibleMaexleValue" && !isPossibleMaexleValue(value)) {
+    if (expectedType === "PossibleLittleMaxValue" && !isPossibleLittleMaxValue(value)) {
       return false;
     } else if (typeof value !== expectedType) {
       return false;
@@ -115,7 +115,7 @@ const isValidJSONState = (state: unknown, schema: Record<string, string>): boole
     const expectedType = schema[key];
     const value = (state as Record<string, unknown>)[key];
 
-    if (expectedType === "PossibleMaexleValue" && !isPossibleMaexleValue(value)) {
+    if (expectedType === "PossibleLittleMaxValue" && !isPossibleLittleMaxValue(value)) {
       return false;
     }
 
@@ -128,9 +128,9 @@ const isValidJSONState = (state: unknown, schema: Record<string, string>): boole
   return true;
 };
 
-const isPossibleMaexleValue = (value: unknown): boolean => {
+const isPossibleLittleMaxValue = (value: unknown): boolean => {
   const validValues = [null, 31, 32, 41, 42, 43, 51, 52, 53, 54, 61, 62, 63, 64, 65, 11, 22, 33, 44, 55, 66, 21];
-  return validValues.includes(value as PossibleMaexleValue);
+  return validValues.includes(value as PossibleLittleMaxValue);
 };
 
 export const isPartialGameT = (input: unknown): input is Partial<Game_t> => {
@@ -233,18 +233,18 @@ export const isJSONConvertibleToGameState = <T extends Games>(json: Json): json 
 
   // valid options and state
   switch (game) {
-    case "ARSCHLOCH":
+    case "ASSHOLE":
       return isValidJSONOptions(json["options"], {}) && isValidJSONState(json["state"], {});
     case "DURAK":
       return isValidJSONOptions(json["options"], {}) && isValidJSONState(json["state"], {});
-    case "MAEXLE":
+    case "LITTLE_MAX":
       return (
         isValidJSONOptions(json["options"], { passOn21: "boolean", lives: "number" }) &&
-        isValidJSONState(json["state"], { diceValue: "PossibleMaexleValue", namedValue: "PossibleMaexleValue" })
+        isValidJSONState(json["state"], { diceValue: "PossibleLittleMaxValue", namedValue: "PossibleLittleMaxValue" })
       );
     case "POKER":
       return isValidJSONOptions(json["options"], {}) && isValidJSONState(json["state"], {});
-    case "SCHWIMMEN":
+    case "THIRTY_ONE":
       return isValidJSONOptions(json["options"], {}) && isValidJSONState(json["state"], {});
     case "WERWOLF":
       return isValidJSONOptions(json["options"], {}) && isValidJSONState(json["state"], {});
@@ -253,7 +253,7 @@ export const isJSONConvertibleToGameState = <T extends Games>(json: Json): json 
   }
 };
 
-export const isMaexleOptions = (options: any): options is MaexleOptionsType => {
+export const isLittleMaxOptions = (options: any): options is LittleMaxOptionsType => {
   return (
     options &&
     typeof options === "object" &&
@@ -266,11 +266,11 @@ export const isPokerOptions = (options: any): options is PokerOptionsType => {
   return options && typeof options === "object";
 };
 
-export const isArschlochOptions = (options: any): options is ArschlochOptionsType => {
+export const isAssholeOptions = (options: any): options is AssholeOptionsType => {
   return options && typeof options === "object";
 };
 
-export const isSchwimmenOptions = (options: any): options is SchwimmenOptionsType => {
+export const isThirtyOneOptions = (options: any): options is ThirtyOneOptionsType => {
   return options && typeof options === "object";
 };
 
