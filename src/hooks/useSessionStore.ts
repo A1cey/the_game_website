@@ -20,6 +20,7 @@ interface SessionState {
   updateSession: (data: Partial<Session_t>) => void;
   subscribeToSession: (sessionName: string) => void;
   unsubscribe: () => void;
+  resetStore: () => void;
 }
 
 const useSessionStore = create<SessionState>()((set, get) => ({
@@ -72,6 +73,11 @@ const useSessionStore = create<SessionState>()((set, get) => ({
       subscription.unsubscribe();
       set({ subscription: null, subscriptionActive: false });
     }
+  },
+
+  resetStore: () => {
+    get().unsubscribe();
+    set({ session: { ...defaultSession } });
   },
 }));
 

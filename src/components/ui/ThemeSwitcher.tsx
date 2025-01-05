@@ -42,7 +42,7 @@ export const SunIcon = (props: any) => {
 
 export const ThemeSwitcher = () => {
   const { theme, setTheme } = useThemeStore();
-  const [isSelected, setIsSelected] = useState(true);
+  const [isSelected, setIsSelected] = useState(theme === "dark");
 
   useEffect(() => {
     setTheme(isSelected ? "dark" : "light");

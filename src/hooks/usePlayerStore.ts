@@ -20,6 +20,7 @@ interface PlayerState {
   updatePlayer: (data: Json | Partial<Player_t>) => void;
   subscribeToPlayer: (gameId: string) => void;
   unsubscribe: () => void;
+  resetStore: () => void;
 }
 
 const usePlayerStore = create<PlayerState>()((set, get) => ({
@@ -35,7 +36,7 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
         get().subscribeToPlayer(newPlayer.id);
       }
 
-      return { player: {...state.player, ...newPlayer} };
+      return { player: { ...state.player, ...newPlayer } };
     });
   },
 
@@ -72,6 +73,11 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
       subscription.unsubscribe();
       set({ subscription: null, subscriptionActive: false });
     }
+  },
+
+  resetStore: () => {
+    get().unsubscribe();
+    set({ player: { ...defaultPlayer } });
   },
 }));
 

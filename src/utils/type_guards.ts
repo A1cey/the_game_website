@@ -1,9 +1,22 @@
 import { Json } from "@/types/database.types";
 import { Game_t } from "@/types/database_extended.types";
-import { Games, GameState, JSONGameState, PossibleMaexleValue } from "@/types/game.types";
+import {
+  ArschlochOptionsType,
+  DurakOptionsType,
+  Games,
+  GameState,
+  JSONGameState,
+  MaexleOptionsType,
+  PokerOptionsType,
+  PossibleMaexleValue,
+  SchwimmenOptionsType,
+  WerwolfOptionsType,
+} from "@/types/game.types";
 
 export const isGameState = <T extends Games>(data: unknown): data is GameState<T> => {
-  if (typeof data !== "object" || data === null) return false;
+  if (typeof data !== "object" || data === null) {
+    return false;
+  }
 
   const gameState = data as Partial<GameState<T>>;
 
@@ -13,7 +26,7 @@ export const isGameState = <T extends Games>(data: unknown): data is GameState<T
 
   const isValidBaseInformation = (gameState: Partial<GameState<T>>): boolean => {
     return typeof gameState.minPlayers !== "number" || typeof gameState.maxPlayers !== "number";
-  }
+  };
 
   if (!isValidBaseInformation(gameState)) {
     return false;
@@ -38,10 +51,12 @@ export const isGameState = <T extends Games>(data: unknown): data is GameState<T
     default:
       return false;
   }
-}
+};
 
 const isValidOptions = (options: unknown, schema: Record<string, string>): boolean => {
-  if (typeof options !== "object" || options === null) return false;
+  if (typeof options !== "object" || options == null) {
+    return false;
+  }
 
   for (const key in schema) {
     const expectedType = schema[key];
@@ -49,13 +64,33 @@ const isValidOptions = (options: unknown, schema: Record<string, string>): boole
 
     if (expectedType === "boolean" && typeof value !== "boolean") return false;
     if (expectedType === "number" && typeof value !== "number") return false;
+    if (expectedType === "string" && typeof value !== "string") return false;
   }
 
   return true;
-}
+};
+
+const isValidJSONOptions = (options: unknown, schema: Record<string, string>): boolean => {
+  if (typeof options !== "object" || options == null) {
+    return false;
+  }
+
+  for (const key in schema) {
+    const expectedType = schema[key];
+    const value = (options as Record<string, unknown>)[key];
+
+    if (typeof value !== expectedType) {
+      return false;
+    }
+  }
+
+  return true;
+};
 
 const isValidState = (state: unknown, schema: Record<string, string>): boolean => {
-  if (typeof state !== "object" || state === null) return false;
+  if (typeof state !== "object" || state == null) {
+    return false;
+  }
 
   for (const key in schema) {
     const expectedType = schema[key];
@@ -69,14 +104,34 @@ const isValidState = (state: unknown, schema: Record<string, string>): boolean =
   }
 
   return true;
-}
+};
+
+const isValidJSONState = (state: unknown, schema: Record<string, string>): boolean => {
+  if (typeof state !== "object" || state == null) {
+    return false;
+  }
+
+  for (const key in schema) {
+    const expectedType = schema[key];
+    const value = (state as Record<string, unknown>)[key];
+
+    if (expectedType === "PossibleMaexleValue" && !isPossibleMaexleValue(value)) {
+      return false;
+    }
+
+    if (typeof value === undefined) {
+      console.error(key, " has not correct type ", expectedType, "but: ", value);
+      return false;
+    }
+  }
+
+  return true;
+};
 
 const isPossibleMaexleValue = (value: unknown): boolean => {
-  const validValues = [
-    null, 31, 32, 41, 42, 43, 51, 52, 53, 54, 61, 62, 63, 64, 65, 11, 22, 33, 44, 55, 66, 21,
-  ];
+  const validValues = [null, 31, 32, 41, 42, 43, 51, 52, 53, 54, 61, 62, 63, 64, 65, 11, 22, 33, 44, 55, 66, 21];
   return validValues.includes(value as PossibleMaexleValue);
-}
+};
 
 export const isPartialGameT = (input: unknown): input is Partial<Game_t> => {
   if (input == null || typeof input !== "object") {
@@ -102,7 +157,7 @@ export const isPartialGameT = (input: unknown): input is Partial<Game_t> => {
   }
 
   return true;
-}
+};
 
 export const isGameT = (input: unknown): input is Game_t => {
   if (input == null || typeof input !== "object") {
@@ -123,16 +178,11 @@ export const isGameT = (input: unknown): input is Game_t => {
   }
 
   return true;
-}
+};
 
 export const isJson = (value: unknown): value is Json => {
   // Check for primitive types and null
-  if (
-    typeof value === "string" ||
-    typeof value === "number" ||
-    typeof value === "boolean" ||
-    value === null
-  ) {
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean" || value === null) {
     return true;
   }
 
@@ -150,45 +200,84 @@ export const isJson = (value: unknown): value is Json => {
   }
 
   // If none of the above, it's not Json
-  return false; 0
-}
+  return false;
+};
 
-export const isJsonConvertibleToGameState = <T extends Games>(json: Json): json is JSONGameState<T> => {
+// TODO: Function checks for GameT not gameState
+export const isJSONConvertibleToGameState = <T extends Games>(json: Json): json is JSONGameState<T> => {
   if (json == null) {
     console.error("JSON game data is null or undefined.");
     return false;
   }
 
-  if (typeof json === "boolean" || typeof json === "number" || typeof json === "string" || Array.isArray(json)) {
+  if (typeof json !== "object" || Array.isArray(json)) {
     console.error(
       `JSON game data is not an object but has the type ${typeof json}. It needs to be an object to be converted into a game state.`,
     );
     return false;
   }
 
-  const id = json["id"];
+  const game = json["game"];
 
-  if (!id) {
-    console.error("Game id is undefined.");
+  // valid game type
+  if (typeof game !== "string" || !Object.values(Games).includes(game)) {
+    console.error("JSON game data does not contain valid game type.");
     return false;
   }
 
-  if (typeof id !== "string") {
-    console.error("JSON game id is not a string.");
+  // valid base information
+  if (typeof json["minPlayers"] !== "number" || typeof json["maxPlayers"] !== "number") {
+    console.error("JSON game data does not contain valid game base information.");
     return false;
   }
 
-  const currentPlayer = json["current_player"];
-
-  if (!currentPlayer) {
-    console.error("Current player is undefined.");
-    return false;
+  // valid options and state
+  switch (game) {
+    case "ARSCHLOCH":
+      return isValidJSONOptions(json["options"], {}) && isValidJSONState(json["state"], {});
+    case "DURAK":
+      return isValidJSONOptions(json["options"], {}) && isValidJSONState(json["state"], {});
+    case "MAEXLE":
+      return (
+        isValidJSONOptions(json["options"], { passOn21: "boolean", lives: "number" }) &&
+        isValidJSONState(json["state"], { diceValue: "PossibleMaexleValue", namedValue: "PossibleMaexleValue" })
+      );
+    case "POKER":
+      return isValidJSONOptions(json["options"], {}) && isValidJSONState(json["state"], {});
+    case "SCHWIMMEN":
+      return isValidJSONOptions(json["options"], {}) && isValidJSONState(json["state"], {});
+    case "WERWOLF":
+      return isValidJSONOptions(json["options"], {}) && isValidJSONState(json["state"], {});
+    default:
+      return false;
   }
+};
 
-  if (typeof currentPlayer !== "number") {
-    console.error("Current player JSON is not a number.");
-    return false;
-  }
+export const isMaexleOptions = (options: any): options is MaexleOptionsType => {
+  return (
+    options &&
+    typeof options === "object" &&
+    Object.keys(options).includes("lives") &&
+    Object.keys(options).includes("passOn21")
+  );
+};
 
-  return true;
-}
+export const isPokerOptions = (options: any): options is PokerOptionsType => {
+  return options && typeof options === "object";
+};
+
+export const isArschlochOptions = (options: any): options is ArschlochOptionsType => {
+  return options && typeof options === "object";
+};
+
+export const isSchwimmenOptions = (options: any): options is SchwimmenOptionsType => {
+  return options && typeof options === "object";
+};
+
+export const isDurakOptions = (options: any): options is DurakOptionsType => {
+  return options && typeof options === "object";
+};
+
+export const isWerwolfOptions = (options: any): options is WerwolfOptionsType => {
+  return options && typeof options === "object";
+};

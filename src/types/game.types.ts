@@ -7,41 +7,37 @@ export enum Games {
   WERWOLF = 5,
 }
 
-export type JSONGameState<T extends Games> =
-  { game: string | T }
-  & BaseInformation
-  & { options: Record<string, string | number | boolean> | GameMap[T]["options"]; }
-  & { state: Record<string, string | number | boolean|null> | GameMap[T]["state"]  };
+export type JSONGameState<T extends Games> = { game: string | T } & BaseInformation & {
+    options: Record<string, string | number | boolean> | GameMap[T]["options"];
+  } & { state: Record<string, string | number | boolean | null> | GameMap[T]["state"] };
 
-export type GameState<T extends Games> =
-  { game: T }
-  & BaseInformation
-  & { options: GameMap[T]["options"]; }
-  & { state: GameMap[T]["state"] };
+export type GameState<T extends Games> = { game: T } & BaseInformation & { options: GameMap[T]["options"] } & {
+    state: GameMap[T]["state"];
+  };
 
-type GameMap = {
+export type GameMap = {
   [Games.ARSCHLOCH]: {
-    options: ArschlochOptions;
+    options: ArschlochOptionsType;
     state: ArschlochGameState;
   };
   [Games.DURAK]: {
-    options: DurakOptions;
+    options: DurakOptionsType;
     state: DurakGameState;
   };
   [Games.MAEXLE]: {
-    options: MaexleOptions;
+    options: MaexleOptionsType;
     state: MaexleGameState;
   };
   [Games.POKER]: {
-    options: PokerOptions;
+    options: PokerOptionsType;
     state: PokerGameState;
   };
   [Games.SCHWIMMEN]: {
-    options: SchwimmenOptions;
+    options: SchwimmenOptionsType;
     state: SchwimmenGameState;
   };
   [Games.WERWOLF]: {
-    options: WerwolfOptions;
+    options: WerwolfOptionsType;
     state: WerwolfGameState;
   };
 };
@@ -76,15 +72,15 @@ export type BaseInformation = {
   maxPlayers: number;
 };
 
-export type ArschlochOptions = {};
-export type DurakOptions = {};
-export type MaexleOptions = {
+export type ArschlochOptionsType = {};
+export type DurakOptionsType = {};
+export type MaexleOptionsType = {
   passOn21: boolean;
   lives: number;
 };
-export type PokerOptions = {};
-export type SchwimmenOptions = {};
-export type WerwolfOptions = {};
+export type PokerOptionsType = {};
+export type SchwimmenOptionsType = {};
+export type WerwolfOptionsType = {};
 
 export type ArschlochGameState = {};
 export type DurakGameState = {};

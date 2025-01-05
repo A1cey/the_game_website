@@ -1,8 +1,8 @@
-import { type Card, CardType, CardValue, Games, type GameState, JSONGameState } from "@/types/game.types";
+import { type Card, CardType, CardValue, Games, type GameState } from "@/types/game.types";
 import { getEnumValues } from "./other";
 import type { Json } from "@/types/database.types";
 import type { Game_t } from "@/types/database_extended.types";
-import { isJson, isJsonConvertibleToGameState } from "./type_guards";
+import { isJson, isJSONConvertibleToGameState } from "./type_guards";
 
 export const getGameImgs = (): string[] => {
   return getEnumValues(Games).map(key => "src/assets/".concat(Games[key].toLowerCase(), ".svg"));
@@ -39,13 +39,13 @@ export const validPlayerCount = (playerCount: number, minPlayersAllowed = 1, max
 };
 
 export const convertGamesStateJSONToGameStateType = (json: Json | null): GameState<Games> | null => {
-  if ( !isJson(json) || !isJsonConvertibleToGameState(json)) {
+  if (!isJson(json) || !isJSONConvertibleToGameState(json)) {
     return null;
   }
-  
-  const gameName = getEnumValues(Games).find(val => Games[val] === json.game) || null;
 
-  if (!gameName) {
+  const gameName = getEnumValues(Games).find(val => Games[val] === json.game) ?? null;
+
+  if (!gameName && gameName !== 0) {
     console.error("Game name is null");
     return null;
   }
@@ -54,8 +54,6 @@ export const convertGamesStateJSONToGameStateType = (json: Json | null): GameSta
 };
 
 export const convertGamesJSONToGameT = (json: Json): Game_t | null => {
-  console.log(json);
-
   if (json == null) {
     console.error("JSON game data is null or undefined.");
     return null;
@@ -105,7 +103,7 @@ export const defaultGameState = (game: Games): GameState<Games> => {
     maxPlayers: 8,
     minPlayers: 2,
     options: {},
-    state: {}
+    state: {},
   };
 
   const defaultDurakGameState: GameState<Games.DURAK> = {
@@ -113,7 +111,7 @@ export const defaultGameState = (game: Games): GameState<Games> => {
     maxPlayers: 8,
     minPlayers: 2,
     options: {},
-    state: {}
+    state: {},
   };
 
   const defaultMaexleGameState: GameState<Games.MAEXLE> = {
@@ -127,7 +125,7 @@ export const defaultGameState = (game: Games): GameState<Games> => {
     state: {
       diceValue: 31,
       namedValue: 31,
-    }
+    },
   };
 
   const defaultPokerGameState: GameState<Games.POKER> = {
@@ -135,7 +133,7 @@ export const defaultGameState = (game: Games): GameState<Games> => {
     maxPlayers: 8,
     minPlayers: 2,
     options: {},
-    state: {}
+    state: {},
   };
 
   const defaultSchwimmenGameState: GameState<Games.SCHWIMMEN> = {
@@ -143,7 +141,7 @@ export const defaultGameState = (game: Games): GameState<Games> => {
     maxPlayers: 8,
     minPlayers: 2,
     options: {},
-    state: {}
+    state: {},
   };
 
   const defaultWerwolfGameState: GameState<Games.WERWOLF> = {
@@ -151,7 +149,7 @@ export const defaultGameState = (game: Games): GameState<Games> => {
     maxPlayers: 8,
     minPlayers: 2,
     options: {},
-    state: {}
+    state: {},
   };
 
   switch (game) {
@@ -172,6 +170,5 @@ export const defaultGameState = (game: Games): GameState<Games> => {
 
 export const defaultDBGameState = (game: Games): Json => {
   const defaultState = defaultGameState(game);
-  console.log(Games[game]);
   return { ...defaultState, game: Games[game] };
 };

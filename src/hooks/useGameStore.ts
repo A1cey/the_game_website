@@ -16,25 +16,34 @@ interface GameState {
   game: Game_t;
   subscriptionActive: boolean;
   subscription: RealtimeChannel | null;
-  updateGame: (data: Json | Partial<Game_t>) => void;
+  updateSource: "subscription" | "user";
+  resetUpdateSource: () => void;
+  updateGame: (data: Json | Partial<Game_t>, source: "subscription" | "user") => void;
   subscribeToGame: (gameId: string) => void;
   unsubscribe: () => void;
+  resetStore: () => void;
 }
 
 const useGameStore = create<GameState>()((set, get) => ({
   game: defaultGame,
   subscriptionActive: false,
   subscription: null as RealtimeChannel | null,
+  updateSource: "user",
 
-  updateGame: (data: Json | Partial<Game_t>) => {
+  resetUpdateSource: () => set({ updateSource: "user" }),
+
+  updateGame: (data: Json | Partial<Game_t>, source: "subscription" | "user") => {
     set(state => {
-      let newGame = isPartialGameT(data)? {...state.game, ...data} : getNewGame(data, state.game)
+      let newGame = isPartialGameT(data) ? { ...state.game, ...data } : getNewGame(data, state.game);
 
       if (newGame.id && !state.subscriptionActive) {
         get().subscribeToGame(newGame.id);
       }
 
-      return { game: newGame };
+      return {
+        game: newGame,
+        lastGameUpdateSource: source,
+      };
     });
   },
 
@@ -54,10 +63,10 @@ const useGameStore = create<GameState>()((set, get) => ({
         },
         payload => {
           console.log("New data through game subscription: ", payload, payload.new);
-          get().updateGame(convertGamesJSONToGameT(payload.new) as Game_t);
+          get().updateGame(convertGamesJSONToGameT(payload.new) as Game_t, "subscription");
         },
       )
-      .subscribe( (status, error) => {
+      .subscribe((status, error) => {
         console.log("Game subscription status: ", status);
         if (error) {
           console.error(`Error subscribing to game with id ${gameId}: ${error}`);
@@ -74,11 +83,19 @@ const useGameStore = create<GameState>()((set, get) => ({
       set({ subscription: null, subscriptionActive: false });
     }
   },
+
+  resetStore: () => {
+    get().unsubscribe();
+    get().resetUpdateSource();
+    set({
+      game: { ...defaultGame },
+    });
+  },
 }));
 
 const getNewGame = (data: Json, old: Game_t): Game_t => {
   console.log("Updating game with: ", data);
-  
+
   const newGame = convertGamesJSONToGameT(data);
 
   if (!newGame) {
