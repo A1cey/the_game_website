@@ -5,12 +5,17 @@ import type { Game_t } from "@/types/database_extended.types";
 import { isJson, isJSONConvertibleToGameState } from "./type_guards";
 
 export const getGameImgs = (): string[] => {
-  return getEnumValues(Games).map(key => "src/assets/".concat(Games[key].toLowerCase(), ".svg"));
+  return getEnumValues(Games).map(key =>
+    "src/assets/game_svgs/".concat(Games[key].toLowerCase(), "/").concat(Games[key].toLowerCase(), ".svg"),
+  );
 };
 
 export const getAltNameForGame = (str: string): string => {
-  const name = str.replace("src/assets/", "").replace(".svg", "");
-  return name.substring(0, 1).toUpperCase() + name.substring(1);
+  const name = str.split("/").reverse()[0].replace(".svg", "");
+  return name
+    .split("_")
+    .map(val => val.substring(0, 1).toUpperCase() + val.substring(1).toLocaleLowerCase())
+    .join(" ");
 };
 
 export const getCards = (): Card[] => {
@@ -96,7 +101,6 @@ export const convertGamesJSONToGameT = (json: Json): Game_t | null => {
     game_state: json["game_state"] ? convertGamesStateJSONToGameStateType(json["game_state"] as Json) : null,
   };
 };
-
 
 export const defaultGameState = (game: Games): GameState<Games> => {
   const defaultAssholeGameState: GameState<Games.ASSHOLE> = {

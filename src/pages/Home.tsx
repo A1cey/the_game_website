@@ -6,11 +6,13 @@ import { Input } from "@nextui-org/input";
 import useGameStore from "@/hooks/useGameStore";
 import usePlayerStore from "@/hooks/usePlayerStore";
 import useSessionStore from "@/hooks/useSessionStore";
-import { Session_t } from "@/types/database_extended.types";
+import type { Session_t } from "@/types/database_extended.types";
 import ButtonBordered from "@/components/ui/ButtonBordered";
-import { PostgrestError } from "@supabase/supabase-js";
+import type { PostgrestError } from "@supabase/supabase-js";
 import { Form } from "@nextui-org/form";
 import { InputOtp } from "@nextui-org/input-otp";
+import { Button, Tooltip } from "@nextui-org/react";
+import type { SVGElementProps } from "@/types/other.types";
 
 type SetSessionErrorOptions = {
   consoleError: string;
@@ -58,12 +60,12 @@ const Home = () => {
       console.error("No session name available.");
       return;
     }
-    
-    if (!await createPlayer(name)) {
+
+    if (!(await createPlayer(name))) {
       resetPlayer();
       return;
     }
-    
+
     const gameId = await fetchSessionData(name);
     if (!gameId) {
       console.error("No game id available.: ", gameId);
@@ -71,12 +73,12 @@ const Home = () => {
       resetSession();
       return;
     }
-    
-    if (!await fetchGameData(gameId)) {
+
+    if (!(await fetchGameData(gameId))) {
       resetSession();
       resetPlayer();
       resetGame();
-      return
+      return;
     }
 
     navigate("session");
@@ -88,12 +90,8 @@ const Home = () => {
       return "";
     }
 
-    const { data, error } = await supabase
-      .from("sessions")
-      .select()
-      .eq("name", sessionName)
-      .single();
-    
+    const { data, error } = await supabase.from("sessions").select().eq("name", sessionName).single();
+
     if (error) {
       setSessionError({
         consoleError: "Error fetching session: ",
@@ -102,7 +100,7 @@ const Home = () => {
       });
       return "";
     }
-    
+
     if (data) {
       if (data.num_of_players === data.max_num_of_players) {
         setSessionError({ consoleError: "Session is full." });
@@ -115,15 +113,14 @@ const Home = () => {
       }
 
       updateSession(data as Session_t);
-      
-      console.log("session data: ", data)
-      
+
+      console.log("session data: ", data);
+
       return data.game_id;
     }
-    
 
     return "";
-  }
+  };
 
   const fetchGameData = async (gameId: string): Promise<boolean> => {
     if (!gameId) {
@@ -131,28 +128,33 @@ const Home = () => {
       return false;
     }
 
-    supabase.from("games").select().eq("id", gameId).single().then(({ data, error }) => {
-      if (error) {
-        setSessionError({
-          consoleError: "Error fetching game: ",
-          error,
-          displayError: "Could not find game.",
-        });
-        return false;
-      }
-      if (data) {
-        updateGame(data, "subscription");
-      }
-    });
+    supabase
+      .from("games")
+      .select()
+      .eq("id", gameId)
+      .single()
+      .then(({ data, error }) => {
+        if (error) {
+          setSessionError({
+            consoleError: "Error fetching game: ",
+            error,
+            displayError: "Could not find game.",
+          });
+          return false;
+        }
+        if (data) {
+          updateGame(data, "subscription");
+        }
+      });
 
     return true;
-  }
+  };
 
   const createPlayer = async (name: string): Promise<boolean> => {
     if (!name) {
       console.error("No session name available.");
       return false;
-    }    
+    }
 
     supabase
       .from("players")
@@ -200,44 +202,36 @@ const Home = () => {
     console.log("Joining");
 
     if (sessionName.length < 6) {
-      setSessionError({ consoleError: `Session names must be exactly six characters long. Current length: ${sessionName.length}.` });
+      setSessionError({
+        consoleError: `Session names must be exactly six characters long. Current length: ${sessionName.length}.`,
+      });
       return;
     }
 
     setUp(sessionName);
   };
 
-  const handleSessionNameChange = (input: string) => {
-    const validCharacters = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-    const invalidChars = input
-      .split("")
-      .filter((char) => !validCharacters.includes(char))
-      .reduce<string[]>((acc, val) => {
-        if (!acc.includes(val)) {
-          acc.push(val);
-        }
-        return acc;
-      }, []);
-
-    if (input.length > 6) {
-      setSessionError({ consoleError: `Session names must be exactly six characters long. Current length: ${input.length}.` });
-      return;
-    }
-
-    if (invalidChars.length > 0) {
-      setSessionError({
-        consoleError: `Session name contains invalid characters: ${invalidChars.join(", ")}.`
-      });
-      return;
-    }
-
-    setIsInvalidSession(false);
+  const InfoIcon = ({ fill = "currentColor", filled, size, height, width, ...props }: SVGElementProps) => {
+    return (
+      <svg
+        width={size || width || 24}
+        height={size || height || 24}
+        viewBox="0 0 24 24"
+        fill={filled ? fill : "none"}
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+      >
+        <circle cx="12" cy="12" r="10" stroke={fill} strokeWidth="1.5" />
+        <path d="M12 17V11" stroke={fill} strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="1" cy="1" r="1" transform="matrix(1 0 0 -1 11 9)" fill={fill} />
+      </svg>
+    );
   };
 
   return (
     <div className="grid gap-4 justify-center">
-      <h1 className="mt-40 text-4xl font-bold text-center">The Game Website</h1>
-      <Form className="flex flex-col items-center gap-5 w-full max-w-md mx-auto">
+      <h1 className="mt-40 text-4xl font-bold text-center">Create or Join a Session</h1>
+      <Form className="flex flex-col items-center gap-5 w-full max-w-80 mx-auto">
         <div className="w-full">
           <Input
             label="Player Name"
@@ -252,23 +246,32 @@ const Home = () => {
             }}
           />
         </div>
-        <div className="border-2 border-default rounded-xl w-full flex flex-col items-center">
-          <div className="">
-            <div className="text-sm text-default-500 pl-2 pt-1">Session Name</div>
+        <div className="border-2 border-default-200 dark:border-default rounded-xl w-full flex flex-col items-center">
+          <div>
+            <div className="text-sm text-default-500 pt-1 inline-flex items-center gap-2">
+              <span className="-translate-y-[12.5%]">Session Name</span>
+              <Tooltip content={"Allowed characters: " + "23456789ABCDEFGHJKLMNPQRSTUVWXYZ".split("").join(", ")}>
+                <Button
+                  isIconOnly
+                  aria-label="Session Name Information"
+                  className="p-0 min-w-0 w-fit h-min bg-transparent"
+                >
+                  <InfoIcon size={18} className="text-default-500" />
+                </Button>
+              </Tooltip>
+            </div>
             <InputOtp
-              label="Session Name"
               variant="bordered"
               className="pl-2 pr-2"
               allowedKeys={"^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]*$"}
-              length= {6}
-              onChange={e => setSessionName(e.target.value)}
+              length={6}
+              onChange={e => setSessionName((e.target as HTMLInputElement).value)}
               isInvalid={isInvalidSession}
               errorMessage={sessionNameErrorMessage || "Invalid session name."}
-              onValueChange={value => handleSessionNameChange(value)}
-              />
+            />
           </div>
         </div>
-        <div className="flex mt-6 gap-4 justify-center w-full">
+        <div className="flex gap-4 justify-center w-full">
           <ButtonBordered onPress={createSession}>Create Session</ButtonBordered>
           <ButtonBordered onPress={joinSession}>Join Session</ButtonBordered>
         </div>

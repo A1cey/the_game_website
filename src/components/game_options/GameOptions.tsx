@@ -38,7 +38,9 @@ const GameOptions = ({ currentGame }: { currentGame: Games | undefined }) => {
         })
         .eq("id", gameId)
         .then(({ error }) => {
-          if (error) console.error("Error updating the game options: ", error);
+          if (error) {
+            console.error("Error updating the game options: ", error);
+          }
         });
     },
     [gameState, gameId],

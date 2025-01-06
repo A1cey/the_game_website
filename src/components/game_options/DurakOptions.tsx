@@ -1,11 +1,11 @@
 import type { DurakOptionsType } from "@/types/game.types";
 import { useEffect, useRef } from "react";
 
-type LittleMaxOptionsProps = DurakOptionsType & {
+type DurakOptionsProps = DurakOptionsType & {
   setOptions: React.Dispatch<React.SetStateAction<DurakOptionsType>>;
 };
 
-const DurakOptions = ({ setOptions }: LittleMaxOptionsProps) => {
+const DurakOptions = ({ setOptions }: DurakOptionsProps) => {
   const hasChanged = useRef(false);
 
   useEffect(() => {

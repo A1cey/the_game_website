@@ -36,7 +36,7 @@ const useGameStore = create<GameState>()((set, get) => ({
 
   updateGame: (data: Json | Partial<Game_t>, source: "subscription" | "user") => {
     set(state => {
-      let newGame = isPartialGameT(data) ? { ...state.game, ...data } : getNewGame(data, state.game);
+      const newGame = isPartialGameT(data) ? { ...state.game, ...data } : getNewGame(data, state.game);
 
       if (newGame.id && !state.subscriptionActive) {
         get().subscribeToGame(newGame.id);
@@ -104,10 +104,10 @@ const getNewGame = (data: Json, old: Game_t): Game_t => {
     console.error("Bad response for game update.");
     return old;
   }
-  
+
   if (newGame.game_state === null) {
     newGame.game_state = defaultGameState(
-      Games[Object.keys(Games).filter(key => Number.isNaN(Number(key)))[0] as keyof typeof Games]
+      Games[Object.keys(Games).filter(key => Number.isNaN(Number(key)))[0] as keyof typeof Games],
     );
   }
 

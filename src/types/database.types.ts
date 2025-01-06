@@ -145,6 +145,14 @@ export type Database = {
         }
         Returns: number
       }
+      get_player_names: {
+        Args: {
+          session_name_input: string
+        }
+        Returns: {
+          name: string
+        }[]
+      }
       insert_log: {
         Args: {
           session_name_input: string

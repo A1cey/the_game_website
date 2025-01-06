@@ -21,7 +21,7 @@ const LittleMaxOptions = ({ setOptions, lives, passOn21 }: LittleMaxOptionsProps
     setLives(lives);
     setDebouncedLives(lives);
   }, [passOn21, lives]);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedLives(numOfLives);
@@ -59,44 +59,44 @@ const LittleMaxOptions = ({ setOptions, lives, passOn21 }: LittleMaxOptionsProps
 
   const validateLives = (input: string): void => {
     const num = Number(input);
-    console.log("Validating: ", num)
-    
+    console.log("Validating: ", num);
+
     if (Number.isNaN(num)) {
       console.log("not a number");
-      setLivesInputError("Only numbers allowed.")
+      setLivesInputError("Only numbers allowed.");
       setIsLivesInValid(true);
       return;
     }
-    
+
     if (num > 21) {
-      console.log("Too big")
-      setLivesInputError("Too many lives. Be reasonable")
+      console.log("Too big");
+      setLivesInputError("Too many lives. Be reasonable");
       setIsLivesInValid(true);
       return;
     }
-    
+
     if (num < 1) {
-      console.log("Too small")
-      setLivesInputError("You need at least one life to play.")
+      console.log("Too small");
+      setLivesInputError("You need at least one life to play.");
       setIsLivesInValid(true);
       return;
     }
-    
+
     setIsLivesInValid(false);
-  }
+  };
 
   return (
     <div className="grid items-center justify-center space-x-2 gap-4 m-2">
-        <Checkbox
-          color="success"
-          id="little-max-pass-on"
-          radius="sm"
-          isSelected={isSelected}
-          onValueChange={handlePassOn21Change}
-        > 
-          Little Max can be passed to next player.
-        </Checkbox>
-      <div /* Needed for alignment */ >
+      <Checkbox
+        color="success"
+        id="little-max-pass-on"
+        radius="sm"
+        isSelected={isSelected}
+        onValueChange={handlePassOn21Change}
+      >
+        Little Max can be passed to next player.
+      </Checkbox>
+      <div /* Needed for alignment */>
         <Input
           label="Lives"
           labelPlacement="inside"

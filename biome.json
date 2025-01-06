@@ -22,7 +22,24 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "nursery": {
+        "useExplicitType": "off"
+      },
+      "style": {
+        "useConst": "error",
+        "useBlockStatements": "error",
+        "noParameterAssign": "error",
+        "noVar": "error",
+        "noUselessElse": "error",
+        "recommended": true,
+        "useForOf": "info",
+        "useNamingConvention": "off",
+        "useSelfClosingElements": "warn"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "off"
+      }
     }
   },
   "json": {
@@ -43,6 +60,9 @@
       "arrowParentheses": "asNeeded",
       "semicolons": "always",
       "quoteProperties": "asNeeded"
+    },
+    "linter": {
+      "enabled": true
     }
   }
 }

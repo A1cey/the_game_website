@@ -61,7 +61,9 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
       )
       .subscribe((status, error) => {
         console.log("Player subscription status:", status);
-        if (error) console.error(`Error subscribing to player with id ${playerId}: `, error);
+        if (error) {
+          console.error(`Error subscribing to player with id ${playerId}: `, error);
+        }
       });
 
     set({ subscription, subscriptionActive: true });

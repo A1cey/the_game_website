@@ -1,16 +1,16 @@
-import { Json } from "@/types/database.types";
-import { Game_t } from "@/types/database_extended.types";
+import type { Json } from "@/types/database.types";
+import type { Game_t } from "@/types/database_extended.types";
 import {
-  AssholeOptionsType,
-  DurakOptionsType,
+  type AssholeOptionsType,
+  type DurakOptionsType,
   Games,
-  GameState,
-  JSONGameState,
-  LittleMaxOptionsType,
-  PokerOptionsType,
-  PossibleLittleMaxValue,
-  ThirtyOneOptionsType,
-  WerwolfOptionsType,
+  type GameState,
+  type JSONGameState,
+  type LittleMaxOptionsType,
+  type PokerOptionsType,
+  type PossibleLittleMaxValue,
+  type ThirtyOneOptionsType,
+  type WerwolfOptionsType,
 } from "@/types/game.types";
 
 export const isGameState = <T extends Games>(data: unknown): data is GameState<T> => {

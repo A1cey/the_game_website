@@ -3,8 +3,8 @@ import Home from "@/pages/Home";
 import Game from "@/pages/Game";
 import Session from "@/pages/Session";
 import { useNavigate } from "react-router-dom";
-import { Divider, NextUIProvider } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import {  NextUIProvider } from "@nextui-org/react";
+import { useEffect } from "react";
 import useGameStore from "./hooks/useGameStore";
 import useSessionStore from "./hooks/useSessionStore";
 import usePlayerStore from "./hooks/usePlayerStore";
@@ -22,7 +22,7 @@ const App = () => {
 
   useEffect(() => {
     // Cleanup subscriptions
-    return () => {
+    return (): void => {
       resetSession();
       resetGame();
       resetPlayer();
@@ -31,7 +31,7 @@ const App = () => {
 
   // prevent browser actions tab closing/refreshing when user in session
   useEffect(() => {
-    const beforeUnload = (e: BeforeUnloadEvent) => {
+    const beforeUnload = (e: BeforeUnloadEvent): void => {
       e.preventDefault();
       // Ignored from most browsers
       e.returnValue =
