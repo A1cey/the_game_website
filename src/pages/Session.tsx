@@ -2,7 +2,7 @@ import supabase from "@/utils/supabase";
 import GameCarousel from "@/components/ui/GameCarousel";
 import GameOptions from "@/components/game_options/GameOptions";
 import { Games } from "@/types/game.types";
-import { Link, Snippet } from "@nextui-org/react";
+import { Divider, Link, Snippet } from "@nextui-org/react";
 import useSessionStore from "@/hooks/useSessionStore";
 import usePlayerStore from "@/hooks/usePlayerStore";
 import useGameStore from "@/hooks/useGameStore";
@@ -36,6 +36,12 @@ const Session = () => {
       if (error) console.log("Error while starting game: ", error);
     });
   };
+  
+  const getGameName = (): string => {
+    const selectedGame = gameState?.game.toString() ?? Object.values(Games)[0].toString();
+    
+    return selectedGame.split("_").map(val => val.substring(0, 1).toUpperCase() + val.substring(1).toLocaleLowerCase()).join(" ");
+  }
 
   return (
     <div>
@@ -60,8 +66,9 @@ const Session = () => {
           {"Session Name: " + session.name}
         </Snippet>
         <p>Players: {session.num_of_players}</p>
-        <p>Selected Game: {gameState?.game.toString() ?? Object.values(Games)[0].toString()}</p>
+        <p>Selected Game: {getGameName()}</p>
       </div>
+      <Divider />
       <div className="grid gap-20 justify-center">
         <div className="mt-40">
           <GameCarousel gameImgs={getGameImgs()} />

@@ -3,7 +3,7 @@ import Home from "@/pages/Home";
 import Game from "@/pages/Game";
 import Session from "@/pages/Session";
 import { useNavigate } from "react-router-dom";
-import { NextUIProvider } from "@nextui-org/react";
+import { Divider, NextUIProvider } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import useGameStore from "./hooks/useGameStore";
 import useSessionStore from "./hooks/useSessionStore";

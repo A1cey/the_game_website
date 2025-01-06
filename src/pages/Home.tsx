@@ -10,6 +10,7 @@ import { Session_t } from "@/types/database_extended.types";
 import ButtonBordered from "@/components/ui/ButtonBordered";
 import { PostgrestError } from "@supabase/supabase-js";
 import { Form } from "@nextui-org/form";
+import { InputOtp } from "@nextui-org/input-otp";
 
 type SetSessionErrorOptions = {
   consoleError: string;
@@ -236,29 +237,37 @@ const Home = () => {
   return (
     <div className="grid gap-4 justify-center">
       <h1 className="mt-40 text-4xl font-bold text-center">The Game Website</h1>
-      <Form>
-        <Input
-          label="Player Name"
-          labelPlacement="outside"
-          variant="bordered"
-          className="hover:scale-[1.05]"
-          onChange={e => setPlayerName(e.target.value)}
-          validate={value => {
-            if (value.length > 30) {
-              return "The player name can only be a maximum of 30 characters long.";
-            }
-          }}
-        />
-        <Input
-          label="Session Name"
-          labelPlacement="outside"
-          variant="bordered"
-          className="hover:scale-[1.05]"
-          onChange={e => setSessionName(e.target.value)}
-          isInvalid={isInvalidSession}
-          errorMessage={sessionNameErrorMessage}
-          onValueChange={value => handleSessionNameChange(value)}
-        />
+      <Form className="flex flex-col items-center gap-5 w-full max-w-md mx-auto">
+        <div className="w-full">
+          <Input
+            label="Player Name"
+            labelPlacement="outside"
+            variant="bordered"
+            className="hover:scale-[1.05]"
+            onChange={e => setPlayerName(e.target.value)}
+            validate={value => {
+              if (value.length > 30) {
+                return "The player name can only be 30 characters long.";
+              }
+            }}
+          />
+        </div>
+        <div className="border-2 border-default rounded-xl w-full flex flex-col items-center">
+          <div className="">
+            <div className="text-sm text-default-500 pl-2 pt-1">Session Name</div>
+            <InputOtp
+              label="Session Name"
+              variant="bordered"
+              className="pl-2 pr-2"
+              allowedKeys={"^[23456789ABCDEFGHJKLMNPQRSTUVWXYZ]*$"}
+              length= {6}
+              onChange={e => setSessionName(e.target.value)}
+              isInvalid={isInvalidSession}
+              errorMessage={sessionNameErrorMessage || "Invalid session name."}
+              onValueChange={value => handleSessionNameChange(value)}
+              />
+          </div>
+        </div>
         <div className="flex mt-6 gap-4 justify-center w-full">
           <ButtonBordered onPress={createSession}>Create Session</ButtonBordered>
           <ButtonBordered onPress={joinSession}>Join Session</ButtonBordered>
