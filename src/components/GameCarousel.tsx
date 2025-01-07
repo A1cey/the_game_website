@@ -70,10 +70,6 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
   const sliderRef = useRef<Slider | null>(null);
   const isRender = useRef(true);
 
-  console.log(gameState?.game.toString() ?? Object.values(Games)[0].toString());
-
-  console.log(gameImgs);
-
   const updateGameTypeAtDB = useCallback(() => {
     const gameName = getEnumValues(Games).find(val => Games[val] === currentGame) ?? null;
 
@@ -155,7 +151,7 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
     slidesToShow: 3,
     slidesToScroll: 1,
     centerMode: true,
-    className: "center w-full",
+    className: "center",
     centerPadding: "0px",
     swipeToSlide: true,
     focusOnSelect: true,
@@ -163,6 +159,7 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
     beforeChange: (_: number, next: number) => {
       setActiveSlide(next);
     },
+    style: {width: "56rem"}
   };
 
   return (
@@ -178,7 +175,7 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
             {...settings}
           >
             {gameImgs.map((img, idx) => (
-              <div key={idx} className="bg-opacity-0 ">
+              <div key={idx} className="bg-opacity-0">
                 <img src={img} alt={getAltNameForGame(gameImgs[idx])} />
               </div>
             ))}

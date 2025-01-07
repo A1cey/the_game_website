@@ -7,7 +7,7 @@ import useSessionStore from "@/hooks/useSessionStore";
 import usePlayerStore from "@/hooks/usePlayerStore";
 import useGameStore from "@/hooks/useGameStore";
 import ButtonBordered from "@/components/ui/ButtonBordered";
-import { getGameImgs } from "@/utils/game";
+import { getAltNameForGame, getGameImgs } from "@/utils/game";
 import SessionSize from "@/components/SessionSize";
 import SessionName from "@/components/SessionName";
 
@@ -54,13 +54,17 @@ const Session = () => {
         <div className="mt-40">
           <GameCarousel gameImgs={getGameImgs()} />
         </div>
-        <div className="flex gap-20 justify-center">
+        <div className="flex gap-28 justify-center">
+          <div className="w-1/2 flex justify-end">
           <GameOptions
             currentGame={
-              gameState?.game ? (Games[gameState.game as unknown as keyof typeof Games] as unknown as Games) : undefined
+              gameState? (Games[gameState.game as unknown as keyof typeof Games] as unknown as Games) : undefined
             }
           />
-          <ButtonBordered onPress={startGame}>Start</ButtonBordered>
+          </div>
+          <div className="flex w-1/2">
+            <ButtonBordered onPress={startGame}>Start {gameState?.game ? getAltNameForGame(gameState.game.toString()) : ""}</ButtonBordered>
+          </div>
         </div>
       </div>
     </div>
