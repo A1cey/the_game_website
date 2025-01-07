@@ -1,8 +1,9 @@
-import { SVGElementProps } from "@/types/other.types";
+import type { SVGElementProps } from "@/types/other.types";
 
 const MoonIcon = (props: SVGElementProps) => {
   return (
     <svg
+      aria-label="Moon Icon"
       aria-hidden="true"
       focusable="false"
       height="1em"

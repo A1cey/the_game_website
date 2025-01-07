@@ -24,6 +24,7 @@ const PlayerList = () => {
     return (
       <Listbox aria-label="Table of all players in the party.">
         {players.map((name, idx) => (
+          // biome-igore lint/suspicious/noArrayIndexKey: The key is the index of the array, which is fine in this case.
           <ListboxItem key={idx} value={name}>
             {name}
           </ListboxItem>

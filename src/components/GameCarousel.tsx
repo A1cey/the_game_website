@@ -9,12 +9,13 @@ import { Button } from "@nextui-org/button";
 import useThemeStore from "@/hooks/useThemeStore";
 import useGameStore from "@/hooks/useGameStore";
 import supabase from "@/utils/supabase";
-import { Json } from "@/types/database.types";
+import type { Json } from "@/types/database.types";
 import useSessionStore from "@/hooks/useSessionStore";
 import ArrowLeftIcon from "./icons/ArrowLeft";
 import ArrowRightIcon from "./icons/ArrowRight";
 
 type ArrowProps = {
+  // biome-ignore lint/suspicious/noExplicitAny: The type of the function is not known, so it is set to any.
   onClick?: any;
   theme: string;
 };
@@ -87,7 +88,9 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
       })
       .eq("id", gameId)
       .then(({ error }) => {
-        if (error) console.error("Error updating the game selection: ", error);
+        if (error) {
+          console.error("Error updating the game selection: ", error);
+        }
       });
   }, [gameId, currentGame]);
 
@@ -126,6 +129,7 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
   }, [gameState]);
 
   const settings = {
+    // biome-ignore lint/suspicious/noExplicitAny: The type of the function is not known, so it is set to any.
     appendDots: (dots: any) => (
       <div>
         {" "}
@@ -159,7 +163,7 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
     beforeChange: (_: number, next: number) => {
       setActiveSlide(next);
     },
-    style: {width: "56rem"}
+    style: { width: "56rem" },
   };
 
   return (
@@ -167,20 +171,21 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
       <h2 className="text-3xl dark:text-primary text-center">Select a Game</h2>
       <div className="relative w-[58rem] mx-auto h-[21rem]">
         <div className="absolute inset-0 dark:border-2 rounded-2xl dark:border-primary bg-foreground-200 dark:bg-transparent flex justify-center items-center">
-        <div className="relative z-10 max-w-4xl mx-auto">
-          <Slider
-            ref={slider => {
-              sliderRef.current = slider;
-            }}
-            {...settings}
-          >
-            {gameImgs.map((img, idx) => (
-              <div key={idx} className="bg-opacity-0">
-                <img src={img} alt={getAltNameForGame(gameImgs[idx])} />
-              </div>
-            ))}
-          </Slider>
-        </div>
+          <div className="relative z-10 max-w-4xl mx-auto">
+            <Slider
+              ref={slider => {
+                sliderRef.current = slider;
+              }}
+              {...settings}
+            >
+              {gameImgs.map((img, idx) => (
+                // biome-igore lint/suspicious/noArrayIndexKey: The key is the index of the array, which is fine in this case.
+                <div key={idx} className="bg-opacity-0">
+                  <img src={img} alt={getAltNameForGame(gameImgs[idx])} />
+                </div>
+              ))}
+            </Slider>
+          </div>
         </div>
       </div>
     </div>

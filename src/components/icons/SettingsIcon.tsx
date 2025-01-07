@@ -1,8 +1,9 @@
-import { SVGElementProps } from "@/types/other.types";
+import type { SVGElementProps } from "@/types/other.types";
 
 const SettingsIcon = ({ fill = "currentColor", filled, size, height, width, ...props }: SVGElementProps) => {
   return (
     <svg
+      aria-label="Settings Icon"
       width={size || width || 80}
       height={size || height || 80}
       viewBox="0 0 24 24"

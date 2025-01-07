@@ -62,9 +62,9 @@ const isValidOptions = (options: unknown, schema: Record<string, string>): boole
     const expectedType = schema[key];
     const value = (options as Record<string, unknown>)[key];
 
-    if (expectedType === "boolean" && typeof value !== "boolean") return false;
-    if (expectedType === "number" && typeof value !== "number") return false;
-    if (expectedType === "string" && typeof value !== "string") return false;
+    if (expectedType !== typeof value) {
+      return false;
+    }
   }
 
   return true;

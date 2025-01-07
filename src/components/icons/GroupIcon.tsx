@@ -1,4 +1,4 @@
-import { SVGElementProps } from "@/types/other.types";
+import type { SVGElementProps } from "@/types/other.types";
 
 const GroupIcon = ({ fill = "currentColor", filled, size, height, width, ...props }: SVGElementProps) => {
   return (

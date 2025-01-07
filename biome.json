@@ -39,6 +39,9 @@
       },
       "correctness": {
         "useExhaustiveDependencies": "off"
+      },
+      "complexity": {
+        "useLiteralKeys": "off"
       }
     }
   },

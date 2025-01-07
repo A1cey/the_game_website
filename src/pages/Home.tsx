@@ -13,6 +13,7 @@ import { Form } from "@nextui-org/form";
 import { InputOtp } from "@nextui-org/input-otp";
 import { Button, Tooltip } from "@nextui-org/react";
 import type { SVGElementProps } from "@/types/other.types";
+import useThemeStore from "@/hooks/useThemeStore";
 
 type SetSessionErrorOptions = {
   consoleError: string;
@@ -36,6 +37,8 @@ const Home = () => {
 
   const updateGame = useGameStore(state => state.updateGame);
   const resetGame = useGameStore(state => state.resetStore);
+
+  const theme = useThemeStore(state => state.theme);
 
   useEffect(() => {
     resetSession();
@@ -65,6 +68,9 @@ const Home = () => {
       resetPlayer();
       return;
     }
+
+    // small delay to allow the database to update
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     const gameId = await fetchSessionData(name);
     if (!gameId) {
@@ -231,7 +237,7 @@ const Home = () => {
   return (
     <div className="grid gap-4 justify-center">
       <h1 className="mt-40 text-4xl font-bold text-center">Create or Join a Session</h1>
-      <Form className="flex flex-col items-center gap-5 w-full max-w-80 mx-auto">
+      <Form className="flex flex-col items-center gap-6 w-full max-w-80 mx-auto">
         <div className="w-full">
           <Input
             label="Player Name"
@@ -248,9 +254,13 @@ const Home = () => {
         </div>
         <div className="border-2 border-default-200 dark:border-default rounded-xl w-full flex flex-col items-center">
           <div>
-            <div className="text-sm text-default-500 pt-1 inline-flex items-center gap-2">
+            <div className="pl-2 text-sm text-default-500 pt-1 inline-flex items-center gap-2">
               <span className="-translate-y-[12.5%]">Session Name</span>
-              <Tooltip content={"Allowed characters: " + "23456789ABCDEFGHJKLMNPQRSTUVWXYZ".split("").join(", ")}>
+              <Tooltip
+                offset={8}
+                content={`Allowed characters: ${"23456789ABCDEFGHJKLMNPQRSTUVWXYZ".split("").join(", ")}`}
+                className={`${theme} text-${theme === "dark" ? "white" : "black"} ${theme === "dark" ? "bg-default-50 border-1 border-default" : ""}`}
+              >
                 <Button
                   isIconOnly
                   aria-label="Session Name Information"

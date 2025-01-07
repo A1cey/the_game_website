@@ -13,7 +13,7 @@ const Header = () => {
   return (
     <div>
       <div className="flex items-center justify-between w-full pt-2 pb-2">
-        <div className="w-1/3"></div>
+        <div className="w-1/3" />
         <h1 className="text-2xl dark:text-primary-500 font-bold w-1/3 text-center">The Game Website</h1>
         <div className="flex w-1/3 justify-end">
           <Popover placement="bottom-end" isOpen={isOpen} onOpenChange={open => setIsOpen(open)}>

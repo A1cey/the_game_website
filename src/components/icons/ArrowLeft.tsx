@@ -1,8 +1,9 @@
-import { SVGElementProps } from "@/types/other.types";
+import type { SVGElementProps } from "@/types/other.types";
 
 const ArrowLeftIcon = ({ fill = "currentColor", filled, size, height, width, ...props }: SVGElementProps) => {
   return (
     <svg
+      aria-label="Arrow Left Icon"
       width={size || width || 20}
       height={size || height || 20}
       viewBox="-4.5 0 20 20"

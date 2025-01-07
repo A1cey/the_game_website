@@ -20,7 +20,7 @@ const SessionName = () => {
         closeDelay: 0,
       }}
     >
-      {"Session Name: " + sessionName}
+      {`Session Name: ${sessionName}`}
     </Snippet>
   );
 };

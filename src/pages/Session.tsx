@@ -1,4 +1,4 @@
-import supabase from "@/utils/supabase";
+import supabase, { removePlayerFromSession } from "@/utils/supabase";
 import GameCarousel from "@/components/GameCarousel";
 import GameOptions from "@/components/game_options/GameOptions";
 import { Games } from "@/types/game.types";
@@ -8,7 +8,7 @@ import usePlayerStore from "@/hooks/usePlayerStore";
 import useGameStore from "@/hooks/useGameStore";
 import ButtonBordered from "@/components/ui/ButtonBordered";
 import { getAltNameForGame, getGameImgs } from "@/utils/game";
-import SessionSize from "@/components/SessionSize";
+import SessionSize from "@/components/SessionMembers";
 import SessionName from "@/components/SessionName";
 
 const Session = () => {
@@ -16,24 +16,11 @@ const Session = () => {
   const gameState = useGameStore(state => state.game.game_state);
   const playerId = usePlayerStore(state => state.player.id);
 
-  const removePlayerFromSession = async () => {
-    if (!playerId) {
-      console.error("Error removing player from session: player id not set.");
-      return;
-    }
-
-    supabase
-      .from("players")
-      .delete()
-      .eq("id", playerId)
-      .then(({ error }) => {
-        if (error) console.error("Error removing player from session: ", error);
-      });
-  };
-
   const startGame = async () => {
     supabase.rpc("start_game", { session_name: session.name }).then(({ error }) => {
-      if (error) console.log("Error while starting game: ", error);
+      if (error) {
+        console.log("Error while starting game: ", error);
+      }
     });
   };
 
@@ -41,7 +28,7 @@ const Session = () => {
     <div>
       <div className="p-2 flex gap-20 w-full items-center justify-between">
         <div className="w-1/2">
-          <ButtonBordered as={Link} color="primary" href={"/"} onPress={removePlayerFromSession}>
+          <ButtonBordered as={Link} color="primary" href={"/"} onPress={() => removePlayerFromSession(playerId)}>
             Home
           </ButtonBordered>
         </div>
@@ -56,14 +43,16 @@ const Session = () => {
         </div>
         <div className="flex gap-28 justify-center">
           <div className="w-1/2 flex justify-end">
-          <GameOptions
-            currentGame={
-              gameState? (Games[gameState.game as unknown as keyof typeof Games] as unknown as Games) : undefined
-            }
-          />
+            <GameOptions
+              currentGame={
+                gameState ? (Games[gameState.game as unknown as keyof typeof Games] as unknown as Games) : undefined
+              }
+            />
           </div>
           <div className="flex w-1/2">
-            <ButtonBordered onPress={startGame}>Start {gameState?.game ? getAltNameForGame(gameState.game.toString()) : ""}</ButtonBordered>
+            <ButtonBordered onPress={startGame}>
+              Start {gameState?.game ? getAltNameForGame(gameState.game.toString()) : ""}
+            </ButtonBordered>
           </div>
         </div>
       </div>

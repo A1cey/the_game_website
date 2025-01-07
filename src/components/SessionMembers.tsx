@@ -1,8 +1,8 @@
 import { Button } from "@nextui-org/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 import GroupIcon from "./icons/GroupIcon";
-import { Divider, Select, SelectedItemProps, SelectItem } from "@nextui-org/react";
-import PlayerList from "./Players";
+import { Divider, Select, type SelectedItemProps, SelectItem } from "@nextui-org/react";
+import PlayerList from "./PlayerList";
 import { useState } from "react";
 import useThemeStore from "@/hooks/useThemeStore";
 import useSessionStore from "@/hooks/useSessionStore";
@@ -46,7 +46,7 @@ const SessionSize = () => {
       mr-2
       "
     >
-      <p className="pl-3 -translate-y-[10%]">{numOfPlayers + "/" + maxNumOfPlayers}</p>
+      <p className="pl-3 -translate-y-[10%]">{`${numOfPlayers}/${maxNumOfPlayers}`}</p>
       <Popover placement="bottom-end" isOpen={isPlayersOpen} onOpenChange={open => setIsPlayersOpen(open)}>
         <PopoverTrigger>
           <Button isIconOnly aria-label="Players" className="bg-transparent relative ml-4 mr-4 hover:scale-[1.1]">

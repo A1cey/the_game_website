@@ -1,8 +1,9 @@
-import { SVGElementProps } from "@/types/other.types";
+import type { SVGElementProps } from "@/types/other.types";
 
 const SunIcon = (props: SVGElementProps) => {
   return (
     <svg
+      aria-label="Sun Icon"
       aria-hidden="true"
       focusable="false"
       height="1em"

@@ -61,7 +61,9 @@ const useSessionStore = create<SessionState>()((set, get) => ({
       )
       .subscribe((status, error) => {
         console.log("Session subscription status: ", status);
-        if (error) console.error(`Error subscribing to session with name ${sessionName}: `, error);
+        if (error) {
+          console.error(`Error subscribing to session with name ${sessionName}: ${error}`);
+        }
       });
 
     set({ subscription, subscriptionActive: true });

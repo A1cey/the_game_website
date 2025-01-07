@@ -10,11 +10,13 @@ import useSessionStore from "./hooks/useSessionStore";
 import usePlayerStore from "./hooks/usePlayerStore";
 import useThemeStore from "./hooks/useThemeStore";
 import Header from "./components/Header";
+import { removePlayerFromSession } from "./utils/supabase";
 
 const App = () => {
   const navigate = useNavigate();
   const theme = useThemeStore(state => state.theme);
   const sessionName = useSessionStore(state => state.session.name);
+  const playerId = usePlayerStore(state => state.player.id);
 
   const resetPlayer = usePlayerStore(state => state.resetStore);
   const resetSession = useSessionStore(state => state.resetStore);
@@ -34,19 +36,23 @@ const App = () => {
     const beforeUnload = (e: BeforeUnloadEvent): void => {
       e.preventDefault();
       // Ignored from most browsers
-      e.returnValue =
-        "All session data will be lost if you leave or refresh the page. Are you sure you want to proceed?";
+      e.returnValue = "Are you sure you want to leave? Your session data will be lost.";
     };
 
-    if (!sessionName) {
-      window.removeEventListener("beforeunload", beforeUnload);
+    const unload = async () => {
+      await removePlayerFromSession(playerId);
+      navigate("/");
+    };
+
+    if (sessionName) {
+      window.addEventListener("beforeunload", beforeUnload);
+      window.addEventListener("unload", unload);
       return;
     }
 
-    window.addEventListener("beforeunload", beforeUnload);
-
     return () => {
       window.removeEventListener("beforeunload", beforeUnload);
+      window.removeEventListener("unload", unload);
     };
   }, [sessionName]);
 

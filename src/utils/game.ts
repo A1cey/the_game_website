@@ -5,7 +5,7 @@ import type { Game_t } from "@/types/database_extended.types";
 import { isJson, isJSONConvertibleToGameState } from "./type_guards";
 
 export const getGameImgs = (): string[] => {
-  const images = import.meta.glob('../assets/game_svgs/**/*.svg', { eager: true });
+  const images = import.meta.glob("../assets/game_svgs/**/*.svg", { eager: true });
   return getEnumValues(Games).map(key => {
     const fileName = `${Games[key].toLowerCase()}.svg`;
     const path = `../assets/game_svgs/${Games[key].toLowerCase()}/${fileName}`;
