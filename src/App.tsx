@@ -3,13 +3,13 @@ import Home from "@/pages/Home";
 import Game from "@/pages/Game";
 import Session from "@/pages/Session";
 import { useNavigate } from "react-router-dom";
-import {  NextUIProvider } from "@nextui-org/react";
+import { NextUIProvider } from "@nextui-org/react";
 import { useEffect } from "react";
 import useGameStore from "./hooks/useGameStore";
 import useSessionStore from "./hooks/useSessionStore";
 import usePlayerStore from "./hooks/usePlayerStore";
 import useThemeStore from "./hooks/useThemeStore";
-import Header from "./components/ui/Header";
+import Header from "./components/Header";
 
 const App = () => {
   const navigate = useNavigate();

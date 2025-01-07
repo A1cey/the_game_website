@@ -5,9 +5,12 @@ import type { Game_t } from "@/types/database_extended.types";
 import { isJson, isJSONConvertibleToGameState } from "./type_guards";
 
 export const getGameImgs = (): string[] => {
-  return getEnumValues(Games).map(key =>
-    "src/assets/game_svgs/".concat(Games[key].toLowerCase(), "/").concat(Games[key].toLowerCase(), ".svg"),
-  );
+  const images = import.meta.glob('../assets/game_svgs/**/*.svg', { eager: true });
+  return getEnumValues(Games).map(key => {
+    const fileName = `${Games[key].toLowerCase()}.svg`;
+    const path = `../assets/game_svgs/${Games[key].toLowerCase()}/${fileName}`;
+    return (images[path] as { default: string }).default;
+  });
 };
 
 export const getAltNameForGame = (str: string): string => {

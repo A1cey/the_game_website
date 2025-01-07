@@ -18,32 +18,21 @@ const PlayerList = () => {
         setPlayers(data.map(({ name }) => formatDefaultPlayerName(name)));
       }
     });
-
-  }, [playerCount])
-
+  }, [playerCount]);
 
   const getPlayerList = () => {
     return (
-      <Listbox aria-label="Table of all players in the party." >
+      <Listbox aria-label="Table of all players in the party.">
         {players.map((name, idx) => (
           <ListboxItem key={idx} value={name}>
             {name}
           </ListboxItem>
         ))}
       </Listbox>
-    )
-  }
+    );
+  };
 
-
-  return (
-    <div>
-      {
-        !players
-          ? "No data available."
-          : getPlayerList()
-      }
-    </div>
-  );
+  return <div>{!players ? "No data available." : getPlayerList()}</div>;
 };
 
 export default PlayerList;

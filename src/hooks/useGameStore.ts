@@ -2,7 +2,6 @@ import type { Json } from "@/types/database.types";
 import type { Game_t } from "@/types/database_extended.types";
 import { Games } from "@/types/game.types";
 import { convertGamesJSONToGameT, defaultGameState } from "@/utils/game";
-import { getEnumValues } from "@/utils/other";
 import supabase from "@/utils/supabase";
 import { isPartialGameT } from "@/utils/type_guards";
 import type { RealtimeChannel } from "@supabase/supabase-js";

@@ -1,8 +1,8 @@
 import useThemeStore from "@/hooks/useThemeStore";
 import { Switch } from "@nextui-org/switch";
 import { useEffect, useState } from "react";
-import MoonIcon from "./icons/MoonIcon";
-import SunIcon from "./icons/SunIcon";
+import MoonIcon from "../icons/MoonIcon";
+import SunIcon from "../icons/SunIcon";
 
 export const ThemeSwitcher = () => {
   const { theme, setTheme } = useThemeStore();

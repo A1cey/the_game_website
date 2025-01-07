@@ -10,11 +10,10 @@ export const getEnumValues = <E extends Enum>(e: E): E[keyof E][] => {
     .map(key => e[key as keyof E]) as E[keyof E][];
 };
 
-
 export const formatDefaultPlayerName = (name: string): string => {
   if (name.match("^player_[1-9]+$")) {
     return "Player " + name.split("_")[1];
   }
-  
+
   return name;
-}
+};
