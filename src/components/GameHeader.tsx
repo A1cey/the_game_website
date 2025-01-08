@@ -8,6 +8,7 @@ import useGameStore from "@/hooks/useGameStore";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { useTranslation } from "react-i18next";
 import useLanguageStore from "@/hooks/useLanguageStore";
+import GameRules from "./GameRules";
 
 const GameHeader = () => {
   const playerId = usePlayerStore(state => state.player.id);
@@ -36,12 +37,12 @@ const GameHeader = () => {
   }, [currentPlayer]);
   
   return (
-    <div className="p-2 flex gap-20 items-center">
+    <div className="pt-2 pl-4 pr-4 flex gap-20 items-center">
       <ButtonBordered as={Link} href={"/"} onPress={() => removePlayerFromSession(playerId)}>
         {t("leaveGame")}
       </ButtonBordered>
       
-      <ScrollShadow orientation="horizontal" className="w-full max-w-[1300px]">
+      <ScrollShadow orientation="horizontal" className="w-full">
         <div className="flex gap-1">
           {players.map((player,idx) => 
             <div 
@@ -54,6 +55,7 @@ const GameHeader = () => {
         </div>
       </ScrollShadow>
       
+      <GameRules/>
     </div>
   );
 }

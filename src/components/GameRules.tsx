@@ -34,7 +34,7 @@ const GameRules = () => {
 
   return (
     <div>
-      <ButtonBordered onPress={onOpen}>Game Rules</ButtonBordered>
+      <ButtonBordered onPress={onOpen}>{t("gameRules") }</ButtonBordered>
       <Modal 
         isOpen={isOpen} 
         onOpenChange={onOpenChange} 
@@ -43,7 +43,7 @@ const GameRules = () => {
         classNames={{
           header :`${theme === "dark"? "bg-default-900 text-default border-default-700 border-b-1" : "bg-default-100"} rounded-t-xl justify-center text-2xl`,
           body:`${theme === "dark"? "bg-default-900 text-default" : ""}`,        
-          footer:`${theme === "dark"? "bg-default-900 text-default " : "bg-default-100"} rounded-b-xl`,
+          footer:`${theme === "dark"? "bg-default-900 text-default border-default-700 border-t-1" : "bg-default-100"} rounded-b-xl`,
         }}
       >
         <ModalContent>
