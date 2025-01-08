@@ -1,4 +1,4 @@
-import { Link, Spacer } from "@nextui-org/react";
+import { Link } from "@nextui-org/react";
 import ButtonBordered from "./ui/ButtonBordered";
 import { getPlayerNames, removePlayerFromSession } from "@/utils/supabase";
 import usePlayerStore from "@/hooks/usePlayerStore";
@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import useSessionStore from "@/hooks/useSessionStore";
 import useGameStore from "@/hooks/useGameStore";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
+import { useTranslation } from "react-i18next";
+import useLanguageStore from "@/hooks/useLanguageStore";
 
 const GameHeader = () => {
   const playerId = usePlayerStore(state => state.player.id);
@@ -16,9 +18,12 @@ const GameHeader = () => {
   const [players, setPlayers] = useState<string[]>([]);
   const currentPlayerRef = useRef<HTMLDivElement>(null);
   
+  const {t} = useTranslation();
+  const language = useLanguageStore(state => state.lang);
+  
   useEffect(() => {
-    getPlayerNames(sessionName).then(playerNames => setPlayers(playerNames));     
-  }, [playerCount, sessionName]);
+    getPlayerNames(sessionName, t).then(playerNames => setPlayers(playerNames));     
+  }, [playerCount, sessionName, language]);
 
   useEffect(() => {
     if (currentPlayerRef.current) {
@@ -33,7 +38,7 @@ const GameHeader = () => {
   return (
     <div className="p-2 flex gap-20 items-center">
       <ButtonBordered as={Link} href={"/"} onPress={() => removePlayerFromSession(playerId)}>
-        Leave Game
+        {t("leaveGame")}
       </ButtonBordered>
       
       <ScrollShadow orientation="horizontal" className="w-full max-w-[1300px]">

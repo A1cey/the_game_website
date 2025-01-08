@@ -1,11 +1,14 @@
 import useSessionStore from "@/hooks/useSessionStore";
 import useThemeStore from "@/hooks/useThemeStore";
 import { Snippet } from "@nextui-org/react";
+import { useTranslation } from "react-i18next";
 
 const SessionName = () => {
   const sessionName = useSessionStore(state => state.session.name);
   const theme = useThemeStore(state => state.theme);
 
+  const { t } = useTranslation();
+  
   return (
     <Snippet
       codeString={sessionName}
@@ -20,7 +23,7 @@ const SessionName = () => {
         closeDelay: 0,
       }}
     >
-      {`Session Name: ${sessionName}`}
+      {`${t("sessionName")}: ${sessionName}`}
     </Snippet>
   );
 };

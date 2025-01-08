@@ -1,6 +1,6 @@
 import GameHeader from "@/components/GameHeader";
 
-const Game = () => {
+const Game = () => {  
   return (
     <div>
       <GameHeader />

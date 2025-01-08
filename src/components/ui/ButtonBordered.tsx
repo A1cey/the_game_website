@@ -10,7 +10,7 @@ const ButtonBordered = React.forwardRef<HTMLButtonElement, ButtonProps>((
   return (
     <Button
       ref={ref}
-      className="active:scale-[0.98] hover:scale-[1.05] font-semibold"
+      className="active:scale-[0.98] hover:scale-105 font-semibold"
       color="primary"
       variant={theme === "dark" ? "bordered" : "solid"}
       onPress={onPress}

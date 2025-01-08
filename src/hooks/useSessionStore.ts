@@ -30,8 +30,6 @@ const useSessionStore = create<SessionState>()((set, get) => ({
 
   updateSession: (data: Partial<Session_t>) => {
     set(state => {
-      console.log("trying to subscribe for session: ");
-      console.log("data.name: ", data?.name, "!state.subscriptionActive", !state.subscriptionActive);
       if (data?.name && !state.subscriptionActive) {
         get().subscribeToSession(data.name);
       }

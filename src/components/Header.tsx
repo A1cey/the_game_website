@@ -5,6 +5,7 @@ import { ThemeSwitcher } from "./ui/ThemeSwitcher";
 import useThemeStore from "@/hooks/useThemeStore";
 import { Divider } from "@nextui-org/react";
 import SettingsIcon from "./icons/SettingsIcon";
+import LanguageSelector from "./ui/LanguageSelector";
 
 const Header = () => {
   const theme = useThemeStore(state => state.theme);
@@ -29,8 +30,9 @@ const Header = () => {
             <PopoverContent
               className={`${theme} text-${theme === "dark" ? "white" : "black"} ${theme === "dark" ? "border-1 border-default" : ""}`}
             >
-              <div className={`${theme}`}>
+              <div className={`${theme} flex flex-col gap-2`}>
                 <ThemeSwitcher />
+                <LanguageSelector />
               </div>
             </PopoverContent>
           </Popover>

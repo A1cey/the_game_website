@@ -1,6 +1,6 @@
 import type { Json } from "@/types/database.types";
 import type { Player_t } from "@/types/database_extended.types";
-import supabase from "@/utils/supabase";
+import supabase, { removePlayerFromSession } from "@/utils/supabase";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { create } from "zustand";
 
@@ -77,7 +77,10 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
     }
   },
 
-  resetStore: () => {
+  resetStore: async () => {
+    if (get().player.id){
+      await removePlayerFromSession(get().player.id);
+    }
     get().unsubscribe();
     set({ player: { ...defaultPlayer } });
   },

@@ -20,17 +20,19 @@ import {
   isThirtyOneOptions,
   isWerwolfOptions,
 } from "@/utils/type_guards";
+import { useTranslation } from "react-i18next";
 
-const GameOptions = ({ currentGame }: { currentGame: Games | undefined }) => {
+const GameOptions = () => {
   const theme = useThemeStore(state => state.theme);
   const gameId = useSessionStore(state => state.session.game_id);
   const gameState = useGameStore(state => state.game.game_state);
+  const currentGame = useGameStore(state => state.game.game_state?.game);
   const gameType = gameState?.game;
 
+  const {t} = useTranslation();
+  
   const updateGameOptionsAtDB = useCallback(
     (newOptions: GameMap[Games]["options"]) => {
-      console.log("UPDATING GAME OPTIONS IN DB");
-
       supabase
         .from("games")
         .update({
@@ -55,11 +57,10 @@ const GameOptions = ({ currentGame }: { currentGame: Games | undefined }) => {
 
   let currentOptions = null;
   if (gameType && currentGame !== undefined) {
-    switch (Number(currentGame)) {
+    const game = Games[gameType as unknown as keyof typeof Games] as unknown as Games;
+    switch (Number(game)) {
       case Games.ASSHOLE:
-        console.log("trying setting asshole options with state: ", gameState.options);
         if (isAssholeOptions(gameState.options)) {
-          console.log("setting asshole options");
           currentOptions = <AssholeOptions setOptions={setOptions} />;
         }
         break;
@@ -99,15 +100,17 @@ const GameOptions = ({ currentGame }: { currentGame: Games | undefined }) => {
 
   return (
     <Popover placement="bottom">
-      <PopoverTrigger>
-        <ButtonBordered disabled={!currentOptions}>Game Options</ButtonBordered>
+      <PopoverTrigger
+        className="hover:scale-105"
+      >
+        <ButtonBordered disabled={!currentOptions}>{t("gameOptions") }</ButtonBordered>
       </PopoverTrigger>
       <PopoverContent
         className={`${theme} text-${
           theme === "dark" ? "white" : "black"
         } ${theme === "dark" ? "border-1 border-default" : ""}`}
       >
-        {currentOptions || <p>No options available</p>}
+        {currentOptions || <p>{t("noOptionsAvailabel")}</p>}
       </PopoverContent>
     </Popover>
   );

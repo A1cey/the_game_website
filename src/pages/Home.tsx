@@ -14,6 +14,7 @@ import { InputOtp } from "@nextui-org/input-otp";
 import { Button, Tooltip } from "@nextui-org/react";
 import type { SVGElementProps } from "@/types/other.types";
 import useThemeStore from "@/hooks/useThemeStore";
+import { useTranslation } from "react-i18next";
 
 type SetSessionErrorOptions = {
   consoleError: string;
@@ -23,7 +24,8 @@ type SetSessionErrorOptions = {
 
 const Home = () => {
   const navigate = useNavigate();
-
+   const { t } = useTranslation();
+  
   const [sessionName, setSessionName] = useState("");
   const [playerName, setPlayerName] = useState("");
   const [sessionNameErrorMessage, setSessionNameErrorMessage] = useState("");
@@ -102,19 +104,19 @@ const Home = () => {
       setSessionError({
         consoleError: "Error fetching session: ",
         error,
-        displayError: "Could not find session.",
+        displayError: t("sessionNotFoundError"),
       });
       return "";
     }
 
     if (data) {
-      if (data.num_of_players === data.max_num_of_players) {
-        setSessionError({ consoleError: "Session is full." });
+      if (data.num_of_players > data.max_num_of_players) {
+        setSessionError({ consoleError: "Session is full.", displayError: t("sessionFullError") });
         return "";
       }
 
       if (data.game_started_at) {
-        setSessionError({ consoleError: "Session is currently in a game." });
+        setSessionError({ consoleError: "Session is currently in a game.", displayError: t("sessionInGameError") });
         return "";
       }
 
@@ -144,7 +146,7 @@ const Home = () => {
           setSessionError({
             consoleError: "Error fetching game: ",
             error,
-            displayError: "Could not find game.",
+            displayError: t("gameNotFoundError"),
           });
           return false;
         }
@@ -175,7 +177,7 @@ const Home = () => {
           setSessionError({
             consoleError: "Error creating players: ",
             error,
-            displayError: "Could not create player.",
+            displayError: t("playerCreationError"),
           });
           return false;
         }
@@ -193,7 +195,7 @@ const Home = () => {
         setSessionError({
           consoleError: "Error creating session: ",
           error,
-          displayError: "Could not create session.",
+          displayError: t("sessionCreationError"),
         });
         return;
       }
@@ -236,18 +238,18 @@ const Home = () => {
 
   return (
     <div className="grid gap-4 justify-center">
-      <h1 className="mt-40 text-4xl font-bold text-center">Create or Join a Session</h1>
+      <h1 className="mt-40 text-4xl font-bold text-center">{t("createOrJoinASession")}</h1>
       <Form className="flex flex-col items-center gap-6 w-full max-w-80 mx-auto">
         <div className="w-full">
           <Input
-            label="Player Name"
+            label={t("playerName")}
             labelPlacement="outside"
             variant="bordered"
             className="hover:scale-[1.05]"
             onChange={e => setPlayerName(e.target.value)}
             validate={value => {
               if (value.length > 30) {
-                return "The player name can only be 30 characters long.";
+                return t("playerNameToLong");
               }
             }}
           />
@@ -255,10 +257,10 @@ const Home = () => {
         <div className="border-2 border-default-200 dark:border-default rounded-xl w-full flex flex-col items-center">
           <div>
             <div className="pl-2 text-sm text-default-500 pt-1 inline-flex items-center gap-2">
-              <span className="-translate-y-[12.5%]">Session Name</span>
+              <span className="-translate-y-[12.5%]">{t("sessionName")}</span>
               <Tooltip
                 offset={8}
-                content={`Allowed characters: ${"23456789ABCDEFGHJKLMNPQRSTUVWXYZ".split("").join(", ")}`}
+                content={`${t("allowedCharacters")}: ${"23456789ABCDEFGHJKLMNPQRSTUVWXYZ".split("").join(", ")}`}
                 className={`${theme} text-${theme === "dark" ? "white" : "black"} ${theme === "dark" ? "bg-default-50 border-1 border-default" : ""}`}
               >
                 <Button
@@ -277,13 +279,13 @@ const Home = () => {
               length={6}
               onChange={e => setSessionName((e.target as HTMLInputElement).value)}
               isInvalid={isInvalidSession}
-              errorMessage={sessionNameErrorMessage || "Invalid session name."}
+              errorMessage={sessionNameErrorMessage || t("invalidSessionName")}
             />
           </div>
         </div>
         <div className="flex gap-4 justify-center w-full">
-          <ButtonBordered onPress={createSession}>Create Session</ButtonBordered>
-          <ButtonBordered onPress={joinSession}>Join Session</ButtonBordered>
+          <ButtonBordered onPress={createSession}>{t("createSession")}</ButtonBordered>
+          <ButtonBordered onPress={joinSession}>{t("joinSession")}</ButtonBordered>
         </div>
       </Form>
     </div>

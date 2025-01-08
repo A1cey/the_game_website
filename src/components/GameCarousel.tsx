@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Games } from "@/types/game.types";
-import { defaultDBGameState, getAltNameForGame } from "@/utils/game";
+import { defaultDBGameState, getAltNameForGameSVG } from "@/utils/game";
 import { getEnumValues } from "@/utils/other";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -13,6 +13,7 @@ import type { Json } from "@/types/database.types";
 import useSessionStore from "@/hooks/useSessionStore";
 import ArrowLeftIcon from "./icons/ArrowLeft";
 import ArrowRightIcon from "./icons/ArrowRight";
+import { useTranslation } from "react-i18next";
 
 type ArrowProps = {
   // biome-ignore lint/suspicious/noExplicitAny: The type of the function is not known, so it is set to any.
@@ -70,11 +71,11 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
 
   const sliderRef = useRef<Slider | null>(null);
   const isRender = useRef(true);
+  
+  const {t} = useTranslation();
 
   const updateGameTypeAtDB = useCallback(() => {
     const gameName = getEnumValues(Games).find(val => Games[val] === currentGame) ?? null;
-
-    console.log("Setting new game: ", gameName);
 
     if (!gameId) {
       console.error("Error updating the game selection: Game id not set.");
@@ -100,7 +101,6 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
       return;
     }
 
-    console.log("Setting current game: ", activeSlide, Games[getEnumValues(Games)[activeSlide]]);
     setCurrentGame(Games[getEnumValues(Games)[activeSlide]]);
   }, [activeSlide, setCurrentGame]);
 
@@ -115,7 +115,6 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
 
   // handling changes from other players
   useEffect(() => {
-    console.log("checking for needed slide update");
     if (!gameState?.game) {
       return;
     }
@@ -168,7 +167,7 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
 
   return (
     <div className="flex-col flex gap-8">
-      <h2 className="text-3xl dark:text-primary text-center">Select a Game</h2>
+      <h2 className="text-3xl dark:text-primary text-center">{t("selectGame")}</h2>
       <div className="relative w-[58rem] mx-auto h-[21rem]">
         <div className="absolute inset-0 dark:border-2 rounded-2xl dark:border-primary bg-foreground-200 dark:bg-transparent flex justify-center items-center">
           <div className="relative z-10 max-w-4xl mx-auto">
@@ -181,7 +180,7 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
               {gameImgs.map((img, idx) => (
                 // biome-igore lint/suspicious/noArrayIndexKey: The key is the index of the array, which is fine in this case.
                 <div key={idx} className="bg-opacity-0">
-                  <img src={img} alt={getAltNameForGame(gameImgs[idx])} />
+                  <img src={img} alt={getAltNameForGameSVG(gameImgs[idx])} />
                 </div>
               ))}
             </Slider>

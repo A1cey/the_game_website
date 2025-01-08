@@ -25,7 +25,7 @@ export const removePlayerFromSession = async (playerId: string): Promise<void> =
     });
 };
 
-export const getPlayerNames = async (sessionName: string): Promise<string[]> => {
+export const getPlayerNames = async (sessionName: string, handleTranslation: (key:string) => string): Promise<string[]> => {
   const { data, error } = await supabase.rpc("get_player_names", { session_name_input: sessionName });
   
   if (error) {
@@ -33,7 +33,7 @@ export const getPlayerNames = async (sessionName: string): Promise<string[]> => 
   }
   
   if (data) {
-    return data.map(({ name }) => formatDefaultPlayerName(name));
+    return data.map(({ name }) => formatDefaultPlayerName(name, handleTranslation));
   }
   
   return [];

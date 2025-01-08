@@ -7,6 +7,8 @@ import { useState } from "react";
 import useThemeStore from "@/hooks/useThemeStore";
 import useSessionStore from "@/hooks/useSessionStore";
 import supabase from "@/utils/supabase";
+import { ScrollShadow } from "@nextui-org/scroll-shadow";
+import { useTranslation } from "react-i18next";
 
 const SessionSize = () => {
   const sessionName = useSessionStore(state => state.session.name);
@@ -15,6 +17,8 @@ const SessionSize = () => {
   const theme = useThemeStore(state => state.theme);
   const [isPlayersOpen, setIsPlayersOpen] = useState(false);
 
+  const {t} = useTranslation();
+  
   const sessionSizes: Array<SelectedItemProps<number>> = Array.from({ length: 29 }, (_, i) => ({
     key: i,
     data: i + 2,
@@ -55,16 +59,16 @@ const SessionSize = () => {
         </PopoverTrigger>
         <PopoverContent
           className={`${theme} text-${theme === "dark" ? "white" : "black"} ${theme === "dark" ? "border-1 border-default" : ""}
-        w-fit
+        w-fit translate-x-[18px]
         `}
         >
-          <div className="flex flex-wrap gap-4 w-fit">
+          <div className="flex flex-col flex-wrap gap-4 w-fit">
             <Select
               items={sessionSizes}
               maxListboxHeight={200}
               fullWidth={true}
-              className="min-w-40"
-              label="Set session size"
+              className="min-w-52"
+              label={t("setSessionSize")}
               labelPlacement="outside-left"
               disabledKeys={[(maxNumOfPlayers - 2).toString()]}
               selectedKeys={[(maxNumOfPlayers - 2).toString()]}
@@ -87,8 +91,10 @@ const SessionSize = () => {
                 <SelectItem key={size.key}>{size.data?.toString()}</SelectItem>
               ))}
             </Select>
-            <Divider />
-            <PlayerList />
+            <Divider className=""/>
+            <ScrollShadow className="max-h-[70vh]">
+              <PlayerList />
+            </ScrollShadow>
           </div>
         </PopoverContent>
       </Popover>

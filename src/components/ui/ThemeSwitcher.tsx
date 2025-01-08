@@ -3,8 +3,10 @@ import { Switch } from "@nextui-org/switch";
 import { useEffect, useState } from "react";
 import MoonIcon from "../icons/MoonIcon";
 import SunIcon from "../icons/SunIcon";
+import { useTranslation } from "react-i18next";
 
 export const ThemeSwitcher = () => {
+  const { t } = useTranslation();
   const { theme, setTheme } = useThemeStore();
   const [isSelected, setIsSelected] = useState(theme === "dark");
 
@@ -14,7 +16,7 @@ export const ThemeSwitcher = () => {
 
   return (
     <div className="flex gap-4 items-center">
-      <label htmlFor="theme-switch">{theme.substring(0,1).toUpperCase() + theme.substring(1)} Mode</label>
+      <label htmlFor="theme-switch">{t(`${theme}Mode`)}</label>
       <Switch
         id="theme-switch"
         defaultSelected

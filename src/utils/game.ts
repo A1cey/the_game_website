@@ -4,21 +4,29 @@ import type { Json } from "@/types/database.types";
 import type { Game_t } from "@/types/database_extended.types";
 import { isJson, isJSONConvertibleToGameState } from "./type_guards";
 
-export const getGameImgs = (): string[] => {
+export const getGameImgs = (handleTranslation: (key: string) => string): string[] => {
   const images = import.meta.glob("../assets/game_svgs/**/*.svg", { eager: true });
   return getEnumValues(Games).map(key => {
-    const fileName = `${Games[key].toLowerCase()}.svg`;
+    const fileName = `${handleTranslation(Games[key].toLowerCase()).toLowerCase()}.svg`;
     const path = `../assets/game_svgs/${Games[key].toLowerCase()}/${fileName}`;
     return (images[path] as { default: string }).default;
   });
 };
 
-export const getAltNameForGame = (str: string): string => {
+export const getAltNameForGameSVG = (str: string): string => {
   const name = str.split("/").reverse()[0].replace(".svg", "");
   return name
     .split("_")
-    .map(val => val.substring(0, 1).toUpperCase() + val.substring(1).toLocaleLowerCase())
+    .map(val => val.substring(0, 1).toUpperCase() + val.substring(1).toLowerCase())
     .join(" ");
+};
+
+export const formatGameName = (str: string, handleTranslation: (key: string) => string): string => {
+  return handleTranslation(str.toLowerCase())
+    .split("_")
+    .map(val => val.substring(0, 1).toUpperCase() + val.substring(1).toLowerCase())
+    .join(" ")
+    .replace("ae", "ä");
 };
 
 export const getCards = (): Card[] => {

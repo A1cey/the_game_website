@@ -2,6 +2,7 @@ import type { LittleMaxOptionsType } from "@/types/game.types";
 import { Checkbox } from "@nextui-org/checkbox";
 import { Input } from "@nextui-org/input";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type LittleMaxOptionsProps = LittleMaxOptionsType & {
   setOptions: React.Dispatch<React.SetStateAction<LittleMaxOptionsType>>;
@@ -15,6 +16,8 @@ const LittleMaxOptions = ({ setOptions, lives, passOn21 }: LittleMaxOptionsProps
   const [isLivesInValid, setIsLivesInValid] = useState(false);
 
   const hasChanged = useRef(false);
+  
+  const {t} = useTranslation();
 
   useEffect(() => {
     setIsSelected(passOn21);
@@ -31,12 +34,6 @@ const LittleMaxOptions = ({ setOptions, lives, passOn21 }: LittleMaxOptionsProps
   }, [numOfLives]);
 
   useEffect(() => {
-    // Only update if values have actually changed from user interaction
-    console.log("option change: ", {
-      lives: debouncedLives,
-      passOn21: isSelected,
-    });
-
     if (!isLivesInValid && hasChanged.current) {
       setOptions({
         lives: debouncedLives,
@@ -59,25 +56,21 @@ const LittleMaxOptions = ({ setOptions, lives, passOn21 }: LittleMaxOptionsProps
 
   const validateLives = (input: string): void => {
     const num = Number(input);
-    console.log("Validating: ", num);
 
     if (Number.isNaN(num)) {
-      console.log("not a number");
-      setLivesInputError("Only numbers allowed.");
+      setLivesInputError(t("onlyNumsAllowed"));
       setIsLivesInValid(true);
       return;
     }
 
     if (num > 21) {
-      console.log("Too big");
-      setLivesInputError("Too many lives. Be reasonable");
+      setLivesInputError(t("tooManyLives"));
       setIsLivesInValid(true);
       return;
     }
 
     if (num < 1) {
-      console.log("Too small");
-      setLivesInputError("You need at least one life to play.");
+      setLivesInputError(t("atLeastOneLive"));
       setIsLivesInValid(true);
       return;
     }
@@ -94,15 +87,15 @@ const LittleMaxOptions = ({ setOptions, lives, passOn21 }: LittleMaxOptionsProps
         isSelected={isSelected}
         onValueChange={handlePassOn21Change}
       >
-        Little Max can be passed to next player.
+        {t("passOn21")}
       </Checkbox>
       <div /* Needed for alignment */>
         <Input
-          label="Lives"
+          label={t("lives")}
           labelPlacement="inside"
           variant="bordered"
           className="hover:scale-[1.05] -ml-2" /* margin needed for alignment */
-          value={numOfLives.toString()}
+          value={Number.isNaN(Number(numOfLives)) ? "" : numOfLives.toString()}
           onValueChange={value => handleLivesChange(value)}
           errorMessage={livesInputError}
           isInvalid={isLivesInValid}

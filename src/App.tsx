@@ -11,8 +11,11 @@ import usePlayerStore from "./hooks/usePlayerStore";
 import useThemeStore from "./hooks/useThemeStore";
 import Header from "./components/Header";
 import { removePlayerFromSession } from "./utils/supabase";
+import { useTranslation } from "react-i18next";
 
 const App = () => {
+  const {t} = useTranslation();
+  
   const navigate = useNavigate();
   const theme = useThemeStore(state => state.theme);
   const sessionName = useSessionStore(state => state.session.name);
@@ -36,7 +39,7 @@ const App = () => {
     const beforeUnload = (e: BeforeUnloadEvent): void => {
       e.preventDefault();
       // Ignored from most browsers
-      e.returnValue = "Are you sure you want to leave? Your session data will be lost.";
+      e.returnValue = t("leavePageMessage");
     };
 
     const unload = async () => {
