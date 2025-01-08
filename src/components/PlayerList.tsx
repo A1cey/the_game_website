@@ -1,6 +1,5 @@
 import useSessionStore from "@/hooks/useSessionStore";
-import { formatDefaultPlayerName } from "@/utils/other";
-import supabase from "@/utils/supabase";
+import  { getPlayerNames } from "@/utils/supabase";
 import { Listbox, ListboxItem } from "@nextui-org/listbox";
 import { useEffect, useState } from "react";
 
@@ -10,15 +9,8 @@ const PlayerList = () => {
   const [players, setPlayers] = useState<string[]>([]);
 
   useEffect(() => {
-    supabase.rpc("get_player_names", { session_name_input: sessionName }).then(({ data, error }) => {
-      if (error) {
-        console.error("Error fetching player list: ", error);
-      }
-      if (data) {
-        setPlayers(data.map(({ name }) => formatDefaultPlayerName(name)));
-      }
-    });
-  }, [playerCount]);
+    getPlayerNames(sessionName).then(playerNames => setPlayers(playerNames));     
+  }, [playerCount, sessionName]);
 
   const getPlayerList = () => {
     return (

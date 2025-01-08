@@ -1,5 +1,11 @@
+import GameHeader from "@/components/GameHeader";
+
 const Game = () => {
-  return <div></div>;
+  return (
+    <div>
+      <GameHeader />
+    </div>
+  );
 };
 
 export default Game;

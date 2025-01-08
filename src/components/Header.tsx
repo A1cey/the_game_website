@@ -11,7 +11,7 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div>
+    <header>
       <div className="flex items-center justify-between w-full pt-2 pb-2">
         <div className="w-1/3" />
         <h1 className="text-2xl dark:text-primary-500 font-bold w-1/3 text-center">The Game Website</h1>
@@ -37,7 +37,7 @@ const Header = () => {
         </div>
       </div>
       <Divider />
-    </div>
+    </header>
   );
 };
 

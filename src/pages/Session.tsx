@@ -1,43 +1,34 @@
-import supabase, { removePlayerFromSession } from "@/utils/supabase";
+import supabase from "@/utils/supabase";
 import GameCarousel from "@/components/GameCarousel";
 import GameOptions from "@/components/game_options/GameOptions";
 import { Games } from "@/types/game.types";
-import { Link } from "@nextui-org/react";
 import useSessionStore from "@/hooks/useSessionStore";
-import usePlayerStore from "@/hooks/usePlayerStore";
 import useGameStore from "@/hooks/useGameStore";
 import ButtonBordered from "@/components/ui/ButtonBordered";
 import { getAltNameForGame, getGameImgs } from "@/utils/game";
-import SessionSize from "@/components/SessionMembers";
-import SessionName from "@/components/SessionName";
+import SessionHeader from "@/components/SessionHeader";
+import { useNavigate } from "react-router-dom";
 
 const Session = () => {
   const session = useSessionStore(state => state.session);
   const gameState = useGameStore(state => state.game.game_state);
-  const playerId = usePlayerStore(state => state.player.id);
+  const navigate = useNavigate();
+
 
   const startGame = async () => {
     supabase.rpc("start_game", { session_name: session.name }).then(({ error }) => {
       if (error) {
         console.log("Error while starting game: ", error);
+      } else {
+        navigate("/game");
       }
     });
   };
 
   return (
     <div>
-      <div className="p-2 flex gap-20 w-full items-center justify-between">
-        <div className="w-1/2">
-          <ButtonBordered as={Link} color="primary" href={"/"} onPress={() => removePlayerFromSession(playerId)}>
-            Home
-          </ButtonBordered>
-        </div>
-        <div className="w-1/2 flex justify-end gap-4">
-          <SessionName />
-          <SessionSize />
-        </div>
-      </div>
-      <div className="grid gap-20 justify-center">
+      <div className="flex flex-col gap-20 justify-center">
+        <SessionHeader />
         <div className="mt-40">
           <GameCarousel gameImgs={getGameImgs()} />
         </div>
