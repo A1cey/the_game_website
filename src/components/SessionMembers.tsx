@@ -17,8 +17,8 @@ const SessionSize = () => {
   const theme = useThemeStore(state => state.theme);
   const [isPlayersOpen, setIsPlayersOpen] = useState(false);
 
-  const {t} = useTranslation();
-  
+  const { t } = useTranslation();
+
   const sessionSizes: Array<SelectedItemProps<number>> = Array.from({ length: 29 }, (_, i) => ({
     key: i,
     data: i + 2,
@@ -91,7 +91,7 @@ const SessionSize = () => {
                 <SelectItem key={size.key}>{size.data?.toString()}</SelectItem>
               ))}
             </Select>
-            <Divider className=""/>
+            <Divider className="" />
             <ScrollShadow className="max-h-[70vh]">
               <PlayerList />
             </ScrollShadow>

@@ -71,8 +71,8 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
 
   const sliderRef = useRef<Slider | null>(null);
   const isRender = useRef(true);
-  
-  const {t} = useTranslation();
+
+  const { t } = useTranslation();
 
   const updateGameTypeAtDB = useCallback(() => {
     const gameName = getEnumValues(Games).find(val => Games[val] === currentGame) ?? null;

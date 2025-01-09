@@ -85,15 +85,20 @@ export type WerwolfOptionsType = {};
 export type AssholeGameState = {};
 export type DurakGameState = {};
 export type LittleMaxGameState = {
-  diceValue: PossibleLittleMaxValue;
-  namedValue: PossibleLittleMaxValue;
+  namedValues: LittleMaxOldValue[];
+  lie_revealed: boolean;
+  lives: PlayerLive[];
 };
 export type PokerGameState = {};
 export type ThirtyOneGameState = {};
 export type WerwolfGameState = {};
 
+export type LittleMaxOldValue = {
+  value: PossibleLittleMaxValue;
+  player: number;
+};
 export type PossibleLittleMaxValue =
-  | null
+  | 0
   | 31
   | 32
   | 41
@@ -115,3 +120,8 @@ export type PossibleLittleMaxValue =
   | 55
   | 66
   | 21;
+
+export type PlayerLive = {
+  lives: number;
+  player: number;
+};

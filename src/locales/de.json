@@ -8,11 +8,11 @@
     "sessionName": "Sessionname",
     "invalidSessionName": "Ungültiger Sessionname",
     "sessionCreationError": "Session konnte nicht erstellt werden.",
-    "sessionNotFoundError":"Session konnte nicht gefunden werden.",
+    "sessionNotFoundError": "Session konnte nicht gefunden werden.",
     "sessionFullError": "Die Session ist voll.",
     "sessionInGameError": "Die Session ist zurzeit in einem Spiel.",
     "playerCreationError": "Spieler konnte nicht erstellt werden.",
-    "gameNotFoundError":"Spiel konnte nicht gefunden werden.",
+    "gameNotFoundError": "Spiel konnte nicht gefunden werden.",
     "allowedCharacters": "Erlaubte Zeichen",
     "createSession": "Session erstellen",
     "joinSession": "Session betreten",
@@ -27,9 +27,9 @@
     "startGame": "{{game}} starten",
     "asshole": "Arschloch",
     "littleMax": "Mäxle",
-    "little_max":"maexle",
-    "thirtyOne": "Schwimmen",  
-    "thirty_one": "schwimmen", 
+    "little_max": "maexle",
+    "thirtyOne": "Schwimmen",
+    "thirty_one": "schwimmen",
     "leaveGame": "Spiel verlassen",
     "leavePageMessage": "Bist du dir sicher, dass du die Seite verlassen möchtest? Alle Session Daten werden verloren gehen.",
     "english": "Englisch",
@@ -39,6 +39,7 @@
     "lives": "Leben",
     "onlyNumsAllowed": "Nur Zahlen sind erlaubt.",
     "tooManyLives": "Zu viele Leben. Mach kein Unsinn.",
-    "atLeastOneLive":"Man braucht mindestens ein Leben, um zu spielen."
+    "atLeastOneLive": "Man braucht mindestens ein Leben, um zu spielen.",
+    "notEnoughPlayers": "Zu wenig Spieler"
   }
 }

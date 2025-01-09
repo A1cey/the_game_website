@@ -40,7 +40,11 @@ export const isGameState = <T extends Games>(data: unknown): data is GameState<T
     case Games.LITTLE_MAX:
       return (
         isValidOptions(gameState.options, { passOn21: "boolean", lives: "number" }) &&
-        isValidState(gameState.state, { diceValue: "PossibleLittleMaxValue", namedValue: "PossibleLittleMaxValue" })
+        isValidState(gameState.state, {
+          lie_revealed: "boolean",
+          namedValues: "PossibleLittleMaxValueArray",
+          lives: "PlayerLivesArray",
+        })
       );
     case Games.POKER:
       return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
@@ -96,7 +100,12 @@ const isValidState = (state: unknown, schema: Record<string, string>): boolean =
     const expectedType = schema[key];
     const value = (state as Record<string, unknown>)[key];
 
-    if (expectedType === "PossibleLittleMaxValue" && !isPossibleLittleMaxValue(value)) {
+    if (
+      expectedType === "PossibleLittleMaxValueArray" &&
+      (!Array.isArray(value) || value.some(x => !isPossibleLittleMaxValue(x)))
+    ) {
+      return false;
+    } else if (expectedType === "PlayerLivesArray" && (!Array.isArray(value) || value.some(x => !isPlayerLive(x)))) {
       return false;
     } else if (typeof value !== expectedType) {
       return false;
@@ -104,6 +113,10 @@ const isValidState = (state: unknown, schema: Record<string, string>): boolean =
   }
 
   return true;
+};
+
+const isPlayerLive = (x: any): boolean => {
+  return typeof x === "object" && typeof x["player"] === "number" && typeof x["lives"] === "number";
 };
 
 const isValidJSONState = (state: unknown, schema: Record<string, string>): boolean => {
@@ -220,8 +233,13 @@ export const isJSONConvertibleToGameState = <T extends Games>(json: Json): json 
   const game = json["game"];
 
   // valid game type
-  if (typeof game !== "string" || !Object.values(Games).includes(game)) {
-    console.error("JSON game data does not contain valid game type.");
+  if (
+    !(
+      (typeof game === "string" && Object.keys(Games).includes(game)) ||
+      (typeof game === "number" && Object.values(Games).includes(game))
+    )
+  ) {
+    console.error(`JSON game data does not contain valid game type: ${game}, ${typeof game}`);
     return false;
   }
 
@@ -240,7 +258,7 @@ export const isJSONConvertibleToGameState = <T extends Games>(json: Json): json 
     case "LITTLE_MAX":
       return (
         isValidJSONOptions(json["options"], { passOn21: "boolean", lives: "number" }) &&
-        isValidJSONState(json["state"], { diceValue: "PossibleLittleMaxValue", namedValue: "PossibleLittleMaxValue" })
+        isValidJSONState(json["state"], { lie_revealed: "boolean", namedValue: "PossibleLittleMaxValueArray" })
       );
     case "POKER":
       return isValidJSONOptions(json["options"], {}) && isValidJSONState(json["state"], {});

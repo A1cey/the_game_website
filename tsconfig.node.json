@@ -7,12 +7,10 @@
 		"skipLibCheck": true,
 		"composite": true,
 
-		/* Bundler mode */
 		"moduleResolution": "bundler",
 		"isolatedModules": true,
 		"moduleDetection": "force",
 
-		/* Linting */
 		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,

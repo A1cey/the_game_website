@@ -16,8 +16,8 @@ const LittleMaxOptions = ({ setOptions, lives, passOn21 }: LittleMaxOptionsProps
   const [isLivesInValid, setIsLivesInValid] = useState(false);
 
   const hasChanged = useRef(false);
-  
-  const {t} = useTranslation();
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     setIsSelected(passOn21);

@@ -59,10 +59,10 @@ export const convertGamesStateJSONToGameStateType = (json: Json | null): GameSta
     return null;
   }
 
-  const gameName = getEnumValues(Games).find(val => Games[val] === json.game) ?? null;
+  const gameName = getEnumValues(Games).find(val => Games[val] === json.game);
 
-  if (!gameName && gameName !== 0) {
-    console.error("Game name is null");
+  if (gameName === undefined) {
+    console.error("Game name is not found in Games enum.");
     return null;
   }
 
@@ -139,8 +139,9 @@ export const defaultGameState = (game: Games): GameState<Games> => {
       passOn21: true,
     },
     state: {
-      diceValue: 31,
-      namedValue: 31,
+      namedValues: [],
+      lie_revealed: false,
+      lives: [],
     },
   };
 

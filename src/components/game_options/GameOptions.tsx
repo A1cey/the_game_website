@@ -29,8 +29,8 @@ const GameOptions = () => {
   const currentGame = useGameStore(state => state.game.game_state?.game);
   const gameType = gameState?.game;
 
-  const {t} = useTranslation();
-  
+  const { t } = useTranslation();
+
   const updateGameOptionsAtDB = useCallback(
     (newOptions: GameMap[Games]["options"]) => {
       supabase
@@ -100,17 +100,15 @@ const GameOptions = () => {
 
   return (
     <Popover placement="bottom">
-      <PopoverTrigger
-        className="hover:scale-105"
-      >
-        <ButtonBordered disabled={!currentOptions}>{t("gameOptions") }</ButtonBordered>
+      <PopoverTrigger className="hover:scale-105">
+        <ButtonBordered disabled={!currentOptions}>{t("gameOptions")}</ButtonBordered>
       </PopoverTrigger>
       <PopoverContent
         className={`${theme} text-${
           theme === "dark" ? "white" : "black"
         } ${theme === "dark" ? "border-1 border-default" : ""}`}
       >
-        {currentOptions || <p>{t("noOptionsAvailabel")}</p>}
+        {currentOptions || <p>{t("noOptionsAvailable")}</p>}
       </PopoverContent>
     </Popover>
   );

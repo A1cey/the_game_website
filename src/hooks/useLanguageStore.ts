@@ -4,8 +4,8 @@ export type SupportedLanguages = "en" | "de";
 
 type Language = {
   lang: SupportedLanguages;
-  setLang: (newLang: SupportedLanguages, changeLanguage: (lang: SupportedLanguages) => void)=> void;
-}
+  setLang: (newLang: SupportedLanguages, changeLanguage: (lang: SupportedLanguages) => void) => void;
+};
 
 const useLanguageStore = create<Language>(set => ({
   lang: "en",
@@ -13,7 +13,6 @@ const useLanguageStore = create<Language>(set => ({
     changeLanguage(newLang);
     set(() => ({ lang: newLang }));
   },
-  }));
-
+}));
 
 export default useLanguageStore;
