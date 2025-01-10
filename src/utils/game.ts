@@ -140,8 +140,9 @@ export const defaultGameState = (game: Games): GameState<Games> => {
     },
     state: {
       namedValues: [],
-      lie_revealed: false,
+      lieRevealed: false,
       lives: [],
+      activePlayers: [],
     },
   };
 

@@ -11,6 +11,7 @@ import GameRules from "@/components/GameRules";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { Games, GameState, LittleMaxGameState } from "@/types/game.types";
+import { Spinner } from "@nextui-org/react";
 
 const Session = () => {
   const session = useSessionStore(state => state.session);
@@ -29,13 +30,15 @@ const Session = () => {
   }, [gameStarted]);
 
   const startGame = async () => {
+    setupGame();
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     supabase.rpc("start_game", { session_name: session.name }).then(({ error }) => {
       if (error) {
         console.log("Error while starting game: ", error);
       }
     });
-
-    setupGame();
   };
 
   const setupGame = () => {
@@ -52,7 +55,7 @@ const Session = () => {
       case Games.DURAK:
         break;
       case Games.LITTLE_MAX:
-        setLittleMaxLives();
+        setUpLittleMax();
         break;
       case Games.POKER:
         break;
@@ -65,7 +68,7 @@ const Session = () => {
     }
   };
 
-  const setLittleMaxLives = () => {
+  const setUpLittleMax = () => {
     if (!gameState) {
       console.error("Could not set lives for game. No game state available.");
       return;
@@ -73,10 +76,12 @@ const Session = () => {
 
     const newState = { ...gameState.state } as LittleMaxGameState;
 
-    newState.lives = Array.from({ length: numOfPlayers }).map((_, idx: number) => ({
+    newState.lives = Array.from({ length: numOfPlayers }).map((_, idx) => ({
       lives: (gameState as GameState<Games.LITTLE_MAX>).options.lives,
       player: idx + 1,
     }));
+
+    newState.activePlayers = Array.from({ length: numOfPlayers }).map((_, idx) => idx + 1);
 
     supabase
       .from("games")
@@ -89,6 +94,19 @@ const Session = () => {
       });
   };
 
+  if (!gameState) {
+    return (
+      <div>
+        <div className="flex flex-col gap-28 justify-center">
+          <SessionHeader />
+          <div className="flex justify-center">
+            <Spinner size="lg" color="primary" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div>
       <div className="flex flex-col gap-28 justify-center">

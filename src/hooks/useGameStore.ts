@@ -95,8 +95,7 @@ const useGameStore = create<GameState>()((set, get) => ({
 }));
 
 const getNewGame = (data: Json, old: Game_t): Game_t => {
-  console.log("Updating game with: ", data);
-
+  console.log("Getting new game data");
   const newGame = convertGamesJSONToGameT(data);
 
   if (!newGame) {

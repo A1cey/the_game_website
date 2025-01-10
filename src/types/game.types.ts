@@ -1,3 +1,10 @@
+import { Dispatch, SetStateAction } from "react";
+
+export type GameProps = {
+  setWinner: Dispatch<SetStateAction<string | null>>;
+  onLivesChange: Dispatch<SetStateAction<PlayerLive[]>>;
+};
+
 export enum Games {
   ASSHOLE = 0,
   DURAK = 1,
@@ -86,8 +93,9 @@ export type AssholeGameState = {};
 export type DurakGameState = {};
 export type LittleMaxGameState = {
   namedValues: LittleMaxOldValue[];
-  lie_revealed: boolean;
+  lieRevealed: boolean;
   lives: PlayerLive[];
+  activePlayers: number[];
 };
 export type PokerGameState = {};
 export type ThirtyOneGameState = {};

@@ -50,6 +50,7 @@ const GameOptions = () => {
 
   const setOptions = useCallback(
     (newOptions: GameMap[Games]["options"]) => {
+      console.log("updating options at db");
       updateGameOptionsAtDB(newOptions);
     },
     [updateGameOptionsAtDB],
@@ -57,6 +58,8 @@ const GameOptions = () => {
 
   let currentOptions = null;
   if (gameType && currentGame !== undefined) {
+    console.log("settzing options with state: ", gameState.options)
+    
     const game = Games[gameType as unknown as keyof typeof Games] as unknown as Games;
     switch (Number(game)) {
       case Games.ASSHOLE:

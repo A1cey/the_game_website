@@ -162,6 +162,12 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: string;
       };
+      end_game: {
+        Args: {
+          session_name: string;
+        };
+        Returns: undefined;
+      };
       get_next_player_position: {
         Args: {
           session_name_input: string;

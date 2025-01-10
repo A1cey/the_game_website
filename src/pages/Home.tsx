@@ -151,6 +151,7 @@ const Home = () => {
           return false;
         }
         if (data) {
+          console.log("game data: ", data);
           updateGame(data, "subscription");
         }
       });

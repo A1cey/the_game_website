@@ -43,6 +43,9 @@ const LittleMaxGameProgress = ({
   };
 
   const getPlayerForPos = (val: number): string => {
+    if (!namedValues) {
+      return "";
+    }
     let playerPos = namedValues.find(value => value.value === val)?.player;
     return playerPos ? players[playerPos - 1] : "";
   };

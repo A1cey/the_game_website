@@ -14,25 +14,29 @@ import {
 } from "@/types/game.types";
 
 export const isGameState = <T extends Games>(data: unknown): data is GameState<T> => {
-  if (typeof data !== "object" || data === null) {
+  if (typeof data !== "object" ||data === null) {
+    console.log("not and object or null")
     return false;
   }
 
   const gameState = data as Partial<GameState<T>>;
 
   if (!Object.values(Games).includes(gameState.game as Games)) {
+    console.log("invalid game")
     return false;
   }
 
   const isValidBaseInformation = (gameState: Partial<GameState<T>>): boolean => {
-    return typeof gameState.minPlayers !== "number" || typeof gameState.maxPlayers !== "number";
+    return typeof gameState.minPlayers === "number" || typeof gameState.maxPlayers === "number";
   };
 
   if (!isValidBaseInformation(gameState)) {
+    console.log("invalid base information")
     return false;
   }
-
-  switch (gameState.game) {
+  
+  const game = Games[gameState.game as unknown as keyof typeof Games] as unknown as Games;
+  switch (Number(game)) {
     case Games.ASSHOLE:
       return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
     case Games.DURAK:
@@ -41,8 +45,8 @@ export const isGameState = <T extends Games>(data: unknown): data is GameState<T
       return (
         isValidOptions(gameState.options, { passOn21: "boolean", lives: "number" }) &&
         isValidState(gameState.state, {
-          lie_revealed: "boolean",
-          namedValues: "PossibleLittleMaxValueArray",
+          lieRevealed: "boolean",
+          namedValues: "NamedValuesArray",
           lives: "PlayerLivesArray",
         })
       );
@@ -53,12 +57,15 @@ export const isGameState = <T extends Games>(data: unknown): data is GameState<T
     case Games.WERWOLF:
       return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
     default:
+      console.log("invalud game")
       return false;
   }
 };
 
 const isValidOptions = (options: unknown, schema: Record<string, string>): boolean => {
+  console.log("checking options")
   if (typeof options !== "object" || options == null) {
+    console.log("invalid options")
     return false;
   }
 
@@ -67,6 +74,7 @@ const isValidOptions = (options: unknown, schema: Record<string, string>): boole
     const value = (options as Record<string, unknown>)[key];
 
     if (expectedType !== typeof value) {
+      console.log("invalid options: type: ", typeof value, "expected: ", expectedType)
       return false;
     }
   }
@@ -92,7 +100,9 @@ const isValidJSONOptions = (options: unknown, schema: Record<string, string>): b
 };
 
 const isValidState = (state: unknown, schema: Record<string, string>): boolean => {
+  console.log("checking state")
   if (typeof state !== "object" || state == null) {
+    console.log("invalid state")
     return false;
   }
 
@@ -100,14 +110,18 @@ const isValidState = (state: unknown, schema: Record<string, string>): boolean =
     const expectedType = schema[key];
     const value = (state as Record<string, unknown>)[key];
 
-    if (
-      expectedType === "PossibleLittleMaxValueArray" &&
-      (!Array.isArray(value) || value.some(x => !isPossibleLittleMaxValue(x)))
-    ) {
-      return false;
-    } else if (expectedType === "PlayerLivesArray" && (!Array.isArray(value) || value.some(x => !isPlayerLive(x)))) {
-      return false;
+    if ( expectedType === "NamedValuesArray") {
+      if (!Array.isArray(value) || value.some(x => !isPossibleLittleMaxValue(x))) {
+        console.log("invalid possible little max value array: type: ", value)
+        return false;
+      }
+    } else if (expectedType === "PlayerLivesArray") {
+      if (!Array.isArray(value) || value.some(x => !isPlayerLive(x))) {
+        console.log("invalid player lives array: type: ", value)
+        return false;
+      }
     } else if (typeof value !== expectedType) {
+      console.log("invalid state: type: ", typeof value, "expected: ", expectedType)
       return false;
     }
   }
@@ -162,9 +176,13 @@ export const isPartialGameT = (input: unknown): input is Partial<Game_t> => {
       continue;
     }
 
-    if (expectedType === "GameState" && !isGameState(value)) {
-      return false;
+    if (expectedType === "GameState") {
+      if (!isGameState(value)) {
+        console.log("invalid game State: ", value);
+        return false;
+      }
     } else if (typeof value !== expectedType) {
+      console.log("invalid type:", value, "expected: ", expectedType);
       return false;
     }
   }
@@ -183,9 +201,11 @@ export const isGameT = (input: unknown): input is Game_t => {
     const expectedType = gameTSchema[key];
     const value = (input as Record<string, unknown>)[key];
 
-    if (expectedType === "GameState" && !isGameState(value)) {
+    if (expectedType === "GameState"){ 
+     if( !isGameState(value)) {
       return false;
-    } else if (typeof value !== expectedType) {
+     }
+    } else  if (typeof value !== expectedType) {
       return false;
     }
   }
