@@ -16,7 +16,6 @@ import { random } from "@/utils/other";
 import useSessionStore from "@/hooks/useSessionStore";
 import { useTranslation } from "react-i18next";
 import { Modal, ModalBody, ModalContent, useDisclosure } from "@nextui-org/modal";
-import useThemeStore from "@/hooks/useThemeStore";
 
 const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
   const positionInSession = usePlayerStore(state => state.player.position_in_session as number);
@@ -41,7 +40,6 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
   const [lieRevealText, setLieRevealText] = useState("");
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const theme = useThemeStore(state => state.theme);
 
   const { t } = useTranslation();
 
@@ -395,7 +393,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
         }}
       >
         <ModalContent>
-          {onClose => (
+          {() => (
             <>
               <ModalBody>
                 <div className="size-full flex justify-center items-center text-5xl text-warning text-center text-nowrap bg-transparent">
