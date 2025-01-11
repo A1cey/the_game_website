@@ -29,8 +29,8 @@ const GameOptions = () => {
   const currentGame = useGameStore(state => state.game.game_state?.game);
   const gameType = gameState?.game;
 
-  const {t} = useTranslation();
-  
+  const { t } = useTranslation();
+
   const updateGameOptionsAtDB = useCallback(
     (newOptions: GameMap[Games]["options"]) => {
       supabase
@@ -50,6 +50,7 @@ const GameOptions = () => {
 
   const setOptions = useCallback(
     (newOptions: GameMap[Games]["options"]) => {
+      console.log("updating options at db");
       updateGameOptionsAtDB(newOptions);
     },
     [updateGameOptionsAtDB],
@@ -57,6 +58,8 @@ const GameOptions = () => {
 
   let currentOptions = null;
   if (gameType && currentGame !== undefined) {
+    console.log("settzing options with state: ", gameState.options);
+
     const game = Games[gameType as unknown as keyof typeof Games] as unknown as Games;
     switch (Number(game)) {
       case Games.ASSHOLE:
@@ -100,17 +103,15 @@ const GameOptions = () => {
 
   return (
     <Popover placement="bottom">
-      <PopoverTrigger
-        className="hover:scale-105"
-      >
-        <ButtonBordered disabled={!currentOptions}>{t("gameOptions") }</ButtonBordered>
+      <PopoverTrigger className="hover:scale-105">
+        <ButtonBordered disabled={!currentOptions}>{t("gameOptions")}</ButtonBordered>
       </PopoverTrigger>
       <PopoverContent
         className={`${theme} text-${
           theme === "dark" ? "white" : "black"
         } ${theme === "dark" ? "border-1 border-default" : ""}`}
       >
-        {currentOptions || <p>{t("noOptionsAvailabel")}</p>}
+        {currentOptions || <p>{t("noOptionsAvailable")}</p>}
       </PopoverContent>
     </Popover>
   );

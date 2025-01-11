@@ -14,8 +14,8 @@ import { removePlayerFromSession } from "./utils/supabase";
 import { useTranslation } from "react-i18next";
 
 const App = () => {
-  const {t} = useTranslation();
-  
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
   const theme = useThemeStore(state => state.theme);
   const sessionName = useSessionStore(state => state.session.name);

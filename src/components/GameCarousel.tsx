@@ -67,12 +67,12 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
   const gameState = useGameStore(state => state.game.game_state);
 
   const [currentGame, setCurrentGame] = useState(gameState?.game.toString() ?? Object.values(Games)[0].toString());
-  const [activeSlide, setActiveSlide] = useState(0);
+  const [activeSlide, setActiveSlide] = useState(gameState?.game ?? 0);
 
   const sliderRef = useRef<Slider | null>(null);
   const isRender = useRef(true);
-  
-  const {t} = useTranslation();
+
+  const { t } = useTranslation();
 
   const updateGameTypeAtDB = useCallback(() => {
     const gameName = getEnumValues(Games).find(val => Games[val] === currentGame) ?? null;
@@ -81,6 +81,9 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
       console.error("Error updating the game selection: Game id not set.");
       return;
     }
+
+    console.log("updating game type at db");
+    console.log();
 
     supabase
       .from("games")
@@ -94,6 +97,20 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
         }
       });
   }, [gameId, currentGame]);
+
+  // handling changes from other players
+  useEffect(() => {
+    if (!gameState?.game) {
+      return;
+    }
+
+    const newSlideIndex = getEnumValues(Games).findIndex(val => Games[val] === gameState.game.toString());
+
+    if (newSlideIndex !== -1 && newSlideIndex !== activeSlide) {
+      console.log("Setting slide");
+      sliderRef.current?.slickGoTo(newSlideIndex);
+    }
+  }, [gameState]);
 
   useEffect(() => {
     if (isRender.current) {
@@ -112,20 +129,6 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
 
     updateGameTypeAtDB();
   }, [currentGame]);
-
-  // handling changes from other players
-  useEffect(() => {
-    if (!gameState?.game) {
-      return;
-    }
-
-    const newSlideIndex = getEnumValues(Games).findIndex(val => Games[val] === gameState.game.toString());
-
-    if (newSlideIndex !== -1 && newSlideIndex !== activeSlide) {
-      console.log("Setting slide");
-      sliderRef.current?.slickGoTo(newSlideIndex);
-    }
-  }, [gameState]);
 
   const settings = {
     // biome-ignore lint/suspicious/noExplicitAny: The type of the function is not known, so it is set to any.

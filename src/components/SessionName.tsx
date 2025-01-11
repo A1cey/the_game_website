@@ -8,7 +8,7 @@ const SessionName = () => {
   const theme = useThemeStore(state => state.theme);
 
   const { t } = useTranslation();
-  
+
   return (
     <Snippet
       codeString={sessionName}

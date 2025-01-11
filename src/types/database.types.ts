@@ -21,6 +21,35 @@ export type Database = {
         };
         Relationships: [];
       };
+      little_max: {
+        Row: {
+          created_at: string;
+          dice_value: number | null;
+          game_id: string;
+          last_player: number;
+        };
+        Insert: {
+          created_at?: string;
+          dice_value?: number | null;
+          game_id?: string;
+          last_player?: number;
+        };
+        Update: {
+          created_at?: string;
+          dice_value?: number | null;
+          game_id?: string;
+          last_player?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "little_max_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: true;
+            referencedRelation: "games";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       logs: {
         Row: {
           created_at: string;
@@ -133,6 +162,12 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: string;
       };
+      end_game: {
+        Args: {
+          session_name: string;
+        };
+        Returns: undefined;
+      };
       get_next_player_position: {
         Args: {
           session_name_input: string;
@@ -164,6 +199,14 @@ export type Database = {
       start_game: {
         Args: {
           session_name: string;
+        };
+        Returns: undefined;
+      };
+      update_secure_little_max: {
+        Args: {
+          id: string;
+          player_input: number;
+          value: number;
         };
         Returns: undefined;
       };

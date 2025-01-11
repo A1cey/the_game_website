@@ -8,11 +8,11 @@
     "sessionName": "Session Name",
     "invalidSessionName": "Invalid session name.",
     "sessionCreationError": "Could not create session.",
-    "sessionNotFoundError":"Could not find session.",
+    "sessionNotFoundError": "Could not find session.",
     "sessionFullError": "Session is full.",
     "sessionInGameError": "Session is currently in a game.",
     "playerCreationError": "Could not create player.",
-    "gameNotFoundError":"Could not find game.",
+    "gameNotFoundError": "Could not find game.",
     "allowedCharacters": "Allowed characters",
     "createSession": "Create Session",
     "joinSession": "Join Session",
@@ -28,7 +28,7 @@
     "asshole": "Asshole",
     "littleMax": "Little Max",
     "little_max": "little_max",
-    "thirtyOne": "Thirty One",  
+    "thirtyOne": "Thirty One",
     "leaveGame": "Leave Game",
     "leavePageMessage": "Are you sure you want to leave? Your session data will be lost.",
     "english": "English",
@@ -38,6 +38,12 @@
     "lives": "Lives",
     "onlyNumsAllowed": "Only numbers allowed.",
     "tooManyLives": "Too many lives. Be reasonable",
-    "atLeastOneLive":"You need at least one life to play."
+    "atLeastOneLive": "You need at least one life to play.",
+    "notEnoughPlayers": "Not enough players",
+    "PassOn": "Pass on {{value}} {{orHigher}}",
+    "and": "and",
+    "Roll": "Roll",
+    "Reveal": "Reveal",
+    "orHigher": "or higher"
   }
 }

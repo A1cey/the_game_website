@@ -1,11 +1,11 @@
 import type { LittleMaxOptionsType } from "@/types/game.types";
 import { Checkbox } from "@nextui-org/checkbox";
 import { Input } from "@nextui-org/input";
-import { useEffect, useRef, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 type LittleMaxOptionsProps = LittleMaxOptionsType & {
-  setOptions: React.Dispatch<React.SetStateAction<LittleMaxOptionsType>>;
+  setOptions: Dispatch<SetStateAction<LittleMaxOptionsType>>;
 };
 
 const LittleMaxOptions = ({ setOptions, lives, passOn21 }: LittleMaxOptionsProps) => {
@@ -16,10 +16,12 @@ const LittleMaxOptions = ({ setOptions, lives, passOn21 }: LittleMaxOptionsProps
   const [isLivesInValid, setIsLivesInValid] = useState(false);
 
   const hasChanged = useRef(false);
-  
-  const {t} = useTranslation();
+
+  const { t } = useTranslation();
 
   useEffect(() => {
+    console.log("pass: ", passOn21);
+    console.log("lives: ", lives);
     setIsSelected(passOn21);
     setLives(lives);
     setDebouncedLives(lives);

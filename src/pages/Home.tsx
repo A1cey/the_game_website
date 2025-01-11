@@ -24,8 +24,8 @@ type SetSessionErrorOptions = {
 
 const Home = () => {
   const navigate = useNavigate();
-   const { t } = useTranslation();
-  
+  const { t } = useTranslation();
+
   const [sessionName, setSessionName] = useState("");
   const [playerName, setPlayerName] = useState("");
   const [sessionNameErrorMessage, setSessionNameErrorMessage] = useState("");
@@ -151,6 +151,7 @@ const Home = () => {
           return false;
         }
         if (data) {
+          console.log("game data: ", data);
           updateGame(data, "subscription");
         }
       });

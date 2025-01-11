@@ -12,15 +12,18 @@ const GameRules = () => {
   const [rules, setRules] = useState("");
   const theme = useThemeStore(state => state.theme);
 
-  const {t } = useTranslation();
-  
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation();
+
   useEffect(() => {
     if (!currentGame) {
       return;
     }
-    
+
     const filename = t(currentGame.toString().toLowerCase()).toLowerCase().replace("ä", "ae");
-       
+
     import(`../assets/rules/${filename}.md?raw`)
       .then(module => {
         setRules(module.default);
@@ -29,21 +32,20 @@ const GameRules = () => {
         console.error(`Error fetching rules for game ${currentGame}:`, error);
         setRules("");
       });
-
-  }, [currentGame]);
+  }, [currentGame, language]);
 
   return (
     <div>
-      <ButtonBordered onPress={onOpen}>{t("gameRules") }</ButtonBordered>
-      <Modal 
-        isOpen={isOpen} 
-        onOpenChange={onOpenChange} 
-        size="5xl" 
+      <ButtonBordered onPress={onOpen}>{t("gameRules")}</ButtonBordered>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        size="5xl"
         scrollBehavior="inside"
         classNames={{
-          header :`${theme === "dark"? "bg-default-900 text-default border-default-700 border-b-1" : "bg-default-100"} rounded-t-xl justify-center text-2xl`,
-          body:`${theme === "dark"? "bg-default-900 text-default" : ""}`,        
-          footer:`${theme === "dark"? "bg-default-900 text-default border-default-700 border-t-1" : "bg-default-100"} rounded-b-xl`,
+          header: `${theme === "dark" ? "bg-default-900 text-default border-default-700 border-b-1" : "bg-default-100"} rounded-t-xl justify-center text-2xl`,
+          body: `${theme === "dark" ? "bg-default-900 text-default" : ""}`,
+          footer: `${theme === "dark" ? "bg-default-900 text-default border-default-700 border-t-1" : "bg-default-100"} rounded-b-xl`,
         }}
       >
         <ModalContent>
@@ -51,11 +53,7 @@ const GameRules = () => {
             <>
               <ModalHeader>{t("gameRules")}</ModalHeader>
               <ModalBody>
-               
-               <ReactMarkdown className="markdown">
-                {rules}
-               </ReactMarkdown>
-
+                <ReactMarkdown className="markdown">{rules}</ReactMarkdown>
               </ModalBody>
               <ModalFooter>
                 <ButtonBordered onPress={onClose}>Ok</ButtonBordered>
@@ -65,7 +63,7 @@ const GameRules = () => {
         </ModalContent>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
 export default GameRules;

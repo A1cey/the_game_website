@@ -1,3 +1,10 @@
+import type { Dispatch, SetStateAction } from "react";
+
+export type GameProps = {
+  setWinner: Dispatch<SetStateAction<string | null>>;
+  onLivesChange: Dispatch<SetStateAction<PlayerLive[]>>;
+};
+
 export enum Games {
   ASSHOLE = 0,
   DURAK = 1,
@@ -85,15 +92,22 @@ export type WerwolfOptionsType = {};
 export type AssholeGameState = {};
 export type DurakGameState = {};
 export type LittleMaxGameState = {
-  diceValue: PossibleLittleMaxValue;
-  namedValue: PossibleLittleMaxValue;
+  namedValues: LittleMaxOldValue[];
+  lieRevealed: boolean;
+  lives: PlayerLive[];
+  activePlayers: number[];
 };
 export type PokerGameState = {};
 export type ThirtyOneGameState = {};
 export type WerwolfGameState = {};
 
+export type LittleMaxOldValue = {
+  value: PossibleLittleMaxValue;
+  player: number;
+  orHigher: boolean;
+};
 export type PossibleLittleMaxValue =
-  | null
+  | 0
   | 31
   | 32
   | 41
@@ -115,3 +129,8 @@ export type PossibleLittleMaxValue =
   | 55
   | 66
   | 21;
+
+export type PlayerLive = {
+  lives: number;
+  player: number;
+};

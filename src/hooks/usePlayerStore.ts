@@ -78,7 +78,7 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
   },
 
   resetStore: async () => {
-    if (get().player.id){
+    if (get().player.id) {
       await removePlayerFromSession(get().player.id);
     }
     get().unsubscribe();

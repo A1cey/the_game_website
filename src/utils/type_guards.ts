@@ -15,24 +15,28 @@ import {
 
 export const isGameState = <T extends Games>(data: unknown): data is GameState<T> => {
   if (typeof data !== "object" || data === null) {
+    console.log("not and object or null");
     return false;
   }
 
   const gameState = data as Partial<GameState<T>>;
 
   if (!Object.values(Games).includes(gameState.game as Games)) {
+    console.log("invalid game");
     return false;
   }
 
   const isValidBaseInformation = (gameState: Partial<GameState<T>>): boolean => {
-    return typeof gameState.minPlayers !== "number" || typeof gameState.maxPlayers !== "number";
+    return typeof gameState.minPlayers === "number" || typeof gameState.maxPlayers === "number";
   };
 
   if (!isValidBaseInformation(gameState)) {
+    console.log("invalid base information");
     return false;
   }
 
-  switch (gameState.game) {
+  const game = Games[gameState.game as unknown as keyof typeof Games] as unknown as Games;
+  switch (Number(game)) {
     case Games.ASSHOLE:
       return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
     case Games.DURAK:
@@ -40,7 +44,11 @@ export const isGameState = <T extends Games>(data: unknown): data is GameState<T
     case Games.LITTLE_MAX:
       return (
         isValidOptions(gameState.options, { passOn21: "boolean", lives: "number" }) &&
-        isValidState(gameState.state, { diceValue: "PossibleLittleMaxValue", namedValue: "PossibleLittleMaxValue" })
+        isValidState(gameState.state, {
+          lieRevealed: "boolean",
+          namedValues: "NamedValuesArray",
+          lives: "PlayerLivesArray",
+        })
       );
     case Games.POKER:
       return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
@@ -49,12 +57,15 @@ export const isGameState = <T extends Games>(data: unknown): data is GameState<T
     case Games.WERWOLF:
       return isValidOptions(gameState.options, {}) && isValidState(gameState.state, {});
     default:
+      console.log("invalud game");
       return false;
   }
 };
 
 const isValidOptions = (options: unknown, schema: Record<string, string>): boolean => {
+  console.log("checking options");
   if (typeof options !== "object" || options == null) {
+    console.log("invalid options");
     return false;
   }
 
@@ -63,6 +74,7 @@ const isValidOptions = (options: unknown, schema: Record<string, string>): boole
     const value = (options as Record<string, unknown>)[key];
 
     if (expectedType !== typeof value) {
+      console.log("invalid options: type: ", typeof value, "expected: ", expectedType);
       return false;
     }
   }
@@ -88,7 +100,9 @@ const isValidJSONOptions = (options: unknown, schema: Record<string, string>): b
 };
 
 const isValidState = (state: unknown, schema: Record<string, string>): boolean => {
+  console.log("checking state");
   if (typeof state !== "object" || state == null) {
+    console.log("invalid state");
     return false;
   }
 
@@ -96,14 +110,37 @@ const isValidState = (state: unknown, schema: Record<string, string>): boolean =
     const expectedType = schema[key];
     const value = (state as Record<string, unknown>)[key];
 
-    if (expectedType === "PossibleLittleMaxValue" && !isPossibleLittleMaxValue(value)) {
-      return false;
+    if (expectedType === "NamedValuesArray") {
+      if (!Array.isArray(value) || value.some(x => !isNamedValue(x))) {
+        console.log("invalid possible little max value array: type: ", value);
+        return false;
+      }
+    } else if (expectedType === "PlayerLivesArray") {
+      if (!Array.isArray(value) || value.some(x => !isPlayerLive(x))) {
+        console.log("invalid player lives array: type: ", value);
+        return false;
+      }
     } else if (typeof value !== expectedType) {
+      console.log("invalid state: type: ", typeof value, "expected: ", expectedType);
       return false;
     }
   }
 
   return true;
+};
+
+const isNamedValue = (x: any): boolean => {
+  return (
+    typeof x === "object" &&
+    x["value"] &&
+    isPossibleLittleMaxValue(x["value"]) &&
+    typeof x["player"] === "number" &&
+    typeof x["orHigher"] === "boolean"
+  );
+};
+
+const isPlayerLive = (x: any): boolean => {
+  return typeof x === "object" && typeof x["player"] === "number" && typeof x["lives"] === "number";
 };
 
 const isValidJSONState = (state: unknown, schema: Record<string, string>): boolean => {
@@ -149,9 +186,13 @@ export const isPartialGameT = (input: unknown): input is Partial<Game_t> => {
       continue;
     }
 
-    if (expectedType === "GameState" && !isGameState(value)) {
-      return false;
+    if (expectedType === "GameState") {
+      if (!isGameState(value)) {
+        console.log("invalid game State: ", value);
+        return false;
+      }
     } else if (typeof value !== expectedType) {
+      console.log("invalid type:", value, "expected: ", expectedType);
       return false;
     }
   }
@@ -170,8 +211,10 @@ export const isGameT = (input: unknown): input is Game_t => {
     const expectedType = gameTSchema[key];
     const value = (input as Record<string, unknown>)[key];
 
-    if (expectedType === "GameState" && !isGameState(value)) {
-      return false;
+    if (expectedType === "GameState") {
+      if (!isGameState(value)) {
+        return false;
+      }
     } else if (typeof value !== expectedType) {
       return false;
     }
@@ -220,8 +263,13 @@ export const isJSONConvertibleToGameState = <T extends Games>(json: Json): json 
   const game = json["game"];
 
   // valid game type
-  if (typeof game !== "string" || !Object.values(Games).includes(game)) {
-    console.error("JSON game data does not contain valid game type.");
+  if (
+    !(
+      (typeof game === "string" && Object.keys(Games).includes(game)) ||
+      (typeof game === "number" && Object.values(Games).includes(game))
+    )
+  ) {
+    console.error(`JSON game data does not contain valid game type: ${game}, ${typeof game}`);
     return false;
   }
 
@@ -240,7 +288,7 @@ export const isJSONConvertibleToGameState = <T extends Games>(json: Json): json 
     case "LITTLE_MAX":
       return (
         isValidJSONOptions(json["options"], { passOn21: "boolean", lives: "number" }) &&
-        isValidJSONState(json["state"], { diceValue: "PossibleLittleMaxValue", namedValue: "PossibleLittleMaxValue" })
+        isValidJSONState(json["state"], { lie_revealed: "boolean", namedValue: "PossibleLittleMaxValueArray" })
       );
     case "POKER":
       return isValidJSONOptions(json["options"], {}) && isValidJSONState(json["state"], {});
