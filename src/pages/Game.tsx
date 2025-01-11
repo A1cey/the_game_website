@@ -1,12 +1,9 @@
 import GameHeader from "@/components/GameHeader";
 import LittleMaxGame from "@/components/little_max/LittleMaxGame";
 import useGameStore from "@/hooks/useGameStore";
-import useSessionStore from "@/hooks/useSessionStore";
 import useThemeStore from "@/hooks/useThemeStore";
 import { Games, type LittleMaxGameState, type PlayerLive } from "@/types/game.types";
-import supabase from "@/utils/supabase";
-import { Button } from "@nextui-org/button";
-import { Modal, ModalBody, ModalContent, useDisclosure } from "@nextui-org/modal";
+import { Modal, ModalBody, ModalContent,  } from "@nextui-org/modal";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -18,7 +15,6 @@ const Game = () => {
   const [game, setGame] = useState<JSX.Element | null>(null);
   const [winner, setWinner] = useState<string | null>(null);
   const navigate = useNavigate();
-  const sessionName = useSessionStore(state => state.session.name);
 
   const [isNavigating, setIsNavigating] = useState(false);
 
@@ -92,7 +88,7 @@ const Game = () => {
         }}
       >
         <ModalContent>
-          {onClose => (
+          {() => (
             <>
               <ModalBody>
                 <div className="size-full h-96 flex justify-center items-center text-9xl text-warning text-center  text-nowrap">
