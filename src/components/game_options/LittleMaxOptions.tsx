@@ -20,8 +20,8 @@ const LittleMaxOptions = ({ setOptions, lives, passOn21 }: LittleMaxOptionsProps
   const { t } = useTranslation();
 
   useEffect(() => {
-    console.log("pass: ", passOn21)
-    console.log("lives: ", lives)
+    console.log("pass: ", passOn21);
+    console.log("lives: ", lives);
     setIsSelected(passOn21);
     setLives(lives);
     setDebouncedLives(lives);

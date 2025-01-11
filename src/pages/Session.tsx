@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import GameRules from "@/components/GameRules";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
-import { Games, GameState, LittleMaxGameState } from "@/types/game.types";
+import { Games, type GameState, type LittleMaxGameState } from "@/types/game.types";
 import { Spinner } from "@nextui-org/react";
 
 const Session = () => {
@@ -106,7 +106,7 @@ const Session = () => {
       </div>
     );
   }
-  
+
   return (
     <div>
       <div className="flex flex-col gap-28 justify-center">
@@ -126,13 +126,13 @@ const Session = () => {
               <ButtonBordered
                 className="w-fit"
                 onPress={startGame}
-                isDisabled={numOfPlayers < (gameState?.minPlayers ? gameState?.minPlayers : Infinity)}
+                isDisabled={numOfPlayers < (gameState?.minPlayers ? gameState?.minPlayers : Number.POSITIVE_INFINITY)}
               >
                 {t("startGame", { game: currentGame ? formatGameName(currentGame.toString(), t) : "" })}
               </ButtonBordered>
               <label
                 className={`
-                ${numOfPlayers >= (gameState?.minPlayers ? gameState?.minPlayers : Infinity) ? "hidden" : ""}
+                ${numOfPlayers >= (gameState?.minPlayers ? gameState?.minPlayers : Number.POSITIVE_INFINITY) ? "hidden" : ""}
                 text-danger text-xs
                 `}
               >

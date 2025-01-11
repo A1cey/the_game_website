@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 
 export type GameProps = {
   setWinner: Dispatch<SetStateAction<string | null>>;
@@ -104,6 +104,7 @@ export type WerwolfGameState = {};
 export type LittleMaxOldValue = {
   value: PossibleLittleMaxValue;
   player: number;
+  orHigher: boolean;
 };
 export type PossibleLittleMaxValue =
   | 0

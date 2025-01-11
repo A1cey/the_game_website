@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ButtonBordered from "../ui/ButtonBordered";
 import LittleMaxGameProgress from "./LittleMaxGameProgress";
-import {
+import type {
   GameProps,
   LittleMaxGameState,
   LittleMaxOldValue,
@@ -15,6 +15,8 @@ import DiceRoll from "./Dice";
 import { random } from "@/utils/other";
 import useSessionStore from "@/hooks/useSessionStore";
 import { useTranslation } from "react-i18next";
+import { Modal, ModalBody, ModalContent, useDisclosure } from "@nextui-org/modal";
+import useThemeStore from "@/hooks/useThemeStore";
 
 const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
   const positionInSession = usePlayerStore(state => state.player.position_in_session as number);
@@ -30,11 +32,16 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
   const lives = useGameStore(state => (state.game.game_state?.state as LittleMaxGameState).lives);
 
   const [selectedValue, setSelectedValue] = useState<PossibleLittleMaxValue>(0);
+  const [isSelectedAsOrHigher, setIsSelectedAsOrHigher] = useState(false);
   const [rolledValue, setRolledValue] = useState<PossibleLittleMaxValue>(0);
   const [isFirstRoll, setIsFirstRoll] = useState(true);
   const [roll, setRoll] = useState(false);
-  const [lastValue, setLastValue] = useState<LittleMaxOldValue>({ value: 0, player: 1 });
+  const [lastValue, setLastValue] = useState<LittleMaxOldValue>({ value: 0, player: 1, orHigher: false });
   const [isLie, setIsLie] = useState<boolean | null>(null);
+  const [lieRevealText, setLieRevealText] = useState("");
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const theme = useThemeStore(state => state.theme);
 
   const { t } = useTranslation();
 
@@ -43,7 +50,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
     if (activePlayers && activePlayers.length === 1) {
       supabase
         .rpc("end_game", { session_name: sessionName })
-        .then(({error}) => error && console.error(`error ending the game: ${error}`));
+        .then(({ error }) => error && console.error(`error ending the game: ${error}`));
       getPlayerNames(sessionName, t).then(names => {
         setWinner(names[activePlayers[0] - 1]);
       });
@@ -55,6 +62,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
     setRolledValue(0);
     setIsFirstRoll(true);
     setRoll(false);
+    setIsSelectedAsOrHigher(false);
   };
 
   useEffect(() => {
@@ -65,57 +73,70 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
     if (!namedValues) {
       return;
     }
-    
+
     const len = namedValues.length;
     if (len === 0) {
-      setLastValue({ value: 0, player: 1 });
+      setLastValue({ value: 0, player: 1, orHigher: false });
     } else {
       setLastValue(namedValues[len - 1]);
     }
   }, [namedValues]);
 
-  useEffect(( )=> {
-    if(lives === undefined) {
+  useEffect(() => {
+    if (lives === undefined) {
       return;
     }
-    
+
     onLivesChange(lives);
-  }, [lives])
-  
+  }, [lives]);
+
   useEffect(() => {
     if (isLie === null) {
       return;
     }
 
-    // player lied or revealed wrongly
-    if ((!isLie && positionInSession === currentPlayer) || (isLie && positionInSession === lastValue.player)) {
-      const newState = gameState?.state as LittleMaxGameState;
-      const idx = newState.lives.findIndex(val => val.player === positionInSession);
-
-      const newLives = newState.lives[idx].lives - 1;
-
-      // remove players with 0 lives
-      if (newLives === 0) {
-        newState.activePlayers = newState.activePlayers.filter(pos => pos !== positionInSession);
-      }
-
-      newState.lives[idx] = { lives: newLives, player: positionInSession };
-      newState.lieRevealed = false;
-      newState.namedValues = [];
-      
-      reset();
-
-      supabase
-        .from("games")
-        .update({ game_state: { ...gameState, state: newState }, current_player: positionInSession })
-        .eq("id", gameId)
-        .then(({ error }) => {
-          if (error) {
-            console.error(`Error occurred when updating the lives of player: ${positionInSession}, ${error}`);
-          }
-        });
+    if (isLie) {
+      setLieRevealText("LIE");
+    } else {
+      setLieRevealText("TRUTH");
     }
+
+    new Promise(resolve => setTimeout(resolve, 2000)).then(() => {
+      onClose();
+      // player lied or revealed wrongly
+      if ((!isLie && positionInSession === currentPlayer) || (isLie && positionInSession === lastValue.player)) {
+        decrementLives();
+      }
+    });
   }, [isLie]);
+
+  const decrementLives = () => {
+    const newState = gameState?.state as LittleMaxGameState;
+    const idx = newState.lives.findIndex(val => val.player === positionInSession);
+
+    const newLives = newState.lives[idx].lives - 1;
+
+    // remove players with 0 lives
+    if (newLives === 0) {
+      newState.activePlayers = newState.activePlayers.filter(pos => pos !== positionInSession);
+    }
+
+    newState.lives[idx] = { lives: newLives, player: positionInSession };
+    newState.lieRevealed = false;
+    newState.namedValues = [];
+
+    reset();
+
+    supabase
+      .from("games")
+      .update({ game_state: { ...gameState, state: newState }, current_player: positionInSession })
+      .eq("id", gameId)
+      .then(({ error }) => {
+        if (error) {
+          console.error(`Error occurred when updating the lives of player: ${positionInSession}, ${error}`);
+        }
+      });
+  };
 
   useEffect(() => {
     if (!lieRevealed) {
@@ -133,14 +154,31 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
           console.error(`Error quering DB little_max: ${error}`);
         }
         if (data) {
-          if (data.dice_value && (data.dice_value as PossibleLittleMaxValue) !== lastValue.value) {
-            setIsLie(true);
-          } else {
-            setIsLie(false);
-          }
+          onOpen();
+          setLieRevealText("Revealing...");
+
+          new Promise(resolve => setTimeout(resolve, 3000)).then(() => {
+            if (data.dice_value == null) {
+              console.error("Could not evaluate lie. Dice value is null.");
+              return;
+            }
+
+            evaluateReveal(data.dice_value as PossibleLittleMaxValue);
+          });
         }
       });
   }, [lieRevealed, gameId]);
+
+  const evaluateReveal = (diceValue: PossibleLittleMaxValue) => {
+    // dice value same or higher as told value
+    if (lastValue.orHigher) {
+      setIsLie(diceValue >= lastValue.value);
+    }
+    // dice value same as told value
+    else {
+      setIsLie(diceValue === lastValue.value);
+    }
+  };
 
   const getRandomDiceValues = (): PossibleLittleMaxValue => {
     const a = random(1, 6);
@@ -151,7 +189,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
     return result as PossibleLittleMaxValue;
   };
 
-  const rollDice = () => {
+  const rollDice = async () => {
     setRolledValue(getRandomDiceValues());
     setRoll(true);
     setIsFirstRoll(false);
@@ -176,6 +214,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
     newState.namedValues.push({
       player: positionInSession,
       value: selectedValue ? selectedValue : getNextValue(),
+      orHigher: isSelectedAsOrHigher,
     });
 
     await supabase
@@ -235,6 +274,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
     newState.namedValues.push({
       player: positionInSession,
       value: selectedValue ? selectedValue : rolledValue ? rolledValue : getNextValue(),
+      orHigher: isSelectedAsOrHigher,
     });
 
     await supabase
@@ -287,6 +327,8 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
           <LittleMaxGameProgress
             selectedValue={selectedValue}
             setSelectedValue={setSelectedValue}
+            isSelectedAsOrHigher={isSelectedAsOrHigher}
+            setIsSelectedAsOrHigher={setIsSelectedAsOrHigher}
             lastValue={lastValue}
             disabled={currentPlayer !== positionInSession}
           />
@@ -300,7 +342,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
               !isFirstRoll // cannot use after first roll
             }
           >
-            Reveal
+            {t("Reveal")}
           </ButtonBordered>
           <ButtonBordered
             onPress={rollDice}
@@ -309,7 +351,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
               !isFirstRoll // cannot use after first roll
             }
           >
-            Roll
+            {t("Roll")}
           </ButtonBordered>
           <ButtonBordered
             onPress={rollAndPass}
@@ -318,20 +360,52 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
               (lastValue.value === 21 && !isPassOn21) // cannot pass on 21
             }
           >
-            Roll and Pass On
+            {`${t("Roll")} ${t("and")} ${t("PassOn", {
+              value: selectedValue ? selectedValue : rolledValue && !roll ? rolledValue : getNextValue(),
+              orHigher: isSelectedAsOrHigher ? t("orHigher") : "",
+            })}`}
           </ButtonBordered>
           <ButtonBordered
             onPress={passOn}
             isDisabled={
               currentPlayer !== positionInSession || // cannot use if not current player
               (lastValue.value === 21 && !isPassOn21) || // cannot pass on 21
-              isPlayerWhoFirstPassedLittleMax() // cannot pass little max more than one round
+              isPlayerWhoFirstPassedLittleMax() || // cannot pass little max more than one round
+              (lastValue.value === 0 && isFirstRoll) // cannot pass on without rolling in first round
             }
           >
-            Pass On
+            {t("PassOn", {
+              value: selectedValue ? selectedValue : rolledValue && !roll ? rolledValue : getNextValue(),
+              orHigher: isSelectedAsOrHigher ? t("orHigher") : "",
+            })}
           </ButtonBordered>
         </div>
       </div>
+      <Modal
+        hideCloseButton={true}
+        isDismissable={false}
+        isKeyboardDismissDisabled={true}
+        isOpen={isOpen}
+        size="lg"
+        className="bg-transparent shadow-none"
+        classNames={{
+          body: "",
+          backdrop: "bg-transparent",
+          wrapper: "",
+        }}
+      >
+        <ModalContent>
+          {onClose => (
+            <>
+              <ModalBody>
+                <div className="size-full flex justify-center items-center text-5xl text-warning text-center text-nowrap bg-transparent">
+                  {lieRevealText}
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 };

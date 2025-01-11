@@ -3,7 +3,7 @@ import LittleMaxGame from "@/components/little_max/LittleMaxGame";
 import useGameStore from "@/hooks/useGameStore";
 import useSessionStore from "@/hooks/useSessionStore";
 import useThemeStore from "@/hooks/useThemeStore";
-import { Games, LittleMaxGameState, PlayerLive } from "@/types/game.types";
+import { Games, type LittleMaxGameState, type PlayerLive } from "@/types/game.types";
 import supabase from "@/utils/supabase";
 import { Button } from "@nextui-org/button";
 import { Modal, ModalBody, ModalContent, useDisclosure } from "@nextui-org/modal";
@@ -21,7 +21,7 @@ const Game = () => {
   const sessionName = useSessionStore(state => state.session.name);
 
   const [isNavigating, setIsNavigating] = useState(false);
-  
+
   const theme = useThemeStore(state => state.theme);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const Game = () => {
       handleGameEnd();
     }
   }, [winner]);
-  
+
   useEffect(() => {
     if (currentGame === undefined) {
       console.error("No game chosen.");
@@ -65,50 +65,51 @@ const Game = () => {
   }, [currentGame, setGame]);
 
   const handleGameEnd = async () => {
-      if (!winner || isNavigating) return;
-      setIsNavigating(true);
-      
-      try {
-        console.log("showing end screen")
-        await new Promise(resolve => setTimeout(resolve, 5000));
-        console.log("navigating to session")
-        navigate("/session", { replace: true });
-      } catch (error) {
-        console.error("Error ending game:", error);
-        setIsNavigating(false);
-      }
-    };
+    if (!winner || isNavigating) return;
+    setIsNavigating(true);
 
-  
+    try {
+      console.log("showing end screen");
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      console.log("navigating to session");
+      navigate("/session", { replace: true });
+    } catch (error) {
+      console.error("Error ending game:", error);
+      setIsNavigating(false);
+    }
+  };
+
   if (isNavigating) {
-    return (<Modal
-      hideCloseButton={true}
-      isDismissable={false}
-      isKeyboardDismissDisabled={true}
-      isOpen={true}
-      size="5xl"
-      classNames={{
-        body: ` ${theme === "dark" ? "bg-default-800 text-default" : ""}`,
-      }}
-    >
-      <ModalContent>
-        {onClose => (
-          <>
-            <ModalBody>
-              <div className="size-full h-96 flex justify-center items-center text-9xl text-warning text-center  text-nowrap">
-                {`${winner} won!`}
-              </div>
-            </ModalBody>
-          </>
-        )}
-      </ModalContent>
-    </Modal>);
+    return (
+      <Modal
+        hideCloseButton={true}
+        isDismissable={false}
+        isKeyboardDismissDisabled={true}
+        isOpen={true}
+        size="5xl"
+        classNames={{
+          body: ` ${theme === "dark" ? "bg-default-800 text-default" : ""}`,
+        }}
+      >
+        <ModalContent>
+          {onClose => (
+            <>
+              <ModalBody>
+                <div className="size-full h-96 flex justify-center items-center text-9xl text-warning text-center  text-nowrap">
+                  {`${winner} won!`}
+                </div>
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    );
   }
-  
+
   return (
     <div className="h-full">
       <GameHeader showLives={showLives} lives={lives} />
-      {game}      
+      {game}
     </div>
   );
 };

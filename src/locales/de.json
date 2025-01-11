@@ -40,6 +40,11 @@
     "onlyNumsAllowed": "Nur Zahlen sind erlaubt.",
     "tooManyLives": "Zu viele Leben. Mach kein Unsinn.",
     "atLeastOneLive": "Man braucht mindestens ein Leben, um zu spielen.",
-    "notEnoughPlayers": "Zu wenig Spieler"
+    "notEnoughPlayers": "Zu wenig Spieler",
+    "PassOn": "{{value}} {{orHigher}} weitersagen",
+    "and": "und",
+    "Roll": "Würfeln",
+    "Reveal": "Aufdecken",
+    "orHigher": "oder höher"
   }
 }

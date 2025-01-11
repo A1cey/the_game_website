@@ -3097,7 +3097,7 @@ var require_react_dom_development = __commonJS({
 					flexFlow: ["flexDirection", "flexWrap"],
 					font: [
 						"fontFamily",
-						"fontFeatureSettings",
+						"fontFeatureIcon",
 						"fontKerning",
 						"fontLanguageOverride",
 						"fontSize",

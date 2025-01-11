@@ -39,6 +39,11 @@
     "onlyNumsAllowed": "Only numbers allowed.",
     "tooManyLives": "Too many lives. Be reasonable",
     "atLeastOneLive": "You need at least one life to play.",
-    "notEnoughPlayers": "Not enough players"
+    "notEnoughPlayers": "Not enough players",
+    "PassOn": "Pass on {{value}} {{orHigher}}",
+    "and": "and",
+    "Roll": "Roll",
+    "Reveal": "Reveal",
+    "orHigher": "or higher"
   }
 }

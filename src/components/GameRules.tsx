@@ -12,7 +12,10 @@ const GameRules = () => {
   const [rules, setRules] = useState("");
   const theme = useThemeStore(state => state.theme);
 
-  const { t } = useTranslation();
+  const {
+    t,
+    i18n: { language },
+  } = useTranslation();
 
   useEffect(() => {
     if (!currentGame) {
@@ -29,7 +32,7 @@ const GameRules = () => {
         console.error(`Error fetching rules for game ${currentGame}:`, error);
         setRules("");
       });
-  }, [currentGame]);
+  }, [currentGame, language]);
 
   return (
     <div>

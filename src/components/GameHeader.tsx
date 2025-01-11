@@ -9,7 +9,7 @@ import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { useTranslation } from "react-i18next";
 import useLanguageStore from "@/hooks/useLanguageStore";
 import GameRules from "./GameRules";
-import { PlayerLive } from "@/types/game.types";
+import type { PlayerLive } from "@/types/game.types";
 import useThemeStore from "@/hooks/useThemeStore";
 
 type GameHeaderProps = {
@@ -24,6 +24,7 @@ const GameHeader = ({ showLives, lives }: GameHeaderProps) => {
   const resetPlayer = usePlayerStore(state => state.resetStore);
   const resetSession = useSessionStore(state => state.resetStore);
   const resetGame = useGameStore(state => state.resetStore);
+  const positionInSession = usePlayerStore(state => state.player.position_in_session);
 
   const [players, setPlayers] = useState<string[]>([]);
   const currentPlayerRef = useRef<HTMLDivElement>(null);
@@ -62,6 +63,7 @@ const GameHeader = ({ showLives, lives }: GameHeaderProps) => {
       <ScrollShadow orientation="horizontal" className="w-full">
         <div className="flex gap-1">
           {players.map((player, idx) => (
+            // biome-igore lint/suspicious/noArrayIndexKey: The key is the index of the array, which is fine in this case.
             <div
               key={idx}
               ref={currentPlayer === idx + 1 ? currentPlayerRef : null}
@@ -69,12 +71,13 @@ const GameHeader = ({ showLives, lives }: GameHeaderProps) => {
                 p-2 text-nowrap
                 ${currentPlayer === idx + 1 ? "border-b-2 border-primary bg-primary-50" : ""}
                 ${showLives && lives[idx] && lives[idx].lives === 0 ? "bg-default-100 text-default-400 scale-95" : ""}
+                ${positionInSession === idx + 1 ? "text-warning" : ""}
                 `}
             >
               <div className="text-center">{player}</div>
               {showLives && lives[idx] ? (
                 <Tooltip
-                  content={"Lives"}
+                  content={t("lives")}
                   placement="right-start"
                   offset={-15}
                   className={`${theme} text-${theme === "dark" ? "white" : "black"} ${theme === "dark" ? "bg-default-50 border-1 border-default" : ""}`}

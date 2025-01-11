@@ -1,14 +1,16 @@
 import useGameStore from "@/hooks/useGameStore";
 import useLanguageStore from "@/hooks/useLanguageStore";
 import useSessionStore from "@/hooks/useSessionStore";
-import { LittleMaxGameState, LittleMaxOldValue, PossibleLittleMaxValue } from "@/types/game.types";
+import type { LittleMaxGameState,  LittleMaxOldValue,  PossibleLittleMaxValue } from "@/types/game.types";
 import { getPlayerNames } from "@/utils/supabase";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { type Dispatch,type SetStateAction, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 type LittleMaxGameProgressProps = {
   selectedValue: PossibleLittleMaxValue;
   setSelectedValue: Dispatch<SetStateAction<PossibleLittleMaxValue>>;
+  isSelectedAsOrHigher: boolean;
+  setIsSelectedAsOrHigher: Dispatch<SetStateAction<boolean>>;
   lastValue: LittleMaxOldValue;
   disabled: boolean;
 };
@@ -16,6 +18,8 @@ type LittleMaxGameProgressProps = {
 const LittleMaxGameProgress = ({
   selectedValue,
   setSelectedValue,
+  isSelectedAsOrHigher,
+  setIsSelectedAsOrHigher,
   lastValue,
   disabled,
 }: LittleMaxGameProgressProps) => {
@@ -46,22 +50,50 @@ const LittleMaxGameProgress = ({
     if (!namedValues) {
       return "";
     }
-    let playerPos = namedValues.find(value => value.value === val)?.player;
+    const playerPos = namedValues.find(value => value.value === val)?.player;
     return playerPos ? players[playerPos - 1] : "";
+  };
+
+  const handleSelectedValue = (value: PossibleLittleMaxValue) => {
+    // new value selected
+    if (selectedValue !== value) {
+      setIsSelectedAsOrHigher(false);
+      setSelectedValue(value);
+    }
+    // if clicked on already selected value
+    else {
+      // if or higher not selected
+      if (!isSelectedAsOrHigher && value !== 21) {
+        setIsSelectedAsOrHigher(true);
+      }
+      // reset selection
+      else {
+        setSelectedValue(0);
+        setIsSelectedAsOrHigher(false);
+      }
+    }
   };
 
   const divs = littleMaxValues.map(value => (
     <div
       key={value}
-      onClick={() => {
+      onKeyDown={() => {
         if (!disabled && !leForLittleMax(value, lastValue.value)) {
-          setSelectedValue(value);
+          handleSelectedValue(value);
         }
       }}
       className={`
         dark:bg-transparent
+        ${leForLittleMax(value, 66) && !leForLittleMax(value, 65) ? "text-primary-600" : ""}
+        ${value === 21 ? "text-warning-700 dark:text-warning-400" : ""}
         ${leForLittleMax(value, lastValue.value) || disabled ? "bg-default-500 text-default-200 dark:text-default-300" : "bg-default-300 hover:cursor-pointer"}
-        ${selectedValue === value ? "ring-2 ring-warning bg-warning-300 dark:bg-warning-100 scale-110 ring-inset" : ""}
+        ${
+          selectedValue === value
+            ? isSelectedAsOrHigher
+              ? "ring-2 ring-success-600 dark:ring-success-500 bg-success-400 dark:bg-success-200 scale-110 ring-inset"
+              : "ring-2 ring-warning bg-warning-300 dark:bg-warning-100 scale-110 ring-inset"
+            : ""
+        }
         ${value === 31 ? "rounded-l-md" : ""}
         ${value === 21 ? "rounded-r-md" : ""}
         flex flex-col justify-center w-[4.5rem]
@@ -70,11 +102,11 @@ const LittleMaxGameProgress = ({
     >
       <button
         id={value.toString()}
-        onClick={() => setSelectedValue(value)}
+        onClick={() => handleSelectedValue(value)}
         disabled={leForLittleMax(value, lastValue.value) || disabled}
         className={`${leForLittleMax(value, lastValue.value) || disabled ? "" : "hover:cursor-pointer"} text-4xl`}
       >
-        {value}
+        {`${lastValue.orHigher && lastValue.value === value ? `>${value}` : value}`}
       </button>
       <label
         htmlFor={value.toString()}
