@@ -14,7 +14,7 @@ const SessionName = () => {
       codeString={sessionName}
       hideSymbol={true}
       className={`
-      ${theme} text-${theme === "dark" ? "white" : "black"} ${theme === "dark" ? "border-1 border-default bg-default-50" : "bg-default-200"}`}
+      ${theme} text-${theme === "dark" ? "white" : "black"} ${theme === "dark" ? "border-1 border-default bg-default-50" : "bg-default-200"} -ml-2 lg:ml-0 mr-2 lg:mr-0`}
       tooltipProps={{
         delay: 0,
         color: "foreground",

@@ -239,8 +239,10 @@ const Home = () => {
 
   return (
     <div className="grid gap-4 justify-center">
-      <h1 className="mt-40 text-4xl font-bold text-center">{t("createOrJoinASession")}</h1>
-      <Form className="flex flex-col items-center gap-6 w-full max-w-80 mx-auto">
+      <h1 className="mt-24 lg:mt-40 pl-4 pr-4 text-3xl lg:text-4xl font-bold text-center">
+        {t("createOrJoinASession")}
+      </h1>
+      <Form className="flex flex-col items-center gap-6 w-full max-w-72 lg:max-w-80 mx-auto">
         <div className="w-full">
           <Input
             label={t("playerName")}
@@ -262,7 +264,7 @@ const Home = () => {
               <Tooltip
                 offset={8}
                 content={`${t("allowedCharacters")}: ${"23456789ABCDEFGHJKLMNPQRSTUVWXYZ".split("").join(", ")}`}
-                className={`${theme} text-${theme === "dark" ? "white" : "black"} ${theme === "dark" ? "bg-default-50 border-1 border-default" : ""}`}
+                className={`${theme} text-${theme === "dark" ? "white" : "black"} ${theme === "dark" ? "bg-default-50 border-1 border-default" : ""} max-w-80 lg:max-w-lg`}
               >
                 <Button
                   isIconOnly

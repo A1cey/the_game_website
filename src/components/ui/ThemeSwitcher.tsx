@@ -15,7 +15,7 @@ export const ThemeSwitcher = () => {
   }, [setTheme, isSelected]);
 
   return (
-    <div className="flex gap-4 items-center">
+    <div className="flex gap-10 lg:gap-4 items-center">
       <label htmlFor="theme-switch">{t(`${theme}Mode`)}</label>
       <Switch
         id="theme-switch"

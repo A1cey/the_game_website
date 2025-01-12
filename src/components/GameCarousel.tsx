@@ -29,12 +29,12 @@ const ArrowLeft = ({ onClick }: ArrowProps) => {
       onPress={() => onClick()}
       className="
       hover:scale-[1.05]
-      -left-16 absolute top-[50%] translate-y-[-50%] size-6 rounded-full 
+      absolute -top-[47.5%] left-4 lg:-left-20 lg:top-[50%] lg:translate-y-[-50%] rounded-full
       flex justify-center items-center
-      dark:border-2 dark:border-primary 
+      lg:dark:border-2 lg:dark:border-primary 
       bg-primary dark:bg-transparent"
     >
-      <ArrowLeftIcon filled={true} className="text-primary-foreground dark:text-primary" />
+      <ArrowLeftIcon filled={true} className="text-primary-foreground dark:text-primary size-4 lg:size-5" />
     </Button>
   );
 };
@@ -47,12 +47,12 @@ const ArrowRight = ({ onClick }: ArrowProps) => {
       onPress={() => onClick()}
       className="
       hover:scale-[1.05]
-      -right-16 absolute top-[50%] translate-y-[-50%] size-6 rounded-full 
+      right-4 -top-[47.5%] lg:-right-[4.25rem] absolute lg:top-[50%] lg:translate-y-[-50%] rounded-full 
       flex justify-center items-center
       bg-primary dark:bg-transparent
-      dark:border-2 dark:border-primary"
+      lg:dark:border-2 lg:dark:border-primary"
     >
-      <ArrowRightIcon filled={true} className="text-primary-foreground dark:text-primary" />
+      <ArrowRightIcon filled={true} className="text-primary-foreground dark:text-primary size-4 lg:size-5" />
     </Button>
   );
 };
@@ -68,11 +68,22 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
 
   const [currentGame, setCurrentGame] = useState(gameState?.game.toString() ?? Object.values(Games)[0].toString());
   const [activeSlide, setActiveSlide] = useState(gameState?.game ?? 0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const sliderRef = useRef<Slider | null>(null);
   const isRender = useRef(true);
 
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const updateGameTypeAtDB = useCallback(() => {
     const gameName = getEnumValues(Games).find(val => Games[val] === currentGame) ?? null;
@@ -135,7 +146,10 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
     appendDots: (dots: any) => (
       <div>
         {" "}
-        <ul className="translate-y-6 m-0 flex gap-2 justify-center items-center"> {dots} </ul>
+        <ul className="-translate-x-2 lg:translate-x-0 translate-y-4 lg:translate-y-6 lg:m-0 flex gap-1 lg:gap-2 justify-center items-center">
+          {" "}
+          {dots}{" "}
+        </ul>
       </div>
     ),
     customPaging: (i: number) => (
@@ -154,10 +168,9 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
     dots: true,
     infinite: true,
     speed: 600,
-    slidesToShow: 3,
+    slidesToShow: windowWidth < 1024 ? 2 : 3,
     slidesToScroll: 1,
-    centerMode: true,
-    className: "center",
+    centerMode: windowWidth >= 1024,
     centerPadding: "0px",
     swipeToSlide: true,
     focusOnSelect: true,
@@ -165,25 +178,25 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
     beforeChange: (_: number, next: number) => {
       setActiveSlide(next);
     },
-    style: { width: "56rem" },
   };
 
   return (
-    <div className="flex-col flex gap-8">
-      <h2 className="text-3xl dark:text-primary text-center">{t("selectGame")}</h2>
-      <div className="relative w-[58rem] mx-auto h-[21rem]">
+    <div className="flex-col flex gap-4 lg:gap-8">
+      <h2 className="text-2xl lg:text-3xl dark:text-primary text-center">{t("selectGame")}</h2>
+      <div className="relative w-[20rem] h-[10rem] lg:h-[21rem] lg:w-[58rem] mx-auto">
         <div className="absolute inset-0 dark:border-2 rounded-2xl dark:border-primary bg-foreground-200 dark:bg-transparent flex justify-center items-center">
-          <div className="relative z-10 max-w-4xl mx-auto">
+          <div className="relative ml-3.5 lg:ml-5 z-10 lg:max-w-4xl mx-auto">
             <Slider
               ref={slider => {
                 sliderRef.current = slider;
               }}
               {...settings}
+              className={` w-[18rem] lg:w-[56rem] ${windowWidth >= 1024 ? "center" : ""}`}
             >
               {gameImgs.map((img, idx) => (
                 // biome-igore lint/suspicious/noArrayIndexKey: The key is the index of the array, which is fine in this case.
                 <div key={idx} className="bg-opacity-0">
-                  <img src={img} alt={getAltNameForGameSVG(gameImgs[idx])} />
+                  <img src={img} alt={getAltNameForGameSVG(gameImgs[idx])} className="size-32 lg:size-72" />
                 </div>
               ))}
             </Slider>

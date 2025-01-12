@@ -34,6 +34,18 @@ const GameHeader = ({ showLives, lives }: GameHeaderProps) => {
 
   const theme = useThemeStore(state => state.theme);
 
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   useEffect(() => {
     getPlayerNames(sessionName, t).then(playerNames => setPlayers(playerNames));
   }, [playerCount, sessionName, language]);
@@ -55,12 +67,12 @@ const GameHeader = ({ showLives, lives }: GameHeaderProps) => {
   };
 
   return (
-    <div className="pt-2 pl-4 pr-4 flex gap-20 items-center">
-      <ButtonBordered as={Link} href={"/"} onPress={leaveGame} isDisabled={true}>
+    <div className="pt-2 pl-4 pr-4 flex gap-2 lg:gap-20 items-center flex-wrap lg:flex-nowrap lg:flex-row justify-center">
+      <ButtonBordered as={Link} href={"/"} onPress={leaveGame} isDisabled={true} className="order-1">
         {t("leaveGame")}
       </ButtonBordered>
 
-      <ScrollShadow orientation="horizontal" className="w-full">
+      <ScrollShadow orientation="horizontal" className="w-full order-3 lg:order-2" hideScrollBar={windowWidth < 1024}>
         <div className="flex gap-1">
           {players.map((player, idx) => (
             // biome-igore lint/suspicious/noArrayIndexKey: The key is the index of the array, which is fine in this case.
@@ -91,8 +103,9 @@ const GameHeader = ({ showLives, lives }: GameHeaderProps) => {
           ))}
         </div>
       </ScrollShadow>
-
-      <GameRules />
+      <div className="order-2 lg:order-3">
+        <GameRules />
+      </div>
     </div>
   );
 };

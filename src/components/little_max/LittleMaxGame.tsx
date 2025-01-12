@@ -311,12 +311,12 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
 
   return (
     <div className="flex flex-col justify-between h-[70vh]">
-      <div className="h-full pt-8">
-        <div className="flex justify-center gap-20 p-16">
+      <div className="h-full lg:pt-8">
+        <div className="flex justify-center gap-4 lg:gap-20 p-10 pb-4 lg:p-16">
           <DiceRoll num={Math.floor(rolledValue / 10)} roll={roll} setRoll={setRoll} />
           <DiceRoll num={rolledValue % 10} roll={roll} setRoll={setRoll} />
         </div>
-        <p className="text-center text-6xl">
+        <p className="text-center text-3xl lg:text-6xl">
           {rolledValue && currentPlayer === positionInSession && !roll ? rolledValue : ""}
         </p>
       </div>
@@ -331,7 +331,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
             disabled={currentPlayer !== positionInSession}
           />
         </div>
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-center gap-4 flex-wrap lg:flex-nowrap">
           <ButtonBordered
             onPress={reveal}
             isDisabled={
@@ -396,7 +396,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
           {() => (
             <>
               <ModalBody>
-                <div className="size-full flex justify-center items-center text-5xl text-warning text-center text-nowrap bg-transparent">
+                <div className="size-full flex justify-center items-center text-4xl lg:text-5xl text-warning text-center text-nowrap bg-transparent">
                   {lieRevealText}
                 </div>
               </ModalBody>

@@ -3,7 +3,7 @@ import LittleMaxGame from "@/components/little_max/LittleMaxGame";
 import useGameStore from "@/hooks/useGameStore";
 import useThemeStore from "@/hooks/useThemeStore";
 import { Games, type LittleMaxGameState, type PlayerLive } from "@/types/game.types";
-import { Modal, ModalBody, ModalContent,  } from "@nextui-org/modal";
+import { Modal, ModalBody, ModalContent } from "@nextui-org/modal";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
