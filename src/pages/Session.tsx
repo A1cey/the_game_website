@@ -97,7 +97,7 @@ const Session = () => {
   if (!gameState) {
     return (
       <div>
-        <div className="flex flex-col gap-28 justify-center">
+        <div className="flex flex-col lg:gap-28 justify-center">
           <SessionHeader />
           <div className="flex justify-center">
             <Spinner size="lg" color="primary" />
@@ -109,19 +109,19 @@ const Session = () => {
 
   return (
     <div>
-      <div className="flex flex-col gap-28 justify-center">
+      <div className="flex flex-col gap-10 lg:gap-28 justify-center">
         <SessionHeader />
-        <div className="">
+        <div className="mb-10 lg:mb-0">
           <GameCarousel gameImgs={getGameImgs(t)} />
         </div>
-        <div className="flex gap-28 justify-center">
+        <div className="flex flex-col md:flex-row lg:flex-row gap-4 lg:gap-28 justify-center pl-4 pr-4 items-center">
           <div className="w-1/3 flex justify-end">
             <GameRules />
           </div>
           <div className="w-1/3 flex justify-center">
             <GameOptions />
           </div>
-          <div className="flex w-1/3">
+          <div className="flex w-1/3 justify-center lg:justify-normal">
             <div className="flex flex-col text-center">
               <ButtonBordered
                 className="w-fit"
@@ -134,6 +134,7 @@ const Session = () => {
                 className={`
                 ${numOfPlayers >= (gameState?.minPlayers ? gameState?.minPlayers : Number.POSITIVE_INFINITY) ? "hidden" : ""}
                 text-danger text-xs
+                pr-2 lg:pr-0
                 `}
               >
                 {t("notEnoughPlayers")}

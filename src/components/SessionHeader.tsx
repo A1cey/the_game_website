@@ -21,13 +21,13 @@ const SessionHeader = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="p-2 flex gap-20 items-center justify-between">
-      <div className="w-1/2">
+    <div className="p-2 flex gap-2 lg:gap-20 lg:items-center justify-between">
+      <div className="lg:w-1/2">
         <ButtonBordered as={Link} href={"/"} onPress={leaveGame}>
           {t("leaveSession")}
         </ButtonBordered>
       </div>
-      <div className="w-1/2 flex justify-end gap-4">
+      <div className="flex-col-reverse lg:w-1/2 flex lg:flex-row gap-2 justify-end lg:gap-4 items-end lg:items-center">
         <SessionName />
         <SessionSize />
       </div>

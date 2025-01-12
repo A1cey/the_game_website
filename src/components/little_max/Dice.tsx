@@ -1,4 +1,4 @@
-import {type Dispatch,type SetStateAction, useEffect, useRef, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";
 
 type DiceRollProps = {
   num: number;
@@ -51,14 +51,14 @@ const DiceRoll = ({ num, roll, setRoll }: DiceRollProps) => {
   };
 
   return (
-    <div className="grid place-items-center size-48 bg-[#eeeeee] rounded-full shadow-xl dark:shadow-md dark:shadow-[#eeeeee]">
+    <div className="grid place-items-center size-36 lg:size-48 bg-[#eeeeee] rounded-full shadow-xl dark:shadow-md dark:shadow-[#eeeeee]">
       <div className={`dice ${isRolling ? "dice-rolling" : ""}`} ref={diceRef}>
-        <div className="dice-face dice-front"/>
-        <div className="dice-face dice-back"/>
-        <div className="dice-face dice-top"/>
-        <div className="dice-face dice-bottom"/>
-        <div className="dice-face dice-right"/>
-        <div className="dice-face dice-left"/>
+        <div className="dice-face dice-front" />
+        <div className="dice-face dice-back" />
+        <div className="dice-face dice-top" />
+        <div className="dice-face dice-bottom" />
+        <div className="dice-face dice-right" />
+        <div className="dice-face dice-left" />
       </div>
     </div>
   );

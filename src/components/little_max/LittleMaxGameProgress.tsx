@@ -1,9 +1,9 @@
 import useGameStore from "@/hooks/useGameStore";
 import useLanguageStore from "@/hooks/useLanguageStore";
 import useSessionStore from "@/hooks/useSessionStore";
-import type { LittleMaxGameState,  LittleMaxOldValue,  PossibleLittleMaxValue } from "@/types/game.types";
+import type { LittleMaxGameState, LittleMaxOldValue, PossibleLittleMaxValue } from "@/types/game.types";
 import { getPlayerNames } from "@/utils/supabase";
-import { type Dispatch,type SetStateAction, useEffect, useState } from "react";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 type LittleMaxGameProgressProps = {
@@ -84,34 +84,35 @@ const LittleMaxGameProgress = ({
       }}
       className={`
         dark:bg-transparent
-        ${leForLittleMax(value, 66) && !leForLittleMax(value, 65) ? "text-primary-600" : ""}
-        ${value === 21 ? "text-warning-700 dark:text-warning-400" : ""}
-        ${leForLittleMax(value, lastValue.value) || disabled ? "bg-default-500 text-default-200 dark:text-default-300" : "bg-default-300 hover:cursor-pointer"}
+        ${leForLittleMax(value, 66) && !leForLittleMax(value, 65) && !disabled ? "text-primary-600 dark:text-primary-600" : ""}
+        ${value === 21 && !disabled ? "text-warning-700 dark:text-warning-400" : ""}
+        ${leForLittleMax(value, lastValue.value) || disabled ? "bg-default-200 text-default-700 dark:text-default-300" : "bg-default-300 hover:cursor-pointer"}
         ${
           selectedValue === value
             ? isSelectedAsOrHigher
-              ? "ring-2 ring-success-600 dark:ring-success-500 bg-success-400 dark:bg-success-200 scale-110 ring-inset"
+              ? "ring-2 ring-success-600 dark:ring-success-500 bg-success-400 dark:bg-success-300 scale-110 ring-inset"
               : "ring-2 ring-warning bg-warning-300 dark:bg-warning-100 scale-110 ring-inset"
             : ""
         }
-        ${value === 31 ? "rounded-l-md" : ""}
-        ${value === 21 ? "rounded-r-md" : ""}
-        flex flex-col justify-center w-[4.5rem]
-        p-2
+        ${value === 31 ? "lg:rounded-l-md" : ""}
+        ${value === 21 ? "lg:rounded-r-md" : ""}
+        flex flex-col justify-center lg:w-[4.5rem]
+        pl-2 pr-2 pt-1 lg:p-2
         `}
     >
       <button
+        type="button"
         id={value.toString()}
         onClick={() => handleSelectedValue(value)}
         disabled={leForLittleMax(value, lastValue.value) || disabled}
-        className={`${leForLittleMax(value, lastValue.value) || disabled ? "" : "hover:cursor-pointer"} text-4xl`}
+        className={`${leForLittleMax(value, lastValue.value) || disabled ? "" : "hover:cursor-pointer"} text-xl lg:text-4xl`}
       >
         {`${lastValue.orHigher && lastValue.value === value ? `>${value}` : value}`}
       </button>
       <label
         htmlFor={value.toString()}
         className={`
-          ${leForLittleMax(value, lastValue.value) || disabled ? "" : "hover:cursor-pointer"} 
+          ${leForLittleMax(value, lastValue.value) || disabled ? "" : "hover:cursor-pointer"}
           text-xxs min-h-4 truncate text-center
           `}
       >
@@ -123,10 +124,12 @@ const LittleMaxGameProgress = ({
   return (
     <div
       className={`
-      flex w-fit 
+      flex w-fit flex-wrap lg:flex-nowrap
       dark:border-2 dark:border-primary rounded-lg
       gap-1
-      bg-transparent`}
+      bg-transparent
+      justify-center
+      `}
     >
       {divs}
     </div>
