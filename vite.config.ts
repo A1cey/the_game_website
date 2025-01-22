@@ -12,8 +12,7 @@ export default defineConfig({
 			"@": path.resolve(__dirname, "./src"),
 		},
 	},
-	assetsInclude: ['**/*.svg', "**/*.md"
-	],
+	assetsInclude: ['**/*.svg', "**/*.md"],
 	server: {
 		port: 3000,
 		open: true,

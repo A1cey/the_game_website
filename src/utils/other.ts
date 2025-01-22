@@ -1,4 +1,4 @@
-import type { Enum } from "@/types/other.types";
+import type { Enum } from "@/types/enum.types";
 /**
  * @param {E extends Enum} e - The enum the values should be provided for.
  * @returns Array of the enum values as numeric keys. To get the representation as a string use <e>[key].
