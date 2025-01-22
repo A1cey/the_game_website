@@ -175,9 +175,9 @@ const Home = () => {
             displayError: t("playerCreationError"),
           });
           return false;
-        }
-        if (data) {
+        } else {
           updatePlayer(data);
+          return true;
         }
       });
 
@@ -244,11 +244,7 @@ const Home = () => {
             variant="bordered"
             className="hover:scale-[1.05]"
             onChange={e => setPlayerName(e.target.value)}
-            validate={value => {
-              if (value.length > 30) {
-                return t("playerNameToLong");
-              }
-            }}
+            validate={value => value.length > 30 ? t("playerNameToLong") : undefined}
           />
         </div>
         <div className="border-2 border-default-200 dark:border-default rounded-xl w-full flex flex-col items-center">
