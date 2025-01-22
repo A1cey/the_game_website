@@ -104,7 +104,9 @@ const GameOptions = () => {
   return (
     <Popover placement="bottom">
       <PopoverTrigger className="hover:scale-105">
-        <ButtonBordered disabled={!currentOptions}>{t("gameOptions")}</ButtonBordered>
+        <ButtonBordered disabled={!currentOptions} className="shrink-0">
+          {t("gameOptions")}
+        </ButtonBordered>
       </PopoverTrigger>
       <PopoverContent
         className={`${theme} text-${

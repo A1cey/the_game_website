@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Games } from "@/types/game.types";
+import { Games, GameState } from "@/types/game.types";
 import { defaultDBGameState, getAltNameForGameSVG } from "@/utils/game";
 import { getEnumValues } from "@/utils/other";
 import "slick-carousel/slick/slick.css";
@@ -8,8 +8,7 @@ import Slider from "react-slick";
 import { Button } from "@nextui-org/button";
 import useThemeStore from "@/hooks/useThemeStore";
 import useGameStore from "@/hooks/useGameStore";
-import supabase from "@/utils/supabase";
-import type { Json } from "@/types/database.types";
+import { updateDBGameState } from "@/utils/supabase";
 import useSessionStore from "@/hooks/useSessionStore";
 import ArrowLeftIcon from "./icons/ArrowLeft";
 import ArrowRightIcon from "./icons/ArrowRight";
@@ -85,7 +84,7 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const updateGameTypeAtDB = useCallback(() => {
+  const updateGameTypeAtDB = useCallback(async () => {
     const gameName = getEnumValues(Games).find(val => Games[val] === currentGame) ?? null;
 
     if (!gameId) {
@@ -96,19 +95,12 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
     console.log("updating game type at db");
     console.log();
 
-    supabase
-      .from("games")
-      .update({
-        game_state: gameName === 0 || gameName ? (defaultDBGameState(gameName) as Json) : null,
-      })
-      .eq("id", gameId)
-      .then(({ error }) => {
-        if (error) {
-          console.error("Error updating the game selection: ", error);
-        }
-      });
+    await updateDBGameState(
+      gameId,
+      gameState?.state ?? {},
+      gameName === 0 || gameName ? (defaultDBGameState(gameName) as Partial<GameState<typeof gameName>>) : {},
+    );
   }, [gameId, currentGame]);
-
   // handling changes from other players
   useEffect(() => {
     if (!gameState?.game) {

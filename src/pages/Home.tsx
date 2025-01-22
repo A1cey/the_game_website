@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import supabase from "@/utils/supabase";
+import supabase, { fetchGameData } from "@/utils/supabase";
 import { useNavigate } from "react-router-dom";
 import "@/index.css";
 import { Input } from "@nextui-org/input";
@@ -82,7 +82,7 @@ const Home = () => {
       return;
     }
 
-    if (!(await fetchGameData(gameId))) {
+    if (!(await getGameData(gameId))) {
       resetSession();
       resetPlayer();
       resetGame();
@@ -130,32 +130,26 @@ const Home = () => {
     return "";
   };
 
-  const fetchGameData = async (gameId: string): Promise<boolean> => {
-    if (!gameId) {
-      console.error("No game id available. ", gameId);
+  const getGameData = async (gameId: string): Promise<boolean> => {
+    const res = await fetchGameData(gameId);
+
+    if (!res) {
       return false;
     }
 
-    supabase
-      .from("games")
-      .select()
-      .eq("id", gameId)
-      .single()
-      .then(({ data, error }) => {
-        if (error) {
-          setSessionError({
-            consoleError: "Error fetching game: ",
-            error,
-            displayError: t("gameNotFoundError"),
-          });
-          return false;
-        }
-        if (data) {
-          console.log("game data: ", data);
-          updateGame(data, "subscription");
-        }
+    if (res.error) {
+      setSessionError({
+        consoleError: "Error fetching game: ",
+        error: res.error,
+        displayError: t("gameNotFoundError"),
       });
+      return false;
+    }
 
+    if (res.data) {
+      console.log("game data: ", res.data);
+      updateGame(res.data, "subscription");
+    }
     return true;
   };
 

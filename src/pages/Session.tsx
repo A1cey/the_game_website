@@ -114,15 +114,15 @@ const Session = () => {
         <div className="mb-10 lg:mb-0">
           <GameCarousel gameImgs={getGameImgs(t)} />
         </div>
-        <div className="flex flex-col md:flex-row lg:flex-row gap-4 lg:gap-28 justify-center pl-4 pr-4 items-center">
-          <div className="w-1/3 flex justify-end">
+        <div className="flex flex-col md:flex-row lg:flex-row gap-4 lg:gap-28 justify-center pl-4 pr-4 items-center md:items-start">
+          <div className="w-1/3 flex justify-center md:justify-end ">
             <GameRules />
           </div>
-          <div className="w-1/3 flex justify-center">
+          <div className="w-1/3 flex justify-center md:h-14">
             <GameOptions />
           </div>
-          <div className="flex w-1/3 justify-center lg:justify-normal">
-            <div className="flex flex-col text-center">
+          <div className="flex w-1/3 justify-center md:justify-start">
+            <div className="flex flex-col text-center items-center">
               <ButtonBordered
                 className="w-fit"
                 onPress={startGame}

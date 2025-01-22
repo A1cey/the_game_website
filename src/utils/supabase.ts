@@ -1,6 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/database.types";
 import { formatDefaultPlayerName } from "./other";
+import { Games, GameState, JSONGameState } from "@/types/game.types";
+import useGameStore from "@/hooks/useGameStore";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -40,4 +42,43 @@ export const getPlayerNames = async (
   }
 
   return [];
+};
+
+export const updateDBGameState = async <T extends Games>(
+  gameId: string,
+  currentState: GameState<T> | {},
+  newState: Partial<JSONGameState<T>> | {},
+): Promise<void> => {
+  if (!newState) {
+    console.error("Error updating the game selection: new state not set.");
+    return;
+  }
+
+  return supabase
+    .from("games")
+    .update({
+      game_state: { ...currentState, ...newState },
+    })
+    .eq("id", gameId)
+    .then(({ error }) => {
+      if (error) {
+        console.error("Error updating the game selection: ", error);
+      }
+    });
+};
+
+export const fetchGameData = async (gameId: string) => {
+  if (!gameId) {
+    console.error("No game id available. ", gameId);
+    return;
+  }
+
+  return await supabase
+    .from("games")
+    .select()
+    .eq("id", gameId)
+    .single()
+    .then(({ data, error }) => {
+      return { data, error };
+    });
 };

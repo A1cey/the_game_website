@@ -61,7 +61,7 @@ const App = () => {
 
   return (
     <NextUIProvider navigate={navigate} useHref={useHref}>
-      <main className={`${theme} text-foreground bg-background h-screen w-screen`}>
+      <main className={`${theme} text-foreground bg-background h-screen w-screen overflow-scroll`}>
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
