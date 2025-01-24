@@ -1,4 +1,4 @@
-﻿export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
   public: {
@@ -114,6 +114,7 @@ export type Database = {
           created_at: string;
           game_id: string;
           game_started_at: string | null;
+          host: string | null;
           last_update_at: string;
           max_num_of_players: number;
           name: string;
@@ -123,6 +124,7 @@ export type Database = {
           created_at?: string;
           game_id?: string;
           game_started_at?: string | null;
+          host?: string | null;
           last_update_at?: string;
           max_num_of_players?: number;
           name: string;
@@ -132,6 +134,7 @@ export type Database = {
           created_at?: string;
           game_id?: string;
           game_started_at?: string | null;
+          host?: string | null;
           last_update_at?: string;
           max_num_of_players?: number;
           name?: string;

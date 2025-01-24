@@ -1,4 +1,4 @@
-import type { LittleMaxOptionsType } from "@/types/game.types";
+import type{ LittleMaxOptionsType } from "@/types/game/little_max.types";
 import { Checkbox } from "@nextui-org/checkbox";
 import { Input } from "@nextui-org/input";
 import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";

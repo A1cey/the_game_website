@@ -2,6 +2,7 @@ import type { SVGElementProps } from "@/types/other.types";
 
 const SunIcon = (props: SVGElementProps) => {
   return (
+    // biome-ignore lint/a11y/noSvgWithoutTitle: biome does not recognize label
     <svg
       aria-label="Sun Icon"
       aria-hidden="true"

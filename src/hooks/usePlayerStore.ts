@@ -1,5 +1,4 @@
-import type { Json } from "@/types/database.types";
-import type { Player_t } from "@/types/database_extended.types";
+import { Player_t } from "@/types/database/database_extended.types";
 import supabase, { removePlayerFromSession } from "@/utils/supabase";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { create } from "zustand";
@@ -17,7 +16,7 @@ interface PlayerState {
   player: Player_t;
   subscriptionActive: boolean;
   subscription: RealtimeChannel | null;
-  updatePlayer: (data: Json | Partial<Player_t>) => void;
+  updatePlayer: (data: Partial<Player_t>) => void;
   subscribeToPlayer: (gameId: string) => void;
   unsubscribe: () => void;
   resetStore: () => void;
@@ -28,15 +27,15 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
   subscriptionActive: false,
   subscription: null as RealtimeChannel | null,
 
-  updatePlayer: (data: Json | Partial<Player_t>) => {
+  updatePlayer: (data: Partial<Player_t>) => {
     set(state => {
-      const newPlayer = data as Player_t;
+      const newPlayer = { ...state.player, ...data };
 
-      if (newPlayer?.id && !state.subscriptionActive) {
-        get().subscribeToPlayer(newPlayer.id);
+      if (data?.id && !state.subscriptionActive) {
+        get().subscribeToPlayer(data.id);
       }
 
-      return { player: { ...state.player, ...newPlayer } };
+      return { player: newPlayer };
     });
   },
 
@@ -44,6 +43,7 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
     get().unsubscribe();
 
     console.log("Setting up player subscription");
+
     const subscription = supabase
       .channel("player-updates")
       .on(
@@ -56,7 +56,15 @@ const usePlayerStore = create<PlayerState>()((set, get) => ({
         },
         payload => {
           console.log("New data through player subscription: ", payload, payload.new);
-          get().updatePlayer(payload.new);
+
+          const { success, error, data } = Player_t.partial().safeParse(payload.new);
+
+          if (!success) {
+            console.error("Error parsing player data from subscription: ", error);
+            return;
+          }
+
+          get().updatePlayer(data);
         },
       )
       .subscribe((status, error) => {

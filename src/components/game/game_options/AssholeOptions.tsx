@@ -1,4 +1,4 @@
-import type { AssholeOptionsType } from "@/types/game.types";
+import type { AssholeOptionsType } from "@/types/game/asshole.types";
 import { useEffect, useRef } from "react";
 
 type AssholeOptionsProps = AssholeOptionsType & {

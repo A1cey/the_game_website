@@ -1,9 +1,5 @@
-import type { Json } from "@/types/database.types";
-import type { Game_t } from "@/types/database_extended.types";
-import { Games } from "@/types/game.types";
-import { convertGamesJSONToGameT, defaultGameState } from "@/utils/game";
+import { Game_t } from "@/types/database/database_extended.types";
 import supabase from "@/utils/supabase";
-import { isPartialGameT } from "@/utils/type_guards";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { create } from "zustand";
 
@@ -19,7 +15,7 @@ interface GameState {
   subscription: RealtimeChannel | null;
   updateSource: "subscription" | "user";
   resetUpdateSource: () => void;
-  updateGame: (data: Json | Partial<Game_t>, source: "subscription" | "user") => void;
+  updateGame: (data: Partial<Game_t>, source: "subscription" | "user") => void;
   subscribeToGame: (gameId: string) => void;
   unsubscribe: () => void;
   resetStore: () => void;
@@ -33,9 +29,9 @@ const useGameStore = create<GameState>()((set, get) => ({
 
   resetUpdateSource: () => set({ updateSource: "user" }),
 
-  updateGame: (data: Json | Partial<Game_t>, source: "subscription" | "user") => {
+  updateGame: (data: Partial<Game_t>, source: "subscription" | "user") => {
     set(state => {
-      const newGame = isPartialGameT(data) ? { ...state.game, ...data } : getNewGame(data, state.game);
+      const newGame: Game_t = { ...state.game, ...data };
 
       if (newGame.id && !state.subscriptionActive) {
         get().subscribeToGame(newGame.id);
@@ -52,6 +48,7 @@ const useGameStore = create<GameState>()((set, get) => ({
     get().unsubscribe();
 
     console.log("Setting up game subscription");
+
     const subscription = supabase
       .channel("game-updates")
       .on(
@@ -64,7 +61,14 @@ const useGameStore = create<GameState>()((set, get) => ({
         },
         payload => {
           console.log("New data through game subscription: ", payload, payload.new);
-          get().updateGame(convertGamesJSONToGameT(payload.new) as Game_t, "subscription");
+          const { success, error, data } = Game_t.partial().safeParse(payload.new);
+
+          if (!success) {
+            console.error("Error parsing game data from subscription: ", error);
+            return;
+          }
+
+          get().updateGame(data, "subscription");
         },
       )
       .subscribe((status, error) => {
@@ -93,23 +97,5 @@ const useGameStore = create<GameState>()((set, get) => ({
     });
   },
 }));
-
-const getNewGame = (data: Json, old: Game_t): Game_t => {
-  console.log("Getting new game data");
-  const newGame = convertGamesJSONToGameT(data);
-
-  if (!newGame) {
-    console.error("Bad response for game update.");
-    return old;
-  }
-
-  if (newGame.game_state === null) {
-    newGame.game_state = defaultGameState(
-      Games[Object.keys(Games).filter(key => Number.isNaN(Number(key)))[0] as keyof typeof Games],
-    );
-  }
-
-  return newGame;
-};
 
 export default useGameStore;

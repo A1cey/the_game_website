@@ -1,5 +1,5 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/modal";
-import ButtonBordered from "./ui/ButtonBordered";
+import ButtonBordered from "../ui/ButtonBordered";
 import useGameStore from "@/hooks/useGameStore";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";

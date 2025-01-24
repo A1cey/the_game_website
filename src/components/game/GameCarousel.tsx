@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Games, GameState } from "@/types/game.types";
-import { defaultDBGameState, getAltNameForGameSVG } from "@/utils/game";
+import { defaultGameState, getAltNameForGameSVG } from "@/utils/game";
 import { getEnumValues } from "@/utils/other";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -10,9 +9,10 @@ import useThemeStore from "@/hooks/useThemeStore";
 import useGameStore from "@/hooks/useGameStore";
 import { updateDBGameState } from "@/utils/supabase";
 import useSessionStore from "@/hooks/useSessionStore";
-import ArrowLeftIcon from "./icons/ArrowLeft";
-import ArrowRightIcon from "./icons/ArrowRight";
+import ArrowLeftIcon from "../icons/ArrowLeft";
+import ArrowRightIcon from "../icons/ArrowRight";
 import { useTranslation } from "react-i18next";
+import { GameType } from "@/types/game/game.types";
 
 type ArrowProps = {
   // biome-ignore lint/suspicious/noExplicitAny: The type of the function is not known, so it is set to any.
@@ -64,9 +64,12 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
   const theme = useThemeStore(state => state.theme);
   const gameId = useSessionStore(state => state.session.game_id);
   const gameState = useGameStore(state => state.game.game_state);
+  const host = useSessionStore(state => state.session.host);
 
-  const [currentGame, setCurrentGame] = useState(gameState?.game.toString() ?? Object.values(Games)[0].toString());
-  const [activeSlide, setActiveSlide] = useState(gameState?.game ?? 0);
+  const [currentGame, setCurrentGame] = useState(gameState?.game ?? GameType.enum.ASSHOLE);
+  const [activeSlide, setActiveSlide] = useState(
+    Object.values(GameType.enum).indexOf(gameState?.game ?? GameType.enum.ASSHOLE),
+  );
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const sliderRef = useRef<Slider | null>(null);
@@ -85,21 +88,14 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
   }, []);
 
   const updateGameTypeAtDB = useCallback(async () => {
-    const gameName = getEnumValues(Games).find(val => Games[val] === currentGame) ?? null;
-
     if (!gameId) {
       console.error("Error updating the game selection: Game id not set.");
       return;
     }
 
     console.log("updating game type at db");
-    console.log();
 
-    await updateDBGameState(
-      gameId,
-      gameState?.state ?? {},
-      gameName === 0 || gameName ? (defaultDBGameState(gameName) as Partial<GameState<typeof gameName>>) : {},
-    );
+    await updateDBGameState(gameId, gameState?.state ?? {}, currentGame ? defaultGameState(currentGame) : {});
   }, [gameId, currentGame]);
   // handling changes from other players
   useEffect(() => {
@@ -107,7 +103,7 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
       return;
     }
 
-    const newSlideIndex = getEnumValues(Games).findIndex(val => Games[val] === gameState.game.toString());
+    const newSlideIndex = Object.values(GameType.enum).indexOf(gameState.game);
 
     if (newSlideIndex !== -1 && newSlideIndex !== activeSlide) {
       console.log("Setting slide");
@@ -121,7 +117,7 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
       return;
     }
 
-    setCurrentGame(Games[getEnumValues(Games)[activeSlide]]);
+    setCurrentGame(Object.values(GameType.enum)[activeSlide]);
   }, [activeSlide, setCurrentGame]);
 
   useEffect(() => {
@@ -186,7 +182,7 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
               className={` w-[18rem] lg:w-[56rem] ${windowWidth >= 1024 ? "center" : ""}`}
             >
               {gameImgs.map((img, idx) => (
-                // biome-igore lint/suspicious/noArrayIndexKey: The key is the index of the array, which is fine in this case.
+                // biome-ignore lint/suspicious/noArrayIndexKey: The key is the index of the array, which is fine in this case.
                 <div key={idx} className="bg-opacity-0">
                   <img src={img} alt={getAltNameForGameSVG(gameImgs[idx])} className="size-32 lg:size-72" />
                 </div>

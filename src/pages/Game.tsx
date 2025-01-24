@@ -1,8 +1,9 @@
-import GameHeader from "@/components/GameHeader";
+import GameHeader from "@/components/game/GameHeader";
 import LittleMaxGame from "@/components/little_max/LittleMaxGame";
 import useGameStore from "@/hooks/useGameStore";
 import useThemeStore from "@/hooks/useThemeStore";
-import { Games, type LittleMaxGameState, type PlayerLive } from "@/types/game.types";
+import { GameType,type PlayerLive_t } from "@/types/game/game.types";
+import type { LittleMaxGameState } from "@/types/game/little_max.types";
 import { Modal, ModalBody, ModalContent } from "@nextui-org/modal";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 const Game = () => {
   const currentGame = useGameStore(state => state.game.game_state?.game);
   const [showLives, setShowLives] = useState(true);
-  const [lives, setLives] = useState<PlayerLive[]>([]);
+  const [lives, setLives] = useState<PlayerLive_t[]>([]);
   const gameState = useGameStore(state => state.game.game_state?.state);
   const [game, setGame] = useState<JSX.Element | null>(null);
   const [winner, setWinner] = useState<string | null>(null);
@@ -32,27 +33,25 @@ const Game = () => {
       return;
     }
 
-    const game = Games[currentGame as unknown as keyof typeof Games] as unknown as Games;
-
-    switch (Number(game)) {
-      case Games.ASSHOLE:
+    switch (currentGame) {
+      case GameType.enum.ASSHOLE:
         setGame(<div>Not implemented.</div>);
         break;
-      case Games.DURAK:
+      case GameType.enum.DURAK:
         setGame(<div>Not implemented.</div>);
         break;
-      case Games.LITTLE_MAX:
+      case GameType.enum.LITTLE_MAX:
         setLives((gameState as LittleMaxGameState).lives);
         setShowLives(true);
         setGame(<LittleMaxGame setWinner={setWinner} onLivesChange={setLives} />);
         break;
-      case Games.POKER:
+      case GameType.enum.POKER:
         setGame(<div>Not implemented.</div>);
         break;
-      case Games.THIRTY_ONE:
+      case GameType.enum.THIRTY_ONE:
         setGame(<div>Not implemented.</div>);
         break;
-      case Games.WERWOLF:
+      case GameType.enum.WERWOLF:
         setGame(<div>Not implemented.</div>);
         break;
       default:
@@ -61,7 +60,9 @@ const Game = () => {
   }, [currentGame, setGame]);
 
   const handleGameEnd = async () => {
-    if (!winner || isNavigating) return;
+    if (!winner || isNavigating) {
+      return;
+    }
     setIsNavigating(true);
 
     try {

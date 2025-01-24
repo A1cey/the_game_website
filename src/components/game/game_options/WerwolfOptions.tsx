@@ -1,4 +1,4 @@
-import type { WerwolfOptionsType } from "@/types/game.types";
+import type{ WerwolfOptionsType } from "@/types/game/werwolf.types";
 import { useEffect, useRef } from "react";
 
 type WerwolfOptionsProps = WerwolfOptionsType & {

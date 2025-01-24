@@ -1,4 +1,4 @@
-import type { PokerOptionsType } from "@/types/game.types";
+import type{ PokerOptionsType } from "@/types/game/poker.types";
 import { useEffect, useRef } from "react";
 
 type PokerOptionsProps = PokerOptionsType & {

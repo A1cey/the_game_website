@@ -6,7 +6,7 @@ import { Input } from "@nextui-org/input";
 import useGameStore from "@/hooks/useGameStore";
 import usePlayerStore from "@/hooks/usePlayerStore";
 import useSessionStore from "@/hooks/useSessionStore";
-import type { Session_t } from "@/types/database_extended.types";
+import type { Session_t } from "@/types/database/database_extended.types";
 import ButtonBordered from "@/components/ui/ButtonBordered";
 import type { PostgrestError } from "@supabase/supabase-js";
 import { Form } from "@nextui-org/form";
@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 
 type SetSessionErrorOptions = {
   consoleError: string;
-  error?: PostgrestError;
+  error?: string | PostgrestError;
   displayError?: string;
 };
 
@@ -50,7 +50,7 @@ const Home = () => {
 
   const setSessionError = ({ consoleError, error, displayError }: SetSessionErrorOptions) => {
     setSessionNameErrorMessage(
-      error?.code === "23505"
+      typeof error !== "string" && error?.code === "23505"
         ? "This session name is already in use. Please try another."
         : displayError
           ? displayError
@@ -133,10 +133,6 @@ const Home = () => {
   const getGameData = async (gameId: string): Promise<boolean> => {
     const res = await fetchGameData(gameId);
 
-    if (!res) {
-      return false;
-    }
-
     if (res.error) {
       setSessionError({
         consoleError: "Error fetching game: ",
@@ -146,9 +142,9 @@ const Home = () => {
       return false;
     }
 
-    if (res.data) {
-      console.log("game data: ", res.data);
-      updateGame(res.data, "subscription");
+    if (res.gameData) {
+      console.log("game data: ", res.gameData);
+      updateGame(res.gameData, "subscription");
     }
     return true;
   };
@@ -175,10 +171,10 @@ const Home = () => {
             displayError: t("playerCreationError"),
           });
           return false;
-        } else {
-          updatePlayer(data);
-          return true;
-        }
+        } 
+        
+        updatePlayer(data);
+        return true;
       });
 
     return true;
@@ -216,6 +212,7 @@ const Home = () => {
 
   const InfoIcon = ({ fill = "currentColor", filled, size, height, width, ...props }: SVGElementProps) => {
     return (
+      // biome-ignore lint/a11y/noSvgWithoutTitle: biome does not recognize label
       <svg
         width={size || width || 24}
         height={size || height || 24}
@@ -244,7 +241,7 @@ const Home = () => {
             variant="bordered"
             className="hover:scale-[1.05]"
             onChange={e => setPlayerName(e.target.value)}
-            validate={value => value.length > 30 ? t("playerNameToLong") : undefined}
+            validate={value => (value.length > 30 ? t("playerNameToLong") : undefined)}
           />
         </div>
         <div className="border-2 border-default-200 dark:border-default rounded-xl w-full flex flex-col items-center">

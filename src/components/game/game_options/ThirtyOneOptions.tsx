@@ -1,4 +1,4 @@
-import type { ThirtyOneOptionsType } from "@/types/game.types";
+import type{ ThirtyOneOptionsType } from "@/types/game/thirty_one.types";
 import { useEffect, useRef } from "react";
 
 type ThirtyOneOptionsProps = ThirtyOneOptionsType & {

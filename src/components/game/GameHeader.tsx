@@ -1,5 +1,4 @@
 import { Link, Tooltip } from "@nextui-org/react";
-import ButtonBordered from "./ui/ButtonBordered";
 import { getPlayerNames } from "@/utils/supabase";
 import usePlayerStore from "@/hooks/usePlayerStore";
 import { useEffect, useRef, useState } from "react";
@@ -9,12 +8,13 @@ import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { useTranslation } from "react-i18next";
 import useLanguageStore from "@/hooks/useLanguageStore";
 import GameRules from "./GameRules";
-import type { PlayerLive } from "@/types/game.types";
 import useThemeStore from "@/hooks/useThemeStore";
+import type { PlayerLive_t } from "@/types/game/game.types";
+import ButtonBordered from "../ui/ButtonBordered";
 
 type GameHeaderProps = {
   showLives: boolean;
-  lives: PlayerLive[];
+  lives: PlayerLive_t[];
 };
 
 const GameHeader = ({ showLives, lives }: GameHeaderProps) => {
@@ -75,9 +75,8 @@ const GameHeader = ({ showLives, lives }: GameHeaderProps) => {
       <ScrollShadow orientation="horizontal" className="w-full order-3 lg:order-2" hideScrollBar={windowWidth < 1024}>
         <div className="flex gap-1">
           {players.map((player, idx) => (
-            // biome-igore lint/suspicious/noArrayIndexKey: The key is the index of the array, which is fine in this case.
-            <div
-              key={idx}
+            // biome-ignore lint/suspicious/noArrayIndexKey: The key is the index of the array, which is fine in this case.
+            <div key={idx}
               ref={currentPlayer === idx + 1 ? currentPlayerRef : null}
               className={`
                 p-2 text-nowrap

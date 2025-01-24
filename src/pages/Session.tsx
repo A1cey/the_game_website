@@ -1,17 +1,17 @@
 import supabase from "@/utils/supabase";
-import GameCarousel from "@/components/GameCarousel";
-import GameOptions from "@/components/game_options/GameOptions";
+import GameCarousel from "@/components/game/GameCarousel";
+import GameOptions from "@/components/game/game_options/GameOptions";
 import useSessionStore from "@/hooks/useSessionStore";
 import useGameStore from "@/hooks/useGameStore";
 import ButtonBordered from "@/components/ui/ButtonBordered";
 import { formatGameName, getGameImgs } from "@/utils/game";
-import SessionHeader from "@/components/SessionHeader";
+import SessionHeader from "@/components/session/SessionHeader";
 import { useNavigate } from "react-router-dom";
-import GameRules from "@/components/GameRules";
+import GameRules from "@/components/game/GameRules";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
-import { Games, type GameState, type LittleMaxGameState } from "@/types/game.types";
 import { Spinner } from "@nextui-org/react";
+import { GameState, GameType } from "@/types/game/game.types";
 
 const Session = () => {
   const session = useSessionStore(state => state.session);
@@ -47,21 +47,19 @@ const Session = () => {
       return;
     }
 
-    const game = Games[currentGame as unknown as keyof typeof Games] as unknown as Games;
-
-    switch (Number(game)) {
-      case Games.ASSHOLE:
+    switch (currentGame) {
+      case GameType.enum.ASSHOLE:
         break;
-      case Games.DURAK:
+      case GameType.enum.DURAK:
         break;
-      case Games.LITTLE_MAX:
+      case GameType.enum.LITTLE_MAX:
         setUpLittleMax();
         break;
-      case Games.POKER:
+      case GameType.enum.POKER:
         break;
-      case Games.THIRTY_ONE:
+      case GameType.enum.THIRTY_ONE:
         break;
-      case Games.WERWOLF:
+      case GameType.enum.WERWOLF:
         break;
       default:
         console.error(`Could not setup game. Unknown game : ${currentGame}`);
@@ -74,10 +72,12 @@ const Session = () => {
       return;
     }
 
-    const newState = { ...gameState.state } as LittleMaxGameState;
+    const currOptions = GameState.options[2].shape.options.parse(gameState.options);
+
+    const newState = { ...gameState.state };
 
     newState.lives = Array.from({ length: numOfPlayers }).map((_, idx) => ({
-      lives: (gameState as GameState<Games.LITTLE_MAX>).options.lives,
+      lives: currOptions.lives,
       player: idx + 1,
     }));
 
@@ -124,6 +124,7 @@ const Session = () => {
           <div className="flex w-1/3 justify-center md:justify-start">
             <div className="flex flex-col text-center items-center">
               <ButtonBordered
+                id="startGame"
                 className="w-fit"
                 onPress={startGame}
                 isDisabled={numOfPlayers < (gameState?.minPlayers ? gameState?.minPlayers : Number.POSITIVE_INFINITY)}
@@ -131,6 +132,7 @@ const Session = () => {
                 {t("startGame", { game: currentGame ? formatGameName(currentGame.toString(), t) : "" })}
               </ButtonBordered>
               <label
+                htmlFor="startGame"
                 className={`
                 ${numOfPlayers >= (gameState?.minPlayers ? gameState?.minPlayers : Number.POSITIVE_INFINITY) ? "hidden" : ""}
                 text-danger text-xs

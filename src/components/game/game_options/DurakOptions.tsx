@@ -1,4 +1,4 @@
-import type { DurakOptionsType } from "@/types/game.types";
+import type{ DurakOptionsType } from "@/types/game/durak.types";
 import { useEffect, useRef } from "react";
 
 type DurakOptionsProps = DurakOptionsType & {

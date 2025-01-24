@@ -1,7 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/types/database.types";
+import type { Database } from "@/types/database/database.types";
 import { formatDefaultPlayerName } from "./other";
-import { Games, GameState, JSONGameState } from "@/types/game.types";
+import type { GameState_t } from "@/types/game/game.types";
+import { Game_t } from "@/types/database/database_extended.types";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -34,19 +35,16 @@ export const getPlayerNames = async (
 
   if (error) {
     console.error("Error fetching player list: ", error);
+    return [];
   }
 
-  if (data) {
-    return data.map(({ name }) => formatDefaultPlayerName(name, handleTranslation));
-  }
-
-  return [];
+  return data.map(({ name }) => formatDefaultPlayerName(name, handleTranslation));
 };
 
-export const updateDBGameState = async <T extends Games>(
+export const updateDBGameState = async (
   gameId: string,
-  currentState: GameState<T> | {},
-  newState: Partial<JSONGameState<T>> | {},
+  currentState: Partial<GameState_t>,
+  newState: Partial<GameState_t>,
 ): Promise<void> => {
   if (!newState) {
     console.error("Error updating the game selection: new state not set.");
@@ -66,18 +64,27 @@ export const updateDBGameState = async <T extends Games>(
     });
 };
 
-export const fetchGameData = async (gameId: string) => {
+export const fetchGameData = async (gameId: string): Promise<{ gameData: Game_t | null; error: null | string }> => {
   if (!gameId) {
-    console.error("No game id available. ", gameId);
-    return;
+    return { gameData: null, error: `No game id available. ${gameId}` };
   }
 
-  return await supabase
+  return supabase
     .from("games")
     .select()
     .eq("id", gameId)
     .single()
     .then(({ data, error }) => {
-      return { data, error };
+      if (error) {
+        return { gameData: null, error: `Error fetching game data: ${error}` };
+      }
+
+      const res = Game_t.safeParse(data);
+
+      if (!res.success) {
+        return { gameData: null, error: `Error parsing game data: ${res.error}` };
+      }
+
+      return { gameData: res.data, error: null };
     });
 };

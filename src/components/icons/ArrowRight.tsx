@@ -2,6 +2,7 @@ import type { SVGElementProps } from "@/types/other.types";
 
 const ArrowRightIcon = ({ fill = "currentColor", filled, size, height, width, ...props }: SVGElementProps) => {
   return (
+    // biome-ignore lint/a11y/noSvgWithoutTitle: biome does not recognize label
     <svg
       aria-label="Arrow Right Icon"
       width={size || width || 20}

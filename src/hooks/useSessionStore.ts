@@ -1,4 +1,4 @@
-import type { Session_t } from "@/types/database_extended.types";
+import { Session_t } from "@/types/database/database_extended.types";
 import supabase from "@/utils/supabase";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { create } from "zustand";
@@ -11,6 +11,7 @@ const defaultSession: Session_t = {
   max_num_of_players: 8,
   name: "",
   num_of_players: 0,
+  host: null,
 };
 
 interface SessionState {
@@ -30,11 +31,13 @@ const useSessionStore = create<SessionState>()((set, get) => ({
 
   updateSession: (data: Partial<Session_t>) => {
     set(state => {
+      const newSession = { ...state.session, ...data };
+
       if (data?.name && !state.subscriptionActive) {
         get().subscribeToSession(data.name);
       }
 
-      return { session: { ...state.session, ...data } };
+      return { session: newSession };
     });
   },
 
@@ -42,6 +45,7 @@ const useSessionStore = create<SessionState>()((set, get) => ({
     get().unsubscribe();
 
     console.log("Setting up session subscription");
+
     const subscription = supabase
       .channel("session-updates")
       .on(
@@ -54,7 +58,15 @@ const useSessionStore = create<SessionState>()((set, get) => ({
         },
         payload => {
           console.log("New data through session subscription: ", payload, payload.new);
-          get().updateSession(payload.new as Session_t);
+
+          const { success, error, data } = Session_t.partial().safeParse(payload.new);
+
+          if (!success) {
+            console.error("Error parsing session data from subscription: ", error);
+            return;
+          }
+
+          get().updateSession(data);
         },
       )
       .subscribe((status, error) => {

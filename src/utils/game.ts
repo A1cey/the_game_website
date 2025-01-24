@@ -1,14 +1,12 @@
-import { type Card, CardType, CardValue, Games, type GameState } from "@/types/game.types";
-import { getEnumValues } from "./other";
-import type { Json } from "@/types/database.types";
-import type { Game_t } from "@/types/database_extended.types";
-import { isJson, isJSONConvertibleToGameState } from "./type_guards";
+import {type Card, CardType, CardValue } from "@/types/game/card.types";
+import  {type GameState, GameType,type GameType_t } from "@/types/game/game.types";
+import type{ z } from "zod";
 
 export const getGameImgs = (handleTranslation: (key: string) => string): string[] => {
   const images = import.meta.glob("../assets/game_svgs/**/*.svg", { eager: true });
-  return getEnumValues(Games).map(key => {
-    const fileName = `${handleTranslation(Games[key].toLowerCase()).toLowerCase()}.svg`;
-    const path = `../assets/game_svgs/${Games[key].toLowerCase()}/${fileName}`;
+  return Object.values(GameType.enum).map(gameName => {
+    const fileName = `${handleTranslation(gameName.toLowerCase())}.svg`;
+    const path = `../assets/game_svgs/${gameName.toLowerCase()}/${fileName}`;
     return (images[path] as { default: string }).default;
   });
 };
@@ -30,8 +28,8 @@ export const formatGameName = (str: string, handleTranslation: (key: string) => 
 };
 
 export const getCards = (): Card[] => {
-  return getEnumValues(CardType).flatMap(cardType =>
-    getEnumValues(CardValue).map(cardValue => [cardType, cardValue] as Card),
+  return Object.values(CardType.enum).flatMap(cardType =>
+    Object.values(CardValue.enum).map(cardValue => [cardType, cardValue] as Card),
   );
 };
 
@@ -54,7 +52,8 @@ export const validPlayerCount = (playerCount: number, minPlayersAllowed = 1, max
   return true;
 };
 
-export const convertGamesStateJSONToGameStateType = (json: Json | null): GameState<Games> | null => {
+/*
+export const convertGamesStateJSONToGameStateType = (json: Json_t | null): GameState<Games> | null => {
   if (!isJson(json) || !isJSONConvertibleToGameState(json)) {
     return null;
   }
@@ -69,7 +68,7 @@ export const convertGamesStateJSONToGameStateType = (json: Json | null): GameSta
   return json as GameState<typeof gameName>;
 };
 
-export const convertGamesJSONToGameT = (json: Json): Game_t | null => {
+export const convertGamesJSONToGameT = (json: Json_t): Game_t | null => {
   if (json == null) {
     console.error("JSON game data is null or undefined.");
     return null;
@@ -109,84 +108,64 @@ export const convertGamesJSONToGameT = (json: Json): Game_t | null => {
   return {
     current_player: currentPlayer,
     id: id,
-    game_state: json["game_state"] ? convertGamesStateJSONToGameStateType(json["game_state"] as Json) : null,
+    game_state: json["game_state"] ? convertGamesStateJSONToGameStateType(json["game_state"] as Json_t) : null,
   };
 };
+*/
 
-export const defaultGameState = (game: Games): GameState<Games> => {
-  const defaultAssholeGameState: GameState<Games.ASSHOLE> = {
-    game: Games.ASSHOLE,
-    maxPlayers: 8,
-    minPlayers: 2,
-    options: {},
-    state: {},
-  };
-
-  const defaultDurakGameState: GameState<Games.DURAK> = {
-    game: Games.DURAK,
-    maxPlayers: 8,
-    minPlayers: 2,
-    options: {},
-    state: {},
-  };
-
-  const defaultLittleMaxGameState: GameState<Games.LITTLE_MAX> = {
-    game: Games.LITTLE_MAX,
-    maxPlayers: 8,
-    minPlayers: 2,
-    options: {
-      lives: 5,
-      passOn21: true,
+export const defaultGameState = (game: GameType_t): z.infer<typeof GameState> => {
+  const gameStateMap: Record<GameType_t, z.infer<typeof GameState>> = {
+    ASSHOLE: {
+      game: GameType.enum.ASSHOLE,
+      maxPlayers: 8,
+      minPlayers: 2,
+      options: {},
+      state: {},
     },
-    state: {
-      namedValues: [],
-      lieRevealed: false,
-      lives: [],
-      activePlayers: [],
+    DURAK: {
+      game: GameType.enum.DURAK,
+      maxPlayers: 8,
+      minPlayers: 2,
+      options: {},
+      state: {},
+    },
+    LITTLE_MAX: {
+      game: GameType.enum.LITTLE_MAX,
+      maxPlayers: 8,
+      minPlayers: 2,
+      options: {
+        lives: 5,
+        passOn21: true,
+      },
+      state: {
+        namedValues: [],
+        lieRevealed: false,
+        lives: [],
+        activePlayers: [],
+      },
+    },
+    POKER: {
+      game: GameType.enum.POKER,
+      maxPlayers: 8,
+      minPlayers: 2,
+      options: {},
+      state: {},
+    },
+    THIRTY_ONE: {
+      game: GameType.enum.THIRTY_ONE,
+      maxPlayers: 8,
+      minPlayers: 2,
+      options: {},
+      state: {},
+    },
+    WERWOLF: {
+      game: GameType.enum.WERWOLF,
+      maxPlayers: 8,
+      minPlayers: 2,
+      options: {},
+      state: {},
     },
   };
 
-  const defaultPokerGameState: GameState<Games.POKER> = {
-    game: Games.POKER,
-    maxPlayers: 8,
-    minPlayers: 2,
-    options: {},
-    state: {},
-  };
-
-  const defaultThirtyOneGameState: GameState<Games.THIRTY_ONE> = {
-    game: Games.THIRTY_ONE,
-    maxPlayers: 8,
-    minPlayers: 2,
-    options: {},
-    state: {},
-  };
-
-  const defaultWerwolfGameState: GameState<Games.WERWOLF> = {
-    game: Games.WERWOLF,
-    maxPlayers: 8,
-    minPlayers: 2,
-    options: {},
-    state: {},
-  };
-
-  switch (game) {
-    case Games.ASSHOLE:
-      return defaultAssholeGameState;
-    case Games.DURAK:
-      return defaultDurakGameState;
-    case Games.LITTLE_MAX:
-      return defaultLittleMaxGameState;
-    case Games.POKER:
-      return defaultPokerGameState;
-    case Games.THIRTY_ONE:
-      return defaultThirtyOneGameState;
-    case Games.WERWOLF:
-      return defaultWerwolfGameState;
-  }
-};
-
-export const defaultDBGameState = (game: Games): Json => {
-  const defaultState = defaultGameState(game);
-  return { ...defaultState, game: Games[game] };
+  return gameStateMap[game];
 };

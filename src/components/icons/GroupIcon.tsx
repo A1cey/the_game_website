@@ -2,6 +2,7 @@ import type { SVGElementProps } from "@/types/other.types";
 
 const GroupIcon = ({ fill = "currentColor", filled, size, height, width, ...props }: SVGElementProps) => {
   return (
+    // biome-ignore lint/a11y/noSvgWithoutTitle: biome does not recognize label
     <svg
       width={size || width || 80}
       height={size || height || 80}
