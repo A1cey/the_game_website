@@ -1,25 +1,25 @@
+import ButtonBordered from "@/components/ui/ButtonBordered";
 import useGameStore from "@/hooks/useGameStore";
+import usePlayerStore from "@/hooks/usePlayerStore";
 import useSessionStore from "@/hooks/useSessionStore";
 import useThemeStore from "@/hooks/useThemeStore";
+import { AssholeOptionsType } from "@/types/game/asshole.types";
+import { DurakOptionsType } from "@/types/game/durak.types";
+import { type GameOptionsType_t, type GameState_t, GameType } from "@/types/game/game.types";
+import { LittleMaxOptionsType } from "@/types/game/little_max.types";
+import { PokerOptionsType } from "@/types/game/poker.types";
+import { ThirtyOneOptionsType } from "@/types/game/thirty_one.types";
+import { WerwolfOptionsType } from "@/types/game/werwolf.types";
 import supabase from "@/utils/supabase";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import AssholeOptions from "./AssholeOptions";
 import DurakOptions from "./DurakOptions";
 import LittleMaxOptions from "./LittleMaxOptions";
 import PokerOptions from "./PokerOptions";
 import ThirtyOneOptions from "./ThirtyOneOptions";
 import WerwolfOptions from "./WerwolfOptions";
-import ButtonBordered from "@/components/ui/ButtonBordered";
-import { AssholeOptionsType } from "@/types/game/asshole.types";
-import { DurakOptionsType } from "@/types/game/durak.types";
-import { GameOptionsType_t, type GameState_t, GameType } from "@/types/game/game.types";
-import { LittleMaxOptionsType } from "@/types/game/little_max.types";
-import { PokerOptionsType } from "@/types/game/poker.types";
-import { ThirtyOneOptionsType } from "@/types/game/thirty_one.types";
-import { WerwolfOptionsType } from "@/types/game/werwolf.types";
-import { useTranslation } from "react-i18next";
-import usePlayerStore from "@/hooks/usePlayerStore";
 
 const GameOptions = () => {
   const theme = useThemeStore(state => state.theme);
@@ -29,8 +29,8 @@ const GameOptions = () => {
   const gameType = gameState?.game;
   const host = useSessionStore(state => state.session.host);
   const playerId = usePlayerStore(state => state.player.id);
-  const disabled = useMemo(() => !!(host && playerId &&playerId !== host), [host, playerId]);
-  
+  const disabled = useMemo(() => !!(host && playerId && playerId !== host), [host, playerId]);
+
   const { t } = useTranslation();
 
   const updateGameOptionsAtDB = useCallback(
@@ -104,7 +104,11 @@ const GameOptions = () => {
 
 export default GameOptions;
 
-const getAssholeOptions = (gameState: GameState_t, disabled: boolean, setOptions: (newOptions: GameOptionsType_t) => void) => {
+const getAssholeOptions = (
+  gameState: GameState_t,
+  disabled: boolean,
+  setOptions: (newOptions: GameOptionsType_t) => void,
+) => {
   const { success, error, data } = AssholeOptionsType.safeParse(gameState.options);
 
   if (!success) {
@@ -112,10 +116,14 @@ const getAssholeOptions = (gameState: GameState_t, disabled: boolean, setOptions
     return null;
   }
 
-  return <AssholeOptions setOptions={setOptions}disabled = {disabled} {...data} />;
+  return <AssholeOptions setOptions={setOptions} disabled={disabled} {...data} />;
 };
 
-const getDurakOptions = (gameState: GameState_t, disabled: boolean, setOptions: (newOptions: GameOptionsType_t) => void) => {
+const getDurakOptions = (
+  gameState: GameState_t,
+  disabled: boolean,
+  setOptions: (newOptions: GameOptionsType_t) => void,
+) => {
   const { success, error, data } = DurakOptionsType.safeParse(gameState.options);
 
   if (!success) {
@@ -123,10 +131,14 @@ const getDurakOptions = (gameState: GameState_t, disabled: boolean, setOptions: 
     return null;
   }
 
-  return <DurakOptions setOptions={setOptions}disabled = {disabled} {...data} />;
+  return <DurakOptions setOptions={setOptions} disabled={disabled} {...data} />;
 };
 
-const getLittleMaxOptions = (gameState: GameState_t, disabled: boolean, setOptions: (newOptions: GameOptionsType_t) => void) => {
+const getLittleMaxOptions = (
+  gameState: GameState_t,
+  disabled: boolean,
+  setOptions: (newOptions: GameOptionsType_t) => void,
+) => {
   const { success, error, data } = LittleMaxOptionsType.safeParse(gameState.options);
 
   if (!success) {
@@ -134,10 +146,14 @@ const getLittleMaxOptions = (gameState: GameState_t, disabled: boolean, setOptio
     return null;
   }
 
-  return <LittleMaxOptions setOptions={setOptions}disabled = {disabled} {...data} />;
+  return <LittleMaxOptions setOptions={setOptions} disabled={disabled} {...data} />;
 };
 
-const getPokerOptions = (gameState: GameState_t, disabled: boolean, setOptions: (newOptions: GameOptionsType_t) => void) => {
+const getPokerOptions = (
+  gameState: GameState_t,
+  disabled: boolean,
+  setOptions: (newOptions: GameOptionsType_t) => void,
+) => {
   const { success, error, data } = PokerOptionsType.safeParse(gameState.options);
 
   if (!success) {
@@ -145,10 +161,14 @@ const getPokerOptions = (gameState: GameState_t, disabled: boolean, setOptions: 
     return null;
   }
 
-  return <PokerOptions setOptions={setOptions} disabled = {disabled}{...data} />;
+  return <PokerOptions setOptions={setOptions} disabled={disabled} {...data} />;
 };
 
-const getThirtyOneOptions = (gameState: GameState_t, disabled: boolean, setOptions: (newOptions: GameOptionsType_t) => void) => {
+const getThirtyOneOptions = (
+  gameState: GameState_t,
+  disabled: boolean,
+  setOptions: (newOptions: GameOptionsType_t) => void,
+) => {
   const { success, error, data } = ThirtyOneOptionsType.safeParse(gameState.options);
 
   if (!success) {
@@ -156,10 +176,14 @@ const getThirtyOneOptions = (gameState: GameState_t, disabled: boolean, setOptio
     return null;
   }
 
-  return <ThirtyOneOptions setOptions={setOptions}disabled = {disabled} {...data} />;
+  return <ThirtyOneOptions setOptions={setOptions} disabled={disabled} {...data} />;
 };
 
-const getWerwolfOptions = (gameState: GameState_t, disabled: boolean, setOptions: (newOptions: GameOptionsType_t) => void) => {
+const getWerwolfOptions = (
+  gameState: GameState_t,
+  disabled: boolean,
+  setOptions: (newOptions: GameOptionsType_t) => void,
+) => {
   const { success, error, data } = WerwolfOptionsType.safeParse(gameState.options);
 
   if (!success) {
@@ -167,5 +191,5 @@ const getWerwolfOptions = (gameState: GameState_t, disabled: boolean, setOptions
     return null;
   }
 
-  return <WerwolfOptions setOptions={setOptions}disabled = {disabled} {...data} />;
+  return <WerwolfOptions setOptions={setOptions} disabled={disabled} {...data} />;
 };

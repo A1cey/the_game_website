@@ -34,10 +34,10 @@ const useGameStore = create<GameState>()((set, get) => ({
   updateGame: (data: Partial<Game_t>, source: "subscription" | "user") => {
     set(state => {
       const newGame: Game_t = { ...state.game, ...data };
-      
+
       if (!newGame.game_state) {
         newGame.game_state = defaultGameState(Object.values(GameType.enum)[0]);
-      }      
+      }
 
       if (newGame.id && !state.subscriptionActive) {
         get().subscribeToGame(newGame.id);

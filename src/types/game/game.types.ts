@@ -4,10 +4,9 @@ import { AssholeGameState, AssholeOptionsType } from "./asshole.types";
 import { DurakGameState, DurakOptionsType } from "./durak.types";
 import { LittleMaxGameState, LittleMaxOptionsType } from "./little_max.types";
 import { PokerGameState, PokerOptionsType } from "./poker.types";
+import { BaseInformation, type PlayerLive_t } from "./shared.types";
 import { ThirtyOneGameState, ThirtyOneOptionsType } from "./thirty_one.types";
 import { WerwolfGameState, WerwolfOptionsType } from "./werwolf.types";
-import { BaseInformation, PlayerLive_t } from "./shared.types";
-import AssholeOptions from "@/components/game/game_options/AssholeOptions";
 
 export type GameProps = {
   setWinner: Dispatch<SetStateAction<string | null>>;
@@ -66,7 +65,7 @@ export type GameState_t = z.infer<typeof GameState>;
 const GameRules = z.object({
   en: z.string(),
   de: z.string(),
-})
+});
 
 const GameRulesMap = z.object({
   [GameType.enum.ASSHOLE]: GameRules,
@@ -78,5 +77,12 @@ const GameRulesMap = z.object({
 });
 export type GameRulesMap_t = z.infer<typeof GameRulesMap>;
 
-export const GameOptionsType = z.union([AssholeOptionsType, DurakOptionsType, LittleMaxOptionsType, PokerOptionsType, ThirtyOneOptionsType, WerwolfOptionsType]);
+export const GameOptionsType = z.union([
+  AssholeOptionsType,
+  DurakOptionsType,
+  LittleMaxOptionsType,
+  PokerOptionsType,
+  ThirtyOneOptionsType,
+  WerwolfOptionsType,
+]);
 export type GameOptionsType_t = z.infer<typeof GameOptionsType>;

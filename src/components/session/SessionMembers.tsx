@@ -7,9 +7,8 @@ import { Divider, Select, SelectItem, type SelectedItemProps } from "@nextui-org
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import GroupIcon from "../icons/GroupIcon";
 import PlayerList from "../PlayerList";
-
+import GroupIcon from "../icons/GroupIcon";
 
 const SessionSize = () => {
   const sessionName = useSessionStore(state => state.session.name);

@@ -1,4 +1,4 @@
-import type {  AssholeOptionsType_t } from "@/types/game/asshole.types";
+import type { AssholeOptionsType_t } from "@/types/game/asshole.types";
 import { useEffect, useRef } from "react";
 
 type AssholeOptionsProps = AssholeOptionsType_t & {
@@ -6,7 +6,7 @@ type AssholeOptionsProps = AssholeOptionsType_t & {
   setOptions: React.Dispatch<React.SetStateAction<AssholeOptionsType_t>>;
 };
 
-const AssholeOptions = ({ setOptions,disabled }: AssholeOptionsProps) => {
+const AssholeOptions = ({ setOptions, disabled }: AssholeOptionsProps) => {
   const hasChanged = useRef(false);
 
   useEffect(() => {

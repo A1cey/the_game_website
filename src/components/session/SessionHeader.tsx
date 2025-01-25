@@ -3,9 +3,9 @@ import usePlayerStore from "@/hooks/usePlayerStore";
 import useSessionStore from "@/hooks/useSessionStore";
 import { Link } from "@nextui-org/react";
 import { useTranslation } from "react-i18next";
+import ButtonBordered from "../ui/ButtonBordered";
 import SessionSize from "./SessionMembers";
 import SessionName from "./SessionName";
-import ButtonBordered from "../ui/ButtonBordered";
 
 const SessionHeader = () => {
   const resetPlayer = usePlayerStore(state => state.resetStore);

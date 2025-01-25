@@ -1,5 +1,5 @@
 import { defaultGameState, getAltNameForGameSVG } from "@/utils/game";
-import {  useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import useGameStore from "@/hooks/useGameStore";
@@ -70,7 +70,7 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
   const host = useSessionStore(state => state.session.host);
   const playerId = usePlayerStore(state => state.player.id);
 
-  const disabled = useMemo(() => !!(host && playerId &&playerId !== host), [host, playerId]);
+  const disabled = useMemo(() => !!(host && playerId && playerId !== host), [host, playerId]);
   const [activeSlide, setActiveSlide] = useState(
     Object.values(GameType.enum).indexOf(gameState?.game ?? GameType.enum.ASSHOLE),
   );
@@ -192,10 +192,10 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
             <style>{
               // disables dots when not host
               `.slick-dots li div {
-                pointer-events: ${disabled ? 'none': 'auto' };
+                pointer-events: ${disabled ? "none" : "auto"};
               }
               .slick-dots li  {
-                cursor: ${disabled ? 'default': 'pointer' };
+                cursor: ${disabled ? "default" : "pointer"};
               }
               `
             }</style>

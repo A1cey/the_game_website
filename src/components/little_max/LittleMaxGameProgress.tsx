@@ -1,7 +1,11 @@
 import useGameStore from "@/hooks/useGameStore";
 import useLanguageStore from "@/hooks/useLanguageStore";
 import useSessionStore from "@/hooks/useSessionStore";
-import { LittleMaxGameState_t, LittleMaxOldValue_t, PossibleLittleMaxValue_t } from "@/types/game/little_max.types";
+import type {
+  LittleMaxGameState_t,
+  LittleMaxOldValue_t,
+  PossibleLittleMaxValue_t,
+} from "@/types/game/little_max.types";
 import { getPlayerNames } from "@/utils/supabase";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";

@@ -1,23 +1,23 @@
+import assholeRulesDe from "@/assets/rules/asshole.de.md?raw";
+import assholeRulesEn from "@/assets/rules/asshole.en.md?raw?raw";
+import durakRulesDe from "@/assets/rules/durak.de.md?raw";
+import durakRulesEn from "@/assets/rules/durak.en.md?raw";
+import littleMaxRulesDe from "@/assets/rules/little_max.de.md?raw";
+import littleMaxRulesEn from "@/assets/rules/little_max.en.md?raw";
+import pokerRulesDe from "@/assets/rules/poker.de.md?raw";
+import pokerRulesEn from "@/assets/rules/poker.en.md?raw";
+import thirtyOneRulesDe from "@/assets/rules/thirty_one.de.md?raw";
+import thirtyOneRulesEn from "@/assets/rules/thirty_one.en.md?raw";
+import werwolfRulesDe from "@/assets/rules/werwolf.de.md?raw";
+import werwolfRulesEn from "@/assets/rules/werwolf.en.md?raw";
 import useGameStore from "@/hooks/useGameStore";
 import useThemeStore from "@/hooks/useThemeStore";
+import type { GameRulesMap_t } from "@/types/game/game.types";
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/modal";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
 import ButtonBordered from "../ui/ButtonBordered";
-import assholeRulesEn from "@/assets/rules/asshole.en.md?raw?raw";
-import assholeRulesDe from "@/assets/rules/asshole.de.md?raw";
-import durakRulesEn from "@/assets/rules/durak.en.md?raw";
-import durakRulesDe from "@/assets/rules/durak.de.md?raw";
-import littleMaxRulesEn from "@/assets/rules/little_max.en.md?raw";
-import littleMaxRulesDe from "@/assets/rules/little_max.de.md?raw";
-import pokerRulesEn from "@/assets/rules/poker.en.md?raw";
-import pokerRulesDe from "@/assets/rules/poker.de.md?raw";
-import thirtyOneRulesEn from "@/assets/rules/thirty_one.en.md?raw";
-import thirtyOneRulesDe from "@/assets/rules/thirty_one.de.md?raw";
-import werwolfRulesEn from "@/assets/rules/werwolf.en.md?raw";
-import werwolfRulesDe from "@/assets/rules/werwolf.de.md?raw";
-import { GameRulesMap_t } from "@/types/game/game.types";
 
 const GameRules = () => {
   const currentGame = useGameStore(state => state.game.game_state?.game);
@@ -31,30 +31,30 @@ const GameRules = () => {
   } = useTranslation();
 
   const rulesMap: GameRulesMap_t = {
-    "ASSHOLE": {
+    ASSHOLE: {
       en: assholeRulesEn,
-      de: assholeRulesDe
+      de: assholeRulesDe,
     },
-    "DURAK": {
+    DURAK: {
       en: durakRulesEn,
-      de: durakRulesDe
+      de: durakRulesDe,
     },
-    "LITTLE_MAX": {
+    LITTLE_MAX: {
       en: littleMaxRulesEn,
-      de: littleMaxRulesDe
+      de: littleMaxRulesDe,
     },
-    "POKER": {
+    POKER: {
       en: pokerRulesEn,
-      de: pokerRulesDe
+      de: pokerRulesDe,
     },
-    "THIRTY_ONE": {
+    THIRTY_ONE: {
       en: thirtyOneRulesEn,
-      de: thirtyOneRulesDe
+      de: thirtyOneRulesDe,
     },
-    "WERWOLF": {
+    WERWOLF: {
       en: werwolfRulesEn,
-      de: werwolfRulesDe
-    }
+      de: werwolfRulesDe,
+    },
   };
 
   useEffect(() => {
@@ -63,12 +63,14 @@ const GameRules = () => {
     }
 
     const rules = rulesMap[currentGame][language as "en" | "de"];
-    setRules(rules)
+    setRules(rules);
   }, [currentGame, language]);
 
   return (
     <div>
-      <ButtonBordered onPress={onOpen} isDisabled={currentGame !== "LITTLE_MAX"}>{t("gameRules")}</ButtonBordered>
+      <ButtonBordered onPress={onOpen} isDisabled={currentGame !== "LITTLE_MAX"}>
+        {t("gameRules")}
+      </ButtonBordered>
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}

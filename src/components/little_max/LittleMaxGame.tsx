@@ -1,9 +1,13 @@
 import useGameStore from "@/hooks/useGameStore";
 import usePlayerStore from "@/hooks/usePlayerStore";
 import useSessionStore from "@/hooks/useSessionStore";
+import type { GameProps } from "@/types/game/game.types";
 import type {
-  GameProps
-} from "@/types/game/game.types";
+  LittleMaxGameState_t,
+  LittleMaxOldValue_t,
+  LittleMaxOptionsType_t,
+  PossibleLittleMaxValue_t,
+} from "@/types/game/little_max.types";
 import { random } from "@/utils/other";
 import supabase, { getPlayerNames } from "@/utils/supabase";
 import { Modal, ModalBody, ModalContent, useDisclosure } from "@nextui-org/modal";
@@ -12,7 +16,6 @@ import { useTranslation } from "react-i18next";
 import ButtonBordered from "../ui/ButtonBordered";
 import DiceRoll from "./Dice";
 import LittleMaxGameProgress from "./LittleMaxGameProgress";
-import { LittleMaxGameState_t, LittleMaxOldValue_t, LittleMaxOptionsType_t, PossibleLittleMaxValue_t } from "@/types/game/little_max.types";
 
 const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
   const positionInSession = usePlayerStore(state => state.player.position_in_session as number);

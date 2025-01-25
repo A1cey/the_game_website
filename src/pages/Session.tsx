@@ -127,7 +127,10 @@ const Session = () => {
                 id="startGame"
                 className="w-fit"
                 onPress={startGame}
-                isDisabled={numOfPlayers < (gameState?.minPlayers ? gameState?.minPlayers : Number.POSITIVE_INFINITY) || currentGame !== "LITTLE_MAX"}
+                isDisabled={
+                  numOfPlayers < (gameState?.minPlayers ? gameState?.minPlayers : Number.POSITIVE_INFINITY) ||
+                  currentGame !== "LITTLE_MAX"
+                }
               >
                 {t("startGame", { game: currentGame ? formatGameName(currentGame.toString(), t) : "" })}
               </ButtonBordered>
