@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const PokerOptionsType = z.object({});
-export type PokerOptionsType = z.infer<typeof PokerOptionsType>;
+export type PokerOptionsType_t = z.infer<typeof PokerOptionsType>;
 
 export const PokerGameState = z.object({});
-export type PokerGameState = z.infer<typeof PokerGameState>;
+export type PokerGameState_t = z.infer<typeof PokerGameState>;

@@ -1,17 +1,17 @@
-import { Routes, Route, useHref } from "react-router-dom";
-import Home from "@/pages/Home";
 import Game from "@/pages/Game";
+import Home from "@/pages/Home";
 import Session from "@/pages/Session";
-import { useNavigate } from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import { useEffect } from "react";
-import useGameStore from "./hooks/useGameStore";
-import useSessionStore from "./hooks/useSessionStore";
-import usePlayerStore from "./hooks/usePlayerStore";
-import useThemeStore from "./hooks/useThemeStore";
-import Header from "./components/Header";
-import { removePlayerFromSession } from "./utils/supabase";
 import { useTranslation } from "react-i18next";
+import { Route, Routes, useHref } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Header from "./components/Header";
+import useGameStore from "./hooks/useGameStore";
+import usePlayerStore from "./hooks/usePlayerStore";
+import useSessionStore from "./hooks/useSessionStore";
+import useThemeStore from "./hooks/useThemeStore";
+import { removePlayerFromSession } from "./utils/supabase";
 
 const App = () => {
   const { t } = useTranslation();

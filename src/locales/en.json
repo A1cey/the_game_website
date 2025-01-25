@@ -21,6 +21,7 @@
     "player": "Player",
     "noDataAvailable": "No data available",
     "selectGame": "Select a Game",
+    "waitGameSelect": "Waiting for game to start",
     "gameRules": "Game Rules",
     "gameOptions": "Game Options",
     "noOptionsAvailable": "No options available",

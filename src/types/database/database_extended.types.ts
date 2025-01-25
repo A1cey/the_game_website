@@ -1,6 +1,6 @@
-import { GameState } from "../game/game.types";
 import { z } from "zod";
-import type{ Json } from "./database.types";
+import { GameState } from "../game/game.types";
+import type { Json } from "./database.types";
 
 export const Json_t: z.ZodType<Json> = z.lazy(() =>
   z.union([

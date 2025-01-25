@@ -15,10 +15,10 @@ export const CardValue = z.enum([
   "KING",
   "ACE",
 ]);
-export type CardValue = z.infer<typeof CardValue>;
+export type CardValue_t = z.infer<typeof CardValue>;
 
 export const CardType = z.enum(["CLUBS", "DIAMONDS", "HEARTS", "SPADES"]);
-export type CardType = z.infer<typeof CardType>;
+export type CardType_t = z.infer<typeof CardType>;
 
 export const Card = z.tuple([CardType, CardValue]);
-export type Card = [CardType, CardValue];
+export type Card = [CardType_t, CardValue_t];

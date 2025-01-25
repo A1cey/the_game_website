@@ -1,11 +1,11 @@
-import {type Card, CardType, CardValue } from "@/types/game/card.types";
-import  {type GameState, GameType,type GameType_t } from "@/types/game/game.types";
-import type{ z } from "zod";
+import { type Card, CardType, CardValue } from "@/types/game/card.types";
+import { type GameState, GameType, type GameType_t } from "@/types/game/game.types";
+import type { z } from "zod";
 
 export const getGameImgs = (handleTranslation: (key: string) => string): string[] => {
   const images = import.meta.glob("../assets/game_svgs/**/*.svg", { eager: true });
   return Object.values(GameType.enum).map(gameName => {
-    const fileName = `${handleTranslation(gameName.toLowerCase())}.svg`;
+    const fileName = `${handleTranslation(gameName.toLowerCase()).toLowerCase()}.svg`;
     const path = `../assets/game_svgs/${gameName.toLowerCase()}/${fileName}`;
     return (images[path] as { default: string }).default;
   });

@@ -1,8 +1,8 @@
-import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/database/database.types";
-import { formatDefaultPlayerName } from "./other";
-import type { GameState_t } from "@/types/game/game.types";
 import { Game_t } from "@/types/database/database_extended.types";
+import type { GameState_t } from "@/types/game/game.types";
+import { createClient } from "@supabase/supabase-js";
+import { formatDefaultPlayerName } from "./other";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;

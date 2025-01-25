@@ -1,11 +1,12 @@
-import type{ ThirtyOneOptionsType } from "@/types/game/thirty_one.types";
+import type {  ThirtyOneOptionsType_t } from "@/types/game/thirty_one.types";
 import { useEffect, useRef } from "react";
 
-type ThirtyOneOptionsProps = ThirtyOneOptionsType & {
-  setOptions: React.Dispatch<React.SetStateAction<ThirtyOneOptionsType>>;
+type ThirtyOneOptionsProps = ThirtyOneOptionsType_t & {
+    disabled: boolean;
+  setOptions: React.Dispatch<React.SetStateAction<ThirtyOneOptionsType_t>>;
 };
 
-const ThirtyOneOptions = ({ setOptions }: ThirtyOneOptionsProps) => {
+const ThirtyOneOptions = ({ setOptions, disabled }: ThirtyOneOptionsProps) => {
   const hasChanged = useRef(false);
 
   useEffect(() => {

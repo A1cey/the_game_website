@@ -1,14 +1,15 @@
+import useSessionStore from "@/hooks/useSessionStore";
+import useThemeStore from "@/hooks/useThemeStore";
+import supabase from "@/utils/supabase";
 import { Button } from "@nextui-org/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
-import GroupIcon from "./icons/GroupIcon";
-import { Divider, Select, type SelectedItemProps, SelectItem } from "@nextui-org/react";
-import PlayerList from "./PlayerList";
-import { useState } from "react";
-import useThemeStore from "@/hooks/useThemeStore";
-import useSessionStore from "@/hooks/useSessionStore";
-import supabase from "@/utils/supabase";
+import { Divider, Select, SelectItem, type SelectedItemProps } from "@nextui-org/react";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import GroupIcon from "../icons/GroupIcon";
+import PlayerList from "../PlayerList";
+
 
 const SessionSize = () => {
   const sessionName = useSessionStore(state => state.session.name);

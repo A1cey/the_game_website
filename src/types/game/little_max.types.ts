@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PlayerLive } from "./game.types";
+import { PlayerLive } from "./shared.types";
 
 export const PossibleLittleMaxValue = z.union([
   z.literal(0),
@@ -25,20 +25,20 @@ export const PossibleLittleMaxValue = z.union([
   z.literal(66),
   z.literal(21),
 ]);
-export type PossibleLittleMaxValue = z.infer<typeof PossibleLittleMaxValue>;
+export type PossibleLittleMaxValue_t = z.infer<typeof PossibleLittleMaxValue>;
 
 export const LittleMaxOldValue = z.object({
   value: PossibleLittleMaxValue,
   player: z.number(),
   orHigher: z.boolean(),
 });
-export type LittleMaxOldValue = z.infer<typeof LittleMaxOldValue>;
+export type LittleMaxOldValue_t = z.infer<typeof LittleMaxOldValue>;
 
 export const LittleMaxOptionsType = z.object({
   passOn21: z.boolean(),
   lives: z.number(),
 });
-export type LittleMaxOptionsType = z.infer<typeof LittleMaxOptionsType>;
+export type LittleMaxOptionsType_t = z.infer<typeof LittleMaxOptionsType>;
 
 export const LittleMaxGameState = z.object({
   namedValues: LittleMaxOldValue.array(),
@@ -46,4 +46,4 @@ export const LittleMaxGameState = z.object({
   lives: PlayerLive.array(),
   activePlayers: z.number().array(),
 });
-export type LittleMaxGameState = z.infer<typeof LittleMaxGameState>;
+export type LittleMaxGameState_t = z.infer<typeof LittleMaxGameState>;

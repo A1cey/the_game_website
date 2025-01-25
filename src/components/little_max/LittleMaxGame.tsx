@@ -1,41 +1,38 @@
-import { useEffect, useState } from "react";
-import ButtonBordered from "../ui/ButtonBordered";
-import LittleMaxGameProgress from "./LittleMaxGameProgress";
-import type {
-  GameProps,
-  LittleMaxGameState,
-  LittleMaxOldValue,
-  LittleMaxOptionsType,
-  PossibleLittleMaxValue,
-} from "@/types/game.types";
-import supabase, { getPlayerNames } from "@/utils/supabase";
 import useGameStore from "@/hooks/useGameStore";
 import usePlayerStore from "@/hooks/usePlayerStore";
-import DiceRoll from "./Dice";
-import { random } from "@/utils/other";
 import useSessionStore from "@/hooks/useSessionStore";
-import { useTranslation } from "react-i18next";
+import type {
+  GameProps
+} from "@/types/game/game.types";
+import { random } from "@/utils/other";
+import supabase, { getPlayerNames } from "@/utils/supabase";
 import { Modal, ModalBody, ModalContent, useDisclosure } from "@nextui-org/modal";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import ButtonBordered from "../ui/ButtonBordered";
+import DiceRoll from "./Dice";
+import LittleMaxGameProgress from "./LittleMaxGameProgress";
+import { LittleMaxGameState_t, LittleMaxOldValue_t, LittleMaxOptionsType_t, PossibleLittleMaxValue_t } from "@/types/game/little_max.types";
 
 const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
   const positionInSession = usePlayerStore(state => state.player.position_in_session as number);
   const gameState = useGameStore(state => state.game.game_state);
   const currentPlayer = useGameStore(state => state.game.current_player);
-  const namedValues = useGameStore(state => (state.game.game_state?.state as LittleMaxGameState).namedValues);
-  const lieRevealed = useGameStore(state => (state.game.game_state?.state as LittleMaxGameState).lieRevealed);
-  const activePlayers = useGameStore(state => (state.game.game_state?.state as LittleMaxGameState).activePlayers);
+  const namedValues = useGameStore(state => (state.game.game_state?.state as LittleMaxGameState_t).namedValues);
+  const lieRevealed = useGameStore(state => (state.game.game_state?.state as LittleMaxGameState_t).lieRevealed);
+  const activePlayers = useGameStore(state => (state.game.game_state?.state as LittleMaxGameState_t).activePlayers);
   const gameId = useGameStore(state => state.game.id);
   const sessionName = useSessionStore(state => state.session.name);
   const numOfPlayers = useSessionStore(state => state.session.num_of_players);
-  const isPassOn21 = useGameStore(state => (state.game.game_state?.options as LittleMaxOptionsType).passOn21);
-  const lives = useGameStore(state => (state.game.game_state?.state as LittleMaxGameState).lives);
+  const isPassOn21 = useGameStore(state => (state.game.game_state?.options as LittleMaxOptionsType_t).passOn21);
+  const lives = useGameStore(state => (state.game.game_state?.state as LittleMaxGameState_t).lives);
 
-  const [selectedValue, setSelectedValue] = useState<PossibleLittleMaxValue>(0);
+  const [selectedValue, setSelectedValue] = useState<PossibleLittleMaxValue_t>(0);
   const [isSelectedAsOrHigher, setIsSelectedAsOrHigher] = useState(false);
-  const [rolledValue, setRolledValue] = useState<PossibleLittleMaxValue>(0);
+  const [rolledValue, setRolledValue] = useState<PossibleLittleMaxValue_t>(0);
   const [isFirstRoll, setIsFirstRoll] = useState(true);
   const [roll, setRoll] = useState(false);
-  const [lastValue, setLastValue] = useState<LittleMaxOldValue>({ value: 0, player: 1, orHigher: false });
+  const [lastValue, setLastValue] = useState<LittleMaxOldValue_t>({ value: 0, player: 1, orHigher: false });
   const [isLie, setIsLie] = useState<boolean | null>(null);
   const [lieRevealText, setLieRevealText] = useState("");
 
@@ -109,7 +106,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
   }, [isLie]);
 
   const decrementLives = () => {
-    const newState = gameState?.state as LittleMaxGameState;
+    const newState = gameState?.state as LittleMaxGameState_t;
     const idx = newState.lives.findIndex(val => val.player === positionInSession);
 
     const newLives = newState.lives[idx].lives - 1;
@@ -161,13 +158,13 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
               return;
             }
 
-            evaluateReveal(data.dice_value as PossibleLittleMaxValue);
+            evaluateReveal(data.dice_value as PossibleLittleMaxValue_t);
           });
         }
       });
   }, [lieRevealed, gameId]);
 
-  const evaluateReveal = (diceValue: PossibleLittleMaxValue) => {
+  const evaluateReveal = (diceValue: PossibleLittleMaxValue_t) => {
     // dice value same or higher as told value
     if (lastValue.orHigher) {
       setIsLie(diceValue >= lastValue.value);
@@ -178,13 +175,13 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
     }
   };
 
-  const getRandomDiceValues = (): PossibleLittleMaxValue => {
+  const getRandomDiceValues = (): PossibleLittleMaxValue_t => {
     const a = random(1, 6);
     const b = random(1, 6);
 
     const result = a >= b ? a * 10 + b : b * 10 + a;
 
-    return result as PossibleLittleMaxValue;
+    return result as PossibleLittleMaxValue_t;
   };
 
   const rollDice = async () => {
@@ -194,7 +191,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
   };
 
   const reveal = async () => {
-    const newState = gameState?.state as LittleMaxGameState;
+    const newState = gameState?.state as LittleMaxGameState_t;
     newState.lieRevealed = true;
 
     await supabase
@@ -207,7 +204,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
     const val = getRandomDiceValues();
     setRolledValue(val);
 
-    const newState = gameState?.state as LittleMaxGameState;
+    const newState = gameState?.state as LittleMaxGameState_t;
     newState.lieRevealed = false;
     newState.namedValues.push({
       player: positionInSession,
@@ -226,7 +223,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
   };
 
   const next = () => {
-    const newState = gameState?.state as LittleMaxGameState;
+    const newState = gameState?.state as LittleMaxGameState_t;
 
     // find next player
     let nextPlayer = positionInSession + 1;
@@ -255,8 +252,8 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
     reset();
   };
 
-  const getNextValue = (): PossibleLittleMaxValue => {
-    const possibleVals: PossibleLittleMaxValue[] = [
+  const getNextValue = (): PossibleLittleMaxValue_t => {
+    const possibleVals: PossibleLittleMaxValue_t[] = [
       31, 32, 41, 42, 43, 51, 52, 53, 54, 61, 62, 63, 64, 65, 11, 22, 33, 44, 55, 66, 21,
     ];
     console.log(lastValue.value);
@@ -267,7 +264,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
   };
 
   const passOn = async () => {
-    const newState = gameState?.state as LittleMaxGameState;
+    const newState = gameState?.state as LittleMaxGameState_t;
     newState.lieRevealed = false;
     newState.namedValues.push({
       player: positionInSession,
@@ -292,7 +289,7 @@ const LittleMaxGame = ({ setWinner, onLivesChange }: GameProps) => {
             console.error(`Error quering DB little_max: ${error}`);
           }
           if (data) {
-            setRolledValue(data.dice_value as PossibleLittleMaxValue);
+            setRolledValue(data.dice_value as PossibleLittleMaxValue_t);
           }
         });
     }

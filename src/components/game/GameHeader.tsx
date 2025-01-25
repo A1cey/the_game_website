@@ -1,16 +1,16 @@
-import { Link, Tooltip } from "@nextui-org/react";
-import { getPlayerNames } from "@/utils/supabase";
-import usePlayerStore from "@/hooks/usePlayerStore";
-import { useEffect, useRef, useState } from "react";
-import useSessionStore from "@/hooks/useSessionStore";
 import useGameStore from "@/hooks/useGameStore";
-import { ScrollShadow } from "@nextui-org/scroll-shadow";
-import { useTranslation } from "react-i18next";
 import useLanguageStore from "@/hooks/useLanguageStore";
-import GameRules from "./GameRules";
+import usePlayerStore from "@/hooks/usePlayerStore";
+import useSessionStore from "@/hooks/useSessionStore";
 import useThemeStore from "@/hooks/useThemeStore";
-import type { PlayerLive_t } from "@/types/game/game.types";
+import type { PlayerLive_t } from "@/types/game/shared.types";
+import { getPlayerNames } from "@/utils/supabase";
+import { Link, Tooltip } from "@nextui-org/react";
+import { ScrollShadow } from "@nextui-org/scroll-shadow";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import ButtonBordered from "../ui/ButtonBordered";
+import GameRules from "./GameRules";
 
 type GameHeaderProps = {
   showLives: boolean;
@@ -61,14 +61,14 @@ const GameHeader = ({ showLives, lives }: GameHeaderProps) => {
   }, [currentPlayer]);
 
   const leaveGame = () => {
-    resetSession();
-    resetGame();
     resetPlayer();
+    resetGame();
+    resetSession();
   };
 
   return (
     <div className="pt-2 pl-4 pr-4 flex gap-2 lg:gap-20 items-center flex-wrap lg:flex-nowrap lg:flex-row justify-center">
-      <ButtonBordered as={Link} href={"/"} onPress={leaveGame} isDisabled={true} className="order-1">
+      <ButtonBordered as={Link} href={"/"} onPress={leaveGame} className="order-1">
         {t("leaveGame")}
       </ButtonBordered>
 
@@ -76,7 +76,8 @@ const GameHeader = ({ showLives, lives }: GameHeaderProps) => {
         <div className="flex gap-1">
           {players.map((player, idx) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: The key is the index of the array, which is fine in this case.
-            <div key={idx}
+            <div
+              key={idx}
               ref={currentPlayer === idx + 1 ? currentPlayerRef : null}
               className={`
                 p-2 text-nowrap

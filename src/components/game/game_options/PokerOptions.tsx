@@ -1,11 +1,12 @@
-import type{ PokerOptionsType } from "@/types/game/poker.types";
+import type {  PokerOptionsType_t } from "@/types/game/poker.types";
 import { useEffect, useRef } from "react";
 
-type PokerOptionsProps = PokerOptionsType & {
-  setOptions: React.Dispatch<React.SetStateAction<PokerOptionsType>>;
+type PokerOptionsProps = PokerOptionsType_t & {
+    disabled: boolean;
+  setOptions: React.Dispatch<React.SetStateAction<PokerOptionsType_t>>;
 };
 
-const PokerOptions = ({ setOptions }: PokerOptionsProps) => {
+const PokerOptions = ({ setOptions, disabled }: PokerOptionsProps) => {
   const hasChanged = useRef(false);
 
   useEffect(() => {
@@ -13,7 +14,7 @@ const PokerOptions = ({ setOptions }: PokerOptionsProps) => {
     if (!hasChanged.current) {
       return;
     }
-
+    
     setOptions({});
   }, []);
 

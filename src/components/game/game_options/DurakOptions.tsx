@@ -1,11 +1,12 @@
-import type{ DurakOptionsType } from "@/types/game/durak.types";
+import type {  DurakOptionsType_t } from "@/types/game/durak.types";
 import { useEffect, useRef } from "react";
 
-type DurakOptionsProps = DurakOptionsType & {
-  setOptions: React.Dispatch<React.SetStateAction<DurakOptionsType>>;
+type DurakOptionsProps = DurakOptionsType_t & {
+    disabled: boolean;
+  setOptions: React.Dispatch<React.SetStateAction<DurakOptionsType_t>>;
 };
 
-const DurakOptions = ({ setOptions }: DurakOptionsProps) => {
+const DurakOptions = ({ setOptions ,disabled}: DurakOptionsProps) => {
   const hasChanged = useRef(false);
 
   useEffect(() => {

@@ -1,4 +1,6 @@
 import { Game_t } from "@/types/database/database_extended.types";
+import { GameType } from "@/types/game/game.types";
+import { defaultGameState } from "@/utils/game";
 import supabase from "@/utils/supabase";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { create } from "zustand";
@@ -25,13 +27,17 @@ const useGameStore = create<GameState>()((set, get) => ({
   game: defaultGame,
   subscriptionActive: false,
   subscription: null as RealtimeChannel | null,
-  updateSource: "user",
+  updateSource: "user" as const,
 
   resetUpdateSource: () => set({ updateSource: "user" }),
 
   updateGame: (data: Partial<Game_t>, source: "subscription" | "user") => {
     set(state => {
       const newGame: Game_t = { ...state.game, ...data };
+      
+      if (!newGame.game_state) {
+        newGame.game_state = defaultGameState(Object.values(GameType.enum)[0]);
+      }      
 
       if (newGame.id && !state.subscriptionActive) {
         get().subscribeToGame(newGame.id);
@@ -60,7 +66,7 @@ const useGameStore = create<GameState>()((set, get) => ({
           filter: `id=eq.${gameId}`,
         },
         payload => {
-          console.log("New data through game subscription: ", payload, payload.new);
+          console.log("New data through game subscription: ", payload);
           const { success, error, data } = Game_t.partial().safeParse(payload.new);
 
           if (!success) {

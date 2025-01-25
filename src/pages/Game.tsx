@@ -2,8 +2,9 @@ import GameHeader from "@/components/game/GameHeader";
 import LittleMaxGame from "@/components/little_max/LittleMaxGame";
 import useGameStore from "@/hooks/useGameStore";
 import useThemeStore from "@/hooks/useThemeStore";
-import { GameType,type PlayerLive_t } from "@/types/game/game.types";
-import type { LittleMaxGameState } from "@/types/game/little_max.types";
+import { GameType} from "@/types/game/game.types";
+import { LittleMaxGameState_t } from "@/types/game/little_max.types";
+import { PlayerLive_t } from "@/types/game/shared.types";
 import { Modal, ModalBody, ModalContent } from "@nextui-org/modal";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -41,7 +42,7 @@ const Game = () => {
         setGame(<div>Not implemented.</div>);
         break;
       case GameType.enum.LITTLE_MAX:
-        setLives((gameState as LittleMaxGameState).lives);
+        setLives((gameState as LittleMaxGameState_t).lives);
         setShowLives(true);
         setGame(<LittleMaxGame setWinner={setWinner} onLivesChange={setLives} />);
         break;

@@ -1,11 +1,12 @@
-import type{ WerwolfOptionsType } from "@/types/game/werwolf.types";
+import type { WerwolfOptionsType_t } from "@/types/game/werwolf.types";
 import { useEffect, useRef } from "react";
 
-type WerwolfOptionsProps = WerwolfOptionsType & {
-  setOptions: React.Dispatch<React.SetStateAction<WerwolfOptionsType>>;
+type WerwolfOptionsProps = WerwolfOptionsType_t & {
+  disabled: boolean;
+  setOptions: React.Dispatch<React.SetStateAction<WerwolfOptionsType_t>>;
 };
 
-const WerwolfOptions = ({ setOptions }: WerwolfOptionsProps) => {
+const WerwolfOptions = ({ setOptions, disabled }: WerwolfOptionsProps) => {
   const hasChanged = useRef(false);
 
   useEffect(() => {

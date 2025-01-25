@@ -1,11 +1,11 @@
+import useThemeStore from "@/hooks/useThemeStore";
 import { Button } from "@nextui-org/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
-import { useState } from "react";
-import { ThemeSwitcher } from "./ui/ThemeSwitcher";
-import useThemeStore from "@/hooks/useThemeStore";
 import { Divider } from "@nextui-org/react";
+import { useState } from "react";
 import SettingsIcon from "./icons/SettingsIcon";
 import LanguageSelector from "./ui/LanguageSelector";
+import { ThemeSwitcher } from "./ui/ThemeSwitcher";
 
 const Header = () => {
   const theme = useThemeStore(state => state.theme);

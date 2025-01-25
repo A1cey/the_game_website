@@ -1,28 +1,30 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import { defaultGameState, getAltNameForGameSVG } from "@/utils/game";
-import { getEnumValues } from "@/utils/other";
+import {  useEffect, useMemo, useRef, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick";
-import { Button } from "@nextui-org/button";
-import useThemeStore from "@/hooks/useThemeStore";
 import useGameStore from "@/hooks/useGameStore";
-import { updateDBGameState } from "@/utils/supabase";
+import usePlayerStore from "@/hooks/usePlayerStore";
 import useSessionStore from "@/hooks/useSessionStore";
+import useThemeStore from "@/hooks/useThemeStore";
+import { GameType, type GameType_t } from "@/types/game/game.types";
+import { updateDBGameState } from "@/utils/supabase";
+import { Button } from "@nextui-org/button";
+import { useTranslation } from "react-i18next";
+import Slider from "react-slick";
 import ArrowLeftIcon from "../icons/ArrowLeft";
 import ArrowRightIcon from "../icons/ArrowRight";
-import { useTranslation } from "react-i18next";
-import { GameType } from "@/types/game/game.types";
 
 type ArrowProps = {
   // biome-ignore lint/suspicious/noExplicitAny: The type of the function is not known, so it is set to any.
   onClick?: any;
   theme: string;
+  disabled: boolean;
 };
 
-const ArrowLeft = ({ onClick }: ArrowProps) => {
+const ArrowLeft = ({ onClick, disabled }: ArrowProps) => {
   return (
     <Button
+      disabled={disabled}
       isIconOnly
       aria-label="Settings"
       onPress={() => onClick()}
@@ -38,9 +40,10 @@ const ArrowLeft = ({ onClick }: ArrowProps) => {
   );
 };
 
-const ArrowRight = ({ onClick }: ArrowProps) => {
+const ArrowRight = ({ onClick, disabled }: ArrowProps) => {
   return (
     <Button
+      disabled={disabled}
       isIconOnly
       aria-label="Settings"
       onPress={() => onClick()}
@@ -65,16 +68,15 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
   const gameId = useSessionStore(state => state.session.game_id);
   const gameState = useGameStore(state => state.game.game_state);
   const host = useSessionStore(state => state.session.host);
+  const playerId = usePlayerStore(state => state.player.id);
 
-  const [currentGame, setCurrentGame] = useState(gameState?.game ?? GameType.enum.ASSHOLE);
+  const disabled = useMemo(() => !!(host && playerId &&playerId !== host), [host, playerId]);
   const [activeSlide, setActiveSlide] = useState(
     Object.values(GameType.enum).indexOf(gameState?.game ?? GameType.enum.ASSHOLE),
   );
+
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
   const sliderRef = useRef<Slider | null>(null);
-  const isRender = useRef(true);
-
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -87,7 +89,7 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const updateGameTypeAtDB = useCallback(async () => {
+  const updateGameTypeAtDB = async (nextGame: GameType_t) => {
     if (!gameId) {
       console.error("Error updating the game selection: Game id not set.");
       return;
@@ -95,9 +97,10 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
 
     console.log("updating game type at db");
 
-    await updateDBGameState(gameId, gameState?.state ?? {}, currentGame ? defaultGameState(currentGame) : {});
-  }, [gameId, currentGame]);
-  // handling changes from other players
+    await updateDBGameState(gameId, gameState?.state ?? {}, nextGame ? defaultGameState(nextGame) : {});
+  };
+
+  // handling changes from db
   useEffect(() => {
     if (!gameState?.game) {
       return;
@@ -111,23 +114,15 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
     }
   }, [gameState]);
 
+  // update db if player is host
   useEffect(() => {
-    if (isRender.current) {
-      isRender.current = false;
+    if (disabled) {
       return;
     }
 
-    setCurrentGame(Object.values(GameType.enum)[activeSlide]);
-  }, [activeSlide, setCurrentGame]);
-
-  useEffect(() => {
-    if (isRender.current) {
-      isRender.current = false;
-      return;
-    }
-
-    updateGameTypeAtDB();
-  }, [currentGame]);
+    const nextGame = Object.values(GameType.enum)[activeSlide];
+    updateGameTypeAtDB(nextGame);
+  }, [activeSlide]);
 
   const settings = {
     // biome-ignore lint/suspicious/noExplicitAny: The type of the function is not known, so it is set to any.
@@ -151,16 +146,20 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
         {i + 1}
       </div>
     ),
-    nextArrow: <ArrowRight theme={theme} />,
-    prevArrow: <ArrowLeft theme={theme} />,
+    nextArrow: <ArrowRight theme={theme} disabled={disabled} />,
+    prevArrow: <ArrowLeft theme={theme} disabled={disabled} />,
     dots: true,
+    arrows: !disabled,
     infinite: true,
     speed: 600,
     slidesToShow: windowWidth < 1024 ? 2 : 3,
     slidesToScroll: 1,
     centerMode: windowWidth >= 1024,
     centerPadding: "0px",
-    swipeToSlide: true,
+    swipeToSlide: !disabled,
+    swipe: !disabled,
+    draggable: !disabled,
+    touchMove: !disabled,
     focusOnSelect: true,
     variableWidth: false,
     beforeChange: (_: number, next: number) => {
@@ -170,7 +169,9 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
 
   return (
     <div className="flex-col flex gap-4 lg:gap-8">
-      <h2 className="text-2xl lg:text-3xl dark:text-primary text-center">{t("selectGame")}</h2>
+      <h2 className="text-2xl lg:text-3xl dark:text-primary text-center">
+        {disabled ? t("waitGameSelect") : t("selectGame")}
+      </h2>
       <div className="relative w-[20rem] h-[10rem] lg:h-[21rem] lg:w-[58rem] mx-auto">
         <div className="absolute inset-0 dark:border-2 rounded-2xl dark:border-primary bg-foreground-200 dark:bg-transparent flex justify-center items-center">
           <div className="relative ml-3.5 lg:ml-5 z-10 lg:max-w-4xl mx-auto">
@@ -188,6 +189,16 @@ const GameCarousel = ({ gameImgs }: CarouselProps) => {
                 </div>
               ))}
             </Slider>
+            <style>{
+              // disables dots when not host
+              `.slick-dots li div {
+                pointer-events: ${disabled ? 'none': 'auto' };
+              }
+              .slick-dots li  {
+                cursor: ${disabled ? 'default': 'pointer' };
+              }
+              `
+            }</style>
           </div>
         </div>
       </div>

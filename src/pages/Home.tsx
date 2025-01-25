@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
 import supabase, { fetchGameData } from "@/utils/supabase";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "@/index.css";
-import { Input } from "@nextui-org/input";
+import ButtonBordered from "@/components/ui/ButtonBordered";
 import useGameStore from "@/hooks/useGameStore";
 import usePlayerStore from "@/hooks/usePlayerStore";
 import useSessionStore from "@/hooks/useSessionStore";
+import useThemeStore from "@/hooks/useThemeStore";
 import type { Session_t } from "@/types/database/database_extended.types";
-import ButtonBordered from "@/components/ui/ButtonBordered";
-import type { PostgrestError } from "@supabase/supabase-js";
+import type { SVGElementProps } from "@/types/other.types";
 import { Form } from "@nextui-org/form";
+import { Input } from "@nextui-org/input";
 import { InputOtp } from "@nextui-org/input-otp";
 import { Button, Tooltip } from "@nextui-org/react";
-import type { SVGElementProps } from "@/types/other.types";
-import useThemeStore from "@/hooks/useThemeStore";
+import type { PostgrestError } from "@supabase/supabase-js";
 import { useTranslation } from "react-i18next";
 
 type SetSessionErrorOptions = {
@@ -171,8 +171,9 @@ const Home = () => {
             displayError: t("playerCreationError"),
           });
           return false;
-        } 
-        
+        }
+
+        console.log("player data: ", data);
         updatePlayer(data);
         return true;
       });

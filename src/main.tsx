@@ -1,8 +1,8 @@
+import App from "@/App.tsx";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "@/App.tsx";
 import { BrowserRouter } from "react-router-dom";
-import "@/types/database.types.ts";
+import "@/types/database/database.types";
 import "@/i18n.ts";
 
 const rootElement = document.getElementById("root");

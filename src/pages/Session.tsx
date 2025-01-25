@@ -1,17 +1,17 @@
-import supabase from "@/utils/supabase";
 import GameCarousel from "@/components/game/GameCarousel";
-import GameOptions from "@/components/game/game_options/GameOptions";
-import useSessionStore from "@/hooks/useSessionStore";
-import useGameStore from "@/hooks/useGameStore";
-import ButtonBordered from "@/components/ui/ButtonBordered";
-import { formatGameName, getGameImgs } from "@/utils/game";
-import SessionHeader from "@/components/session/SessionHeader";
-import { useNavigate } from "react-router-dom";
 import GameRules from "@/components/game/GameRules";
-import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
-import { Spinner } from "@nextui-org/react";
+import GameOptions from "@/components/game/game_options/GameOptions";
+import SessionHeader from "@/components/session/SessionHeader";
+import ButtonBordered from "@/components/ui/ButtonBordered";
+import useGameStore from "@/hooks/useGameStore";
+import useSessionStore from "@/hooks/useSessionStore";
 import { GameState, GameType } from "@/types/game/game.types";
+import { formatGameName, getGameImgs } from "@/utils/game";
+import supabase from "@/utils/supabase";
+import { Spinner } from "@nextui-org/react";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const Session = () => {
   const session = useSessionStore(state => state.session);
@@ -127,7 +127,7 @@ const Session = () => {
                 id="startGame"
                 className="w-fit"
                 onPress={startGame}
-                isDisabled={numOfPlayers < (gameState?.minPlayers ? gameState?.minPlayers : Number.POSITIVE_INFINITY)}
+                isDisabled={numOfPlayers < (gameState?.minPlayers ? gameState?.minPlayers : Number.POSITIVE_INFINITY) || currentGame !== "LITTLE_MAX"}
               >
                 {t("startGame", { game: currentGame ? formatGameName(currentGame.toString(), t) : "" })}
               </ButtonBordered>

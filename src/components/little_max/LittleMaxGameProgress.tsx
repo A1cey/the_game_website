@@ -1,17 +1,17 @@
 import useGameStore from "@/hooks/useGameStore";
 import useLanguageStore from "@/hooks/useLanguageStore";
 import useSessionStore from "@/hooks/useSessionStore";
-import type { LittleMaxGameState, LittleMaxOldValue, PossibleLittleMaxValue } from "@/types/game.types";
+import { LittleMaxGameState_t, LittleMaxOldValue_t, PossibleLittleMaxValue_t } from "@/types/game/little_max.types";
 import { getPlayerNames } from "@/utils/supabase";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 type LittleMaxGameProgressProps = {
-  selectedValue: PossibleLittleMaxValue;
-  setSelectedValue: Dispatch<SetStateAction<PossibleLittleMaxValue>>;
+  selectedValue: PossibleLittleMaxValue_t;
+  setSelectedValue: Dispatch<SetStateAction<PossibleLittleMaxValue_t>>;
   isSelectedAsOrHigher: boolean;
   setIsSelectedAsOrHigher: Dispatch<SetStateAction<boolean>>;
-  lastValue: LittleMaxOldValue;
+  lastValue: LittleMaxOldValue_t;
   disabled: boolean;
 };
 
@@ -23,7 +23,7 @@ const LittleMaxGameProgress = ({
   lastValue,
   disabled,
 }: LittleMaxGameProgressProps) => {
-  const namedValues = useGameStore(state => (state.game.game_state?.state as LittleMaxGameState).namedValues);
+  const namedValues = useGameStore(state => (state.game.game_state?.state as LittleMaxGameState_t).namedValues);
   const sessionName = useSessionStore(state => state.session.name);
   const playerCount = useSessionStore(state => state.session.num_of_players);
   const [players, setPlayers] = useState<string[]>([]);
@@ -35,11 +35,11 @@ const LittleMaxGameProgress = ({
     getPlayerNames(sessionName, t).then(playerNames => setPlayers(playerNames));
   }, [playerCount, sessionName, language]);
 
-  const littleMaxValues: PossibleLittleMaxValue[] = [
+  const littleMaxValues: PossibleLittleMaxValue_t[] = [
     31, 32, 41, 42, 43, 51, 52, 53, 54, 61, 62, 63, 64, 65, 11, 22, 33, 44, 55, 66, 21,
   ];
 
-  const leForLittleMax = (a: PossibleLittleMaxValue, b: PossibleLittleMaxValue): boolean => {
+  const leForLittleMax = (a: PossibleLittleMaxValue_t, b: PossibleLittleMaxValue_t): boolean => {
     const idxA = littleMaxValues.findIndex(x => x === a);
     const idxB = littleMaxValues.findIndex(x => x === b);
 
@@ -54,7 +54,7 @@ const LittleMaxGameProgress = ({
     return playerPos ? players[playerPos - 1] : "";
   };
 
-  const handleSelectedValue = (value: PossibleLittleMaxValue) => {
+  const handleSelectedValue = (value: PossibleLittleMaxValue_t) => {
     // new value selected
     if (selectedValue !== value) {
       setIsSelectedAsOrHigher(false);

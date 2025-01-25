@@ -1,11 +1,11 @@
-import { Link } from "@nextui-org/react";
-import ButtonBordered from "./ui/ButtonBordered";
-import SessionName from "./SessionName";
-import SessionSize from "./SessionMembers";
-import usePlayerStore from "@/hooks/usePlayerStore";
-import { useTranslation } from "react-i18next";
-import useSessionStore from "@/hooks/useSessionStore";
 import useGameStore from "@/hooks/useGameStore";
+import usePlayerStore from "@/hooks/usePlayerStore";
+import useSessionStore from "@/hooks/useSessionStore";
+import { Link } from "@nextui-org/react";
+import { useTranslation } from "react-i18next";
+import SessionSize from "./SessionMembers";
+import SessionName from "./SessionName";
+import ButtonBordered from "../ui/ButtonBordered";
 
 const SessionHeader = () => {
   const resetPlayer = usePlayerStore(state => state.resetStore);
