@@ -6,7 +6,7 @@ type DurakOptionsProps = DurakOptionsType_t & {
   setOptions: React.Dispatch<React.SetStateAction<DurakOptionsType_t>>;
 };
 
-const DurakOptions = ({ setOptions, disabled }: DurakOptionsProps) => {
+const DurakOptions = ({ setOptions }: DurakOptionsProps) => {
   const hasChanged = useRef(false);
 
   useEffect(() => {

@@ -6,7 +6,7 @@ type AssholeOptionsProps = AssholeOptionsType_t & {
   setOptions: React.Dispatch<React.SetStateAction<AssholeOptionsType_t>>;
 };
 
-const AssholeOptions = ({ setOptions, disabled }: AssholeOptionsProps) => {
+const AssholeOptions = ({ setOptions }: AssholeOptionsProps) => {
   const hasChanged = useRef(false);
 
   useEffect(() => {

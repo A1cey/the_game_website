@@ -6,7 +6,7 @@ type ThirtyOneOptionsProps = ThirtyOneOptionsType_t & {
   setOptions: React.Dispatch<React.SetStateAction<ThirtyOneOptionsType_t>>;
 };
 
-const ThirtyOneOptions = ({ setOptions, disabled }: ThirtyOneOptionsProps) => {
+const ThirtyOneOptions = ({ setOptions }: ThirtyOneOptionsProps) => {
   const hasChanged = useRef(false);
 
   useEffect(() => {

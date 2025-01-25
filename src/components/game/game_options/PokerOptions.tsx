@@ -6,7 +6,7 @@ type PokerOptionsProps = PokerOptionsType_t & {
   setOptions: React.Dispatch<React.SetStateAction<PokerOptionsType_t>>;
 };
 
-const PokerOptions = ({ setOptions, disabled }: PokerOptionsProps) => {
+const PokerOptions = ({ setOptions }: PokerOptionsProps) => {
   const hasChanged = useRef(false);
 
   useEffect(() => {

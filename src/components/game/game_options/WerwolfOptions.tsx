@@ -6,7 +6,7 @@ type WerwolfOptionsProps = WerwolfOptionsType_t & {
   setOptions: React.Dispatch<React.SetStateAction<WerwolfOptionsType_t>>;
 };
 
-const WerwolfOptions = ({ setOptions, disabled }: WerwolfOptionsProps) => {
+const WerwolfOptions = ({ setOptions }: WerwolfOptionsProps) => {
   const hasChanged = useRef(false);
 
   useEffect(() => {
