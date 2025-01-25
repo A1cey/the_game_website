@@ -1,6 +1,6 @@
 import type { LittleMaxOptionsType_t } from "@/types/game/little_max.types";
-import { Checkbox } from "@nextui-org/checkbox";
-import { Input } from "@nextui-org/input";
+import { Checkbox } from "@heroui/checkbox";
+import { Input } from "@heroui/input";
 import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 

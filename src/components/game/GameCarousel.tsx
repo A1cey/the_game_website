@@ -8,7 +8,7 @@ import useSessionStore from "@/hooks/useSessionStore";
 import useThemeStore from "@/hooks/useThemeStore";
 import { GameType, type GameType_t } from "@/types/game/game.types";
 import { updateDBGameState } from "@/utils/supabase";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { useTranslation } from "react-i18next";
 import Slider from "react-slick";
 import ArrowLeftIcon from "../icons/ArrowLeft";

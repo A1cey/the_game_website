@@ -1,10 +1,10 @@
 import useSessionStore from "@/hooks/useSessionStore";
 import useThemeStore from "@/hooks/useThemeStore";
 import supabase from "@/utils/supabase";
-import { Button } from "@nextui-org/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
-import { Divider, Select, SelectItem, type SelectedItemProps } from "@nextui-org/react";
-import { ScrollShadow } from "@nextui-org/scroll-shadow";
+import { Button } from "@heroui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
+import { Divider, Select, SelectItem, type SelectedItemProps } from "@heroui/react";
+import { ScrollShadow } from "@heroui/scroll-shadow";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import PlayerList from "../PlayerList";

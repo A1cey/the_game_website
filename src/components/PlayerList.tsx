@@ -1,6 +1,6 @@
 import useSessionStore from "@/hooks/useSessionStore";
 import { getPlayerNames } from "@/utils/supabase";
-import { Listbox, ListboxItem } from "@nextui-org/listbox";
+import { Listbox, ListboxItem } from "@heroui/listbox";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 

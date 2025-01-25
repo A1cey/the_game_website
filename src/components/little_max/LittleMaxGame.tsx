@@ -10,7 +10,7 @@ import type {
 } from "@/types/game/little_max.types";
 import { random } from "@/utils/other";
 import supabase, { getPlayerNames } from "@/utils/supabase";
-import { Modal, ModalBody, ModalContent, useDisclosure } from "@nextui-org/modal";
+import { Modal, ModalBody, ModalContent, useDisclosure } from "@heroui/modal";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ButtonBordered from "../ui/ButtonBordered";

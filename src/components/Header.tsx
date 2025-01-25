@@ -1,7 +1,7 @@
 import useThemeStore from "@/hooks/useThemeStore";
-import { Button } from "@nextui-org/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
-import { Divider } from "@nextui-org/react";
+import { Button } from "@heroui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
+import { Divider } from "@heroui/react";
 import { useState } from "react";
 import SettingsIcon from "./icons/SettingsIcon";
 import LanguageSelector from "./ui/LanguageSelector";

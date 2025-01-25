@@ -1,7 +1,7 @@
 import useGameStore from "@/hooks/useGameStore";
 import usePlayerStore from "@/hooks/usePlayerStore";
 import useSessionStore from "@/hooks/useSessionStore";
-import { Link } from "@nextui-org/react";
+import { Link } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import ButtonBordered from "../ui/ButtonBordered";
 import SessionSize from "./SessionMembers";

@@ -11,7 +11,7 @@ import { PokerOptionsType } from "@/types/game/poker.types";
 import { ThirtyOneOptionsType } from "@/types/game/thirty_one.types";
 import { WerwolfOptionsType } from "@/types/game/werwolf.types";
 import supabase from "@/utils/supabase";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import AssholeOptions from "./AssholeOptions";

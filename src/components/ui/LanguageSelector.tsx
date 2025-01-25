@@ -1,6 +1,6 @@
 import useLanguageStore, { SupportedLanguages } from "@/hooks/useLanguageStore";
 import useThemeStore from "@/hooks/useThemeStore";
-import { Select, SelectItem } from "@nextui-org/react";
+import { Select, SelectItem } from "@heroui/react";
 import { ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 

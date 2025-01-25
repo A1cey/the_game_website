@@ -1,5 +1,5 @@
 import useThemeStore from "@/hooks/useThemeStore";
-import { Switch } from "@nextui-org/switch";
+import { Switch } from "@heroui/switch";
 import { useEffect, useState } from "react";
 import MoonIcon from "../icons/MoonIcon";
 import SunIcon from "../icons/SunIcon";

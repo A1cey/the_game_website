@@ -1,6 +1,6 @@
 import useSessionStore from "@/hooks/useSessionStore";
 import useThemeStore from "@/hooks/useThemeStore";
-import { Snippet } from "@nextui-org/react";
+import { Snippet } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
 const SessionName = () => {

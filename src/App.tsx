@@ -1,7 +1,7 @@
 import Game from "@/pages/Game";
 import Home from "@/pages/Home";
 import Session from "@/pages/Session";
-import { NextUIProvider } from "@nextui-org/react";
+import { HeroUIProvider } from "@heroui/react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Routes, useHref } from "react-router-dom";
@@ -60,7 +60,7 @@ const App = () => {
   }, [sessionName]);
 
   return (
-    <NextUIProvider navigate={navigate} useHref={useHref}>
+    <HeroUIProvider navigate={navigate} useHref={useHref}>
       <main className={`${theme} text-foreground bg-background h-screen w-screen overflow-scroll`}>
         <Header />
         <Routes>
@@ -70,7 +70,7 @@ const App = () => {
           <Route path="*" element={<Home />} />
         </Routes>
       </main>
-    </NextUIProvider>
+    </HeroUIProvider>
   );
 };
 

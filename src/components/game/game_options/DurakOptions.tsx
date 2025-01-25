@@ -21,4 +21,4 @@ const DurakOptions = ({ setOptions }: DurakOptionsProps) => {
   return <div>Durak Options</div>;
 };
 
-export default DurakOptions;
+export default DurakOptions; 

@@ -9,10 +9,10 @@ import useSessionStore from "@/hooks/useSessionStore";
 import useThemeStore from "@/hooks/useThemeStore";
 import type { Session_t } from "@/types/database/database_extended.types";
 import type { SVGElementProps } from "@/types/other.types";
-import { Form } from "@nextui-org/form";
-import { Input } from "@nextui-org/input";
-import { InputOtp } from "@nextui-org/input-otp";
-import { Button, Tooltip } from "@nextui-org/react";
+import { Form } from "@heroui/form";
+import { Input } from "@heroui/input";
+import { InputOtp } from "@heroui/input-otp";
+import { Button, Tooltip } from "@heroui/react";
 import type { PostgrestError } from "@supabase/supabase-js";
 import { useTranslation } from "react-i18next";
 

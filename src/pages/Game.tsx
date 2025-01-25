@@ -5,7 +5,7 @@ import useThemeStore from "@/hooks/useThemeStore";
 import { GameType } from "@/types/game/game.types";
 import type { LittleMaxGameState_t } from "@/types/game/little_max.types";
 import type { PlayerLive_t } from "@/types/game/shared.types";
-import { Modal, ModalBody, ModalContent } from "@nextui-org/modal";
+import { Modal, ModalBody, ModalContent } from "@heroui/modal";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 

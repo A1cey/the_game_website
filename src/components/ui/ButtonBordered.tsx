@@ -1,5 +1,5 @@
 import useThemeStore from "@/hooks/useThemeStore";
-import { Button, ButtonProps } from "@nextui-org/button";
+import { Button, ButtonProps } from "@heroui/button";
 import React from "react";
 
 const ButtonBordered = React.forwardRef<HTMLButtonElement, ButtonProps>((

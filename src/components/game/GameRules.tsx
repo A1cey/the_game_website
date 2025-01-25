@@ -13,7 +13,7 @@ import werwolfRulesEn from "@/assets/rules/werwolf.en.md?raw";
 import useGameStore from "@/hooks/useGameStore";
 import useThemeStore from "@/hooks/useThemeStore";
 import type { GameRulesMap_t } from "@/types/game/game.types";
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/modal";
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/modal";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";

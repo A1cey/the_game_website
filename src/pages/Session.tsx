@@ -8,7 +8,7 @@ import useSessionStore from "@/hooks/useSessionStore";
 import { GameState, GameType } from "@/types/game/game.types";
 import { formatGameName, getGameImgs } from "@/utils/game";
 import supabase from "@/utils/supabase";
-import { Spinner } from "@nextui-org/react";
+import { Spinner } from "@heroui/react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
